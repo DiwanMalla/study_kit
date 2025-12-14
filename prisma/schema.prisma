@@ -1,0 +1,128 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String?
+  clerkId   String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  files     File[]
+  studyKits StudyKit[]
+}
+
+model File {
+  id               String            @id @default(cuid())
+  userId           String
+  user             User              @relation(fields: [userId], references: [clerkId])
+  name             String
+  url              String
+  type             String            // pdf, pptx, image
+  size             Int
+  status           String            @default("uploaded") // uploaded, processing, ready, error
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  extractedContent ExtractedContent?
+  studyKit         StudyKit?
+  
+  @@index([userId])
+}
+
+model ExtractedContent {
+  id        String   @id @default(cuid())
+  fileId    String   @unique
+  file      File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  content   String   @db.Text
+  metadata  Json?    // Store page numbers, structure, etc.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([fileId])
+}
+
+model StudyKit {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [clerkId])
+  fileId     String      @unique
+  file       File        @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  title      String
+  summary    String?     @db.Text
+  status     String      @default("processing") // processing, ready, error
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  flashcards Flashcard[]
+  quizzes    Quiz[]
+  
+  @@index([userId])
+}
+
+model Flashcard {
+  id         String   @id @default(cuid())
+  studyKitId String
+  studyKit   StudyKit @relation(fields: [studyKitId], references: [id], onDelete: Cascade)
+  question   String   @db.Text
+  answer     String   @db.Text
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  
+  @@index([studyKitId])
+}
+
+model Quiz {
+  id         String         @id @default(cuid())
+  studyKitId String
+  studyKit   StudyKit       @relation(fields: [studyKitId], references: [id], onDelete: Cascade)
+  title      String
+  createdAt  DateTime       @default(now())
+  questions  QuizQuestion[]
+  
+  @@index([studyKitId])
+}
+
+model QuizQuestion {
+  id            String   @id @default(cuid())
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  question      String   @db.Text
+  options       Json     // Array of options
+  correctAnswer Int      // Index of correct option
+  explanation   String?  @db.Text
+  order         Int      @default(0)
+  
+  @@index([quizId])
+}
+
+model Conversation {
+  id            String                @id @default(cuid())
+  userId        String
+  title         String                // Auto-generated from first message
+  subject       String?               // Math, Science, History, etc.
+  mode          String                @default("explain") // explain, practice, quiz
+  contextFileId String?               // Optional file for context
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  messages      ConversationMessage[]
+  
+  @@index([userId])
+}
+
+model ConversationMessage {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String       // user or assistant
+  content        String       @db.Text
+  createdAt      DateTime     @default(now())
+  
+  @@index([conversationId])
+}
+
