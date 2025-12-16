@@ -44,6 +44,7 @@ export type FileMinAggregateOutputType = {
   status: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  assignmentId: string | null
 }
 
 export type FileMaxAggregateOutputType = {
@@ -56,6 +57,7 @@ export type FileMaxAggregateOutputType = {
   status: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  assignmentId: string | null
 }
 
 export type FileCountAggregateOutputType = {
@@ -68,6 +70,7 @@ export type FileCountAggregateOutputType = {
   status: number
   createdAt: number
   updatedAt: number
+  assignmentId: number
   _all: number
 }
 
@@ -90,6 +93,7 @@ export type FileMinAggregateInputType = {
   status?: true
   createdAt?: true
   updatedAt?: true
+  assignmentId?: true
 }
 
 export type FileMaxAggregateInputType = {
@@ -102,6 +106,7 @@ export type FileMaxAggregateInputType = {
   status?: true
   createdAt?: true
   updatedAt?: true
+  assignmentId?: true
 }
 
 export type FileCountAggregateInputType = {
@@ -114,6 +119,7 @@ export type FileCountAggregateInputType = {
   status?: true
   createdAt?: true
   updatedAt?: true
+  assignmentId?: true
   _all?: true
 }
 
@@ -213,6 +219,7 @@ export type FileGroupByOutputType = {
   status: string
   createdAt: Date
   updatedAt: Date
+  assignmentId: string | null
   _count: FileCountAggregateOutputType | null
   _avg: FileAvgAggregateOutputType | null
   _sum: FileSumAggregateOutputType | null
@@ -248,9 +255,11 @@ export type FileWhereInput = {
   status?: Prisma.StringFilter<"File"> | string
   createdAt?: Prisma.DateTimeFilter<"File"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"File"> | Date | string
+  assignmentId?: Prisma.StringNullableFilter<"File"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   extractedContent?: Prisma.XOR<Prisma.ExtractedContentNullableScalarRelationFilter, Prisma.ExtractedContentWhereInput> | null
   studyKit?: Prisma.XOR<Prisma.StudyKitNullableScalarRelationFilter, Prisma.StudyKitWhereInput> | null
+  assignment?: Prisma.XOR<Prisma.AssignmentNullableScalarRelationFilter, Prisma.AssignmentWhereInput> | null
 }
 
 export type FileOrderByWithRelationInput = {
@@ -263,9 +272,11 @@ export type FileOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  assignmentId?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   extractedContent?: Prisma.ExtractedContentOrderByWithRelationInput
   studyKit?: Prisma.StudyKitOrderByWithRelationInput
+  assignment?: Prisma.AssignmentOrderByWithRelationInput
 }
 
 export type FileWhereUniqueInput = Prisma.AtLeast<{
@@ -281,9 +292,11 @@ export type FileWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"File"> | string
   createdAt?: Prisma.DateTimeFilter<"File"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"File"> | Date | string
+  assignmentId?: Prisma.StringNullableFilter<"File"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   extractedContent?: Prisma.XOR<Prisma.ExtractedContentNullableScalarRelationFilter, Prisma.ExtractedContentWhereInput> | null
   studyKit?: Prisma.XOR<Prisma.StudyKitNullableScalarRelationFilter, Prisma.StudyKitWhereInput> | null
+  assignment?: Prisma.XOR<Prisma.AssignmentNullableScalarRelationFilter, Prisma.AssignmentWhereInput> | null
 }, "id">
 
 export type FileOrderByWithAggregationInput = {
@@ -296,6 +309,7 @@ export type FileOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  assignmentId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.FileCountOrderByAggregateInput
   _avg?: Prisma.FileAvgOrderByAggregateInput
   _max?: Prisma.FileMaxOrderByAggregateInput
@@ -316,6 +330,7 @@ export type FileScalarWhereWithAggregatesInput = {
   status?: Prisma.StringWithAggregatesFilter<"File"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"File"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"File"> | Date | string
+  assignmentId?: Prisma.StringNullableWithAggregatesFilter<"File"> | string | null
 }
 
 export type FileCreateInput = {
@@ -330,6 +345,7 @@ export type FileCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutFilesInput
   extractedContent?: Prisma.ExtractedContentCreateNestedOneWithoutFileInput
   studyKit?: Prisma.StudyKitCreateNestedOneWithoutFileInput
+  assignment?: Prisma.AssignmentCreateNestedOneWithoutFilesInput
 }
 
 export type FileUncheckedCreateInput = {
@@ -342,6 +358,7 @@ export type FileUncheckedCreateInput = {
   status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignmentId?: string | null
   extractedContent?: Prisma.ExtractedContentUncheckedCreateNestedOneWithoutFileInput
   studyKit?: Prisma.StudyKitUncheckedCreateNestedOneWithoutFileInput
 }
@@ -358,6 +375,7 @@ export type FileUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
   extractedContent?: Prisma.ExtractedContentUpdateOneWithoutFileNestedInput
   studyKit?: Prisma.StudyKitUpdateOneWithoutFileNestedInput
+  assignment?: Prisma.AssignmentUpdateOneWithoutFilesNestedInput
 }
 
 export type FileUncheckedUpdateInput = {
@@ -370,6 +388,7 @@ export type FileUncheckedUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   extractedContent?: Prisma.ExtractedContentUncheckedUpdateOneWithoutFileNestedInput
   studyKit?: Prisma.StudyKitUncheckedUpdateOneWithoutFileNestedInput
 }
@@ -384,6 +403,7 @@ export type FileCreateManyInput = {
   status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignmentId?: string | null
 }
 
 export type FileUpdateManyMutationInput = {
@@ -407,6 +427,7 @@ export type FileUncheckedUpdateManyInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type FileListRelationFilter = {
@@ -429,6 +450,7 @@ export type FileCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  assignmentId?: Prisma.SortOrder
 }
 
 export type FileAvgOrderByAggregateInput = {
@@ -445,6 +467,7 @@ export type FileMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  assignmentId?: Prisma.SortOrder
 }
 
 export type FileMinOrderByAggregateInput = {
@@ -457,6 +480,7 @@ export type FileMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  assignmentId?: Prisma.SortOrder
 }
 
 export type FileSumOrderByAggregateInput = {
@@ -546,6 +570,48 @@ export type FileUpdateOneRequiredWithoutStudyKitNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.FileUpdateToOneWithWhereWithoutStudyKitInput, Prisma.FileUpdateWithoutStudyKitInput>, Prisma.FileUncheckedUpdateWithoutStudyKitInput>
 }
 
+export type FileCreateNestedManyWithoutAssignmentInput = {
+  create?: Prisma.XOR<Prisma.FileCreateWithoutAssignmentInput, Prisma.FileUncheckedCreateWithoutAssignmentInput> | Prisma.FileCreateWithoutAssignmentInput[] | Prisma.FileUncheckedCreateWithoutAssignmentInput[]
+  connectOrCreate?: Prisma.FileCreateOrConnectWithoutAssignmentInput | Prisma.FileCreateOrConnectWithoutAssignmentInput[]
+  createMany?: Prisma.FileCreateManyAssignmentInputEnvelope
+  connect?: Prisma.FileWhereUniqueInput | Prisma.FileWhereUniqueInput[]
+}
+
+export type FileUncheckedCreateNestedManyWithoutAssignmentInput = {
+  create?: Prisma.XOR<Prisma.FileCreateWithoutAssignmentInput, Prisma.FileUncheckedCreateWithoutAssignmentInput> | Prisma.FileCreateWithoutAssignmentInput[] | Prisma.FileUncheckedCreateWithoutAssignmentInput[]
+  connectOrCreate?: Prisma.FileCreateOrConnectWithoutAssignmentInput | Prisma.FileCreateOrConnectWithoutAssignmentInput[]
+  createMany?: Prisma.FileCreateManyAssignmentInputEnvelope
+  connect?: Prisma.FileWhereUniqueInput | Prisma.FileWhereUniqueInput[]
+}
+
+export type FileUpdateManyWithoutAssignmentNestedInput = {
+  create?: Prisma.XOR<Prisma.FileCreateWithoutAssignmentInput, Prisma.FileUncheckedCreateWithoutAssignmentInput> | Prisma.FileCreateWithoutAssignmentInput[] | Prisma.FileUncheckedCreateWithoutAssignmentInput[]
+  connectOrCreate?: Prisma.FileCreateOrConnectWithoutAssignmentInput | Prisma.FileCreateOrConnectWithoutAssignmentInput[]
+  upsert?: Prisma.FileUpsertWithWhereUniqueWithoutAssignmentInput | Prisma.FileUpsertWithWhereUniqueWithoutAssignmentInput[]
+  createMany?: Prisma.FileCreateManyAssignmentInputEnvelope
+  set?: Prisma.FileWhereUniqueInput | Prisma.FileWhereUniqueInput[]
+  disconnect?: Prisma.FileWhereUniqueInput | Prisma.FileWhereUniqueInput[]
+  delete?: Prisma.FileWhereUniqueInput | Prisma.FileWhereUniqueInput[]
+  connect?: Prisma.FileWhereUniqueInput | Prisma.FileWhereUniqueInput[]
+  update?: Prisma.FileUpdateWithWhereUniqueWithoutAssignmentInput | Prisma.FileUpdateWithWhereUniqueWithoutAssignmentInput[]
+  updateMany?: Prisma.FileUpdateManyWithWhereWithoutAssignmentInput | Prisma.FileUpdateManyWithWhereWithoutAssignmentInput[]
+  deleteMany?: Prisma.FileScalarWhereInput | Prisma.FileScalarWhereInput[]
+}
+
+export type FileUncheckedUpdateManyWithoutAssignmentNestedInput = {
+  create?: Prisma.XOR<Prisma.FileCreateWithoutAssignmentInput, Prisma.FileUncheckedCreateWithoutAssignmentInput> | Prisma.FileCreateWithoutAssignmentInput[] | Prisma.FileUncheckedCreateWithoutAssignmentInput[]
+  connectOrCreate?: Prisma.FileCreateOrConnectWithoutAssignmentInput | Prisma.FileCreateOrConnectWithoutAssignmentInput[]
+  upsert?: Prisma.FileUpsertWithWhereUniqueWithoutAssignmentInput | Prisma.FileUpsertWithWhereUniqueWithoutAssignmentInput[]
+  createMany?: Prisma.FileCreateManyAssignmentInputEnvelope
+  set?: Prisma.FileWhereUniqueInput | Prisma.FileWhereUniqueInput[]
+  disconnect?: Prisma.FileWhereUniqueInput | Prisma.FileWhereUniqueInput[]
+  delete?: Prisma.FileWhereUniqueInput | Prisma.FileWhereUniqueInput[]
+  connect?: Prisma.FileWhereUniqueInput | Prisma.FileWhereUniqueInput[]
+  update?: Prisma.FileUpdateWithWhereUniqueWithoutAssignmentInput | Prisma.FileUpdateWithWhereUniqueWithoutAssignmentInput[]
+  updateMany?: Prisma.FileUpdateManyWithWhereWithoutAssignmentInput | Prisma.FileUpdateManyWithWhereWithoutAssignmentInput[]
+  deleteMany?: Prisma.FileScalarWhereInput | Prisma.FileScalarWhereInput[]
+}
+
 export type FileCreateWithoutUserInput = {
   id?: string
   name: string
@@ -557,6 +623,7 @@ export type FileCreateWithoutUserInput = {
   updatedAt?: Date | string
   extractedContent?: Prisma.ExtractedContentCreateNestedOneWithoutFileInput
   studyKit?: Prisma.StudyKitCreateNestedOneWithoutFileInput
+  assignment?: Prisma.AssignmentCreateNestedOneWithoutFilesInput
 }
 
 export type FileUncheckedCreateWithoutUserInput = {
@@ -568,6 +635,7 @@ export type FileUncheckedCreateWithoutUserInput = {
   status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignmentId?: string | null
   extractedContent?: Prisma.ExtractedContentUncheckedCreateNestedOneWithoutFileInput
   studyKit?: Prisma.StudyKitUncheckedCreateNestedOneWithoutFileInput
 }
@@ -611,6 +679,7 @@ export type FileScalarWhereInput = {
   status?: Prisma.StringFilter<"File"> | string
   createdAt?: Prisma.DateTimeFilter<"File"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"File"> | Date | string
+  assignmentId?: Prisma.StringNullableFilter<"File"> | string | null
 }
 
 export type FileCreateWithoutExtractedContentInput = {
@@ -624,6 +693,7 @@ export type FileCreateWithoutExtractedContentInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutFilesInput
   studyKit?: Prisma.StudyKitCreateNestedOneWithoutFileInput
+  assignment?: Prisma.AssignmentCreateNestedOneWithoutFilesInput
 }
 
 export type FileUncheckedCreateWithoutExtractedContentInput = {
@@ -636,6 +706,7 @@ export type FileUncheckedCreateWithoutExtractedContentInput = {
   status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignmentId?: string | null
   studyKit?: Prisma.StudyKitUncheckedCreateNestedOneWithoutFileInput
 }
 
@@ -666,6 +737,7 @@ export type FileUpdateWithoutExtractedContentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
   studyKit?: Prisma.StudyKitUpdateOneWithoutFileNestedInput
+  assignment?: Prisma.AssignmentUpdateOneWithoutFilesNestedInput
 }
 
 export type FileUncheckedUpdateWithoutExtractedContentInput = {
@@ -678,6 +750,7 @@ export type FileUncheckedUpdateWithoutExtractedContentInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   studyKit?: Prisma.StudyKitUncheckedUpdateOneWithoutFileNestedInput
 }
 
@@ -692,6 +765,7 @@ export type FileCreateWithoutStudyKitInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutFilesInput
   extractedContent?: Prisma.ExtractedContentCreateNestedOneWithoutFileInput
+  assignment?: Prisma.AssignmentCreateNestedOneWithoutFilesInput
 }
 
 export type FileUncheckedCreateWithoutStudyKitInput = {
@@ -704,6 +778,7 @@ export type FileUncheckedCreateWithoutStudyKitInput = {
   status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignmentId?: string | null
   extractedContent?: Prisma.ExtractedContentUncheckedCreateNestedOneWithoutFileInput
 }
 
@@ -734,6 +809,7 @@ export type FileUpdateWithoutStudyKitInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
   extractedContent?: Prisma.ExtractedContentUpdateOneWithoutFileNestedInput
+  assignment?: Prisma.AssignmentUpdateOneWithoutFilesNestedInput
 }
 
 export type FileUncheckedUpdateWithoutStudyKitInput = {
@@ -746,7 +822,62 @@ export type FileUncheckedUpdateWithoutStudyKitInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   extractedContent?: Prisma.ExtractedContentUncheckedUpdateOneWithoutFileNestedInput
+}
+
+export type FileCreateWithoutAssignmentInput = {
+  id?: string
+  name: string
+  url: string
+  type: string
+  size: number
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutFilesInput
+  extractedContent?: Prisma.ExtractedContentCreateNestedOneWithoutFileInput
+  studyKit?: Prisma.StudyKitCreateNestedOneWithoutFileInput
+}
+
+export type FileUncheckedCreateWithoutAssignmentInput = {
+  id?: string
+  userId: string
+  name: string
+  url: string
+  type: string
+  size: number
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  extractedContent?: Prisma.ExtractedContentUncheckedCreateNestedOneWithoutFileInput
+  studyKit?: Prisma.StudyKitUncheckedCreateNestedOneWithoutFileInput
+}
+
+export type FileCreateOrConnectWithoutAssignmentInput = {
+  where: Prisma.FileWhereUniqueInput
+  create: Prisma.XOR<Prisma.FileCreateWithoutAssignmentInput, Prisma.FileUncheckedCreateWithoutAssignmentInput>
+}
+
+export type FileCreateManyAssignmentInputEnvelope = {
+  data: Prisma.FileCreateManyAssignmentInput | Prisma.FileCreateManyAssignmentInput[]
+  skipDuplicates?: boolean
+}
+
+export type FileUpsertWithWhereUniqueWithoutAssignmentInput = {
+  where: Prisma.FileWhereUniqueInput
+  update: Prisma.XOR<Prisma.FileUpdateWithoutAssignmentInput, Prisma.FileUncheckedUpdateWithoutAssignmentInput>
+  create: Prisma.XOR<Prisma.FileCreateWithoutAssignmentInput, Prisma.FileUncheckedCreateWithoutAssignmentInput>
+}
+
+export type FileUpdateWithWhereUniqueWithoutAssignmentInput = {
+  where: Prisma.FileWhereUniqueInput
+  data: Prisma.XOR<Prisma.FileUpdateWithoutAssignmentInput, Prisma.FileUncheckedUpdateWithoutAssignmentInput>
+}
+
+export type FileUpdateManyWithWhereWithoutAssignmentInput = {
+  where: Prisma.FileScalarWhereInput
+  data: Prisma.XOR<Prisma.FileUpdateManyMutationInput, Prisma.FileUncheckedUpdateManyWithoutAssignmentInput>
 }
 
 export type FileCreateManyUserInput = {
@@ -758,6 +889,7 @@ export type FileCreateManyUserInput = {
   status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignmentId?: string | null
 }
 
 export type FileUpdateWithoutUserInput = {
@@ -771,6 +903,7 @@ export type FileUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   extractedContent?: Prisma.ExtractedContentUpdateOneWithoutFileNestedInput
   studyKit?: Prisma.StudyKitUpdateOneWithoutFileNestedInput
+  assignment?: Prisma.AssignmentUpdateOneWithoutFilesNestedInput
 }
 
 export type FileUncheckedUpdateWithoutUserInput = {
@@ -782,12 +915,66 @@ export type FileUncheckedUpdateWithoutUserInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   extractedContent?: Prisma.ExtractedContentUncheckedUpdateOneWithoutFileNestedInput
   studyKit?: Prisma.StudyKitUncheckedUpdateOneWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type FileCreateManyAssignmentInput = {
+  id?: string
+  userId: string
+  name: string
+  url: string
+  type: string
+  size: number
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type FileUpdateWithoutAssignmentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
+  extractedContent?: Prisma.ExtractedContentUpdateOneWithoutFileNestedInput
+  studyKit?: Prisma.StudyKitUpdateOneWithoutFileNestedInput
+}
+
+export type FileUncheckedUpdateWithoutAssignmentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  extractedContent?: Prisma.ExtractedContentUncheckedUpdateOneWithoutFileNestedInput
+  studyKit?: Prisma.StudyKitUncheckedUpdateOneWithoutFileNestedInput
+}
+
+export type FileUncheckedUpdateManyWithoutAssignmentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
@@ -809,9 +996,11 @@ export type FileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  assignmentId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   extractedContent?: boolean | Prisma.File$extractedContentArgs<ExtArgs>
   studyKit?: boolean | Prisma.File$studyKitArgs<ExtArgs>
+  assignment?: boolean | Prisma.File$assignmentArgs<ExtArgs>
 }, ExtArgs["result"]["file"]>
 
 export type FileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -824,7 +1013,9 @@ export type FileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  assignmentId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  assignment?: boolean | Prisma.File$assignmentArgs<ExtArgs>
 }, ExtArgs["result"]["file"]>
 
 export type FileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -837,7 +1028,9 @@ export type FileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  assignmentId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  assignment?: boolean | Prisma.File$assignmentArgs<ExtArgs>
 }, ExtArgs["result"]["file"]>
 
 export type FileSelectScalar = {
@@ -850,19 +1043,23 @@ export type FileSelectScalar = {
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  assignmentId?: boolean
 }
 
-export type FileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "url" | "type" | "size" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["file"]>
+export type FileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "url" | "type" | "size" | "status" | "createdAt" | "updatedAt" | "assignmentId", ExtArgs["result"]["file"]>
 export type FileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   extractedContent?: boolean | Prisma.File$extractedContentArgs<ExtArgs>
   studyKit?: boolean | Prisma.File$studyKitArgs<ExtArgs>
+  assignment?: boolean | Prisma.File$assignmentArgs<ExtArgs>
 }
 export type FileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  assignment?: boolean | Prisma.File$assignmentArgs<ExtArgs>
 }
 export type FileIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  assignment?: boolean | Prisma.File$assignmentArgs<ExtArgs>
 }
 
 export type $FilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -871,6 +1068,7 @@ export type $FilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     user: Prisma.$UserPayload<ExtArgs>
     extractedContent: Prisma.$ExtractedContentPayload<ExtArgs> | null
     studyKit: Prisma.$StudyKitPayload<ExtArgs> | null
+    assignment: Prisma.$AssignmentPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -882,6 +1080,7 @@ export type $FilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     status: string
     createdAt: Date
     updatedAt: Date
+    assignmentId: string | null
   }, ExtArgs["result"]["file"]>
   composites: {}
 }
@@ -1279,6 +1478,7 @@ export interface Prisma__FileClient<T, Null = never, ExtArgs extends runtime.Typ
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   extractedContent<T extends Prisma.File$extractedContentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$extractedContentArgs<ExtArgs>>): Prisma.Prisma__ExtractedContentClient<runtime.Types.Result.GetResult<Prisma.$ExtractedContentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   studyKit<T extends Prisma.File$studyKitArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$studyKitArgs<ExtArgs>>): Prisma.Prisma__StudyKitClient<runtime.Types.Result.GetResult<Prisma.$StudyKitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  assignment<T extends Prisma.File$assignmentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$assignmentArgs<ExtArgs>>): Prisma.Prisma__AssignmentClient<runtime.Types.Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1317,6 +1517,7 @@ export interface FileFieldRefs {
   readonly status: Prisma.FieldRef<"File", 'String'>
   readonly createdAt: Prisma.FieldRef<"File", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"File", 'DateTime'>
+  readonly assignmentId: Prisma.FieldRef<"File", 'String'>
 }
     
 
@@ -1748,6 +1949,25 @@ export type File$studyKitArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   include?: Prisma.StudyKitInclude<ExtArgs> | null
   where?: Prisma.StudyKitWhereInput
+}
+
+/**
+ * File.assignment
+ */
+export type File$assignmentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Assignment
+   */
+  select?: Prisma.AssignmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Assignment
+   */
+  omit?: Prisma.AssignmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssignmentInclude<ExtArgs> | null
+  where?: Prisma.AssignmentWhereInput
 }
 
 /**

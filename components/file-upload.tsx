@@ -5,11 +5,13 @@ import { Upload, Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { ModelSelector, ModelType } from "@/components/model-selector";
 
 export function FileUpload() {
   const [isUploading, setIsUploading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [status, setStatus] = useState<string>("");
+  const [model, setModel] = useState<ModelType>("auto");
   const router = useRouter();
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +42,7 @@ export function FileUpload() {
       const processRes = await fetch("/api/process", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileId: uploadedFile.id }),
+        body: JSON.stringify({ fileId: uploadedFile.id, model }),
       });
 
       if (!processRes.ok) throw new Error("Processing failed");
@@ -88,23 +90,27 @@ export function FileUpload() {
             </>
           )}
         </div>
+
         {!status.includes("created") && (
-          <div className="relative">
-            <Button disabled={isLoading}>
-              {isUploading
-                ? "Uploading..."
-                : isProcessing
-                ? "Processing..."
-                : "Select File"}
-            </Button>
-            <input
-              type="file"
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-              onChange={handleUpload}
-              accept=".pdf,.pptx,image/*"
-              disabled={isLoading}
-            />
-          </div>
+            <div className="w-full max-w-xs space-y-4">
+                <ModelSelector value={model} onValueChange={setModel} />
+                <div className="relative">
+                    <Button disabled={isLoading} className="w-full">
+                    {isUploading
+                        ? "Uploading..."
+                        : isProcessing
+                        ? "Processing..."
+                        : "Select File"}
+                    </Button>
+                    <input
+                    type="file"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                    onChange={handleUpload}
+                    accept=".pdf,.pptx,image/*"
+                    disabled={isLoading}
+                    />
+                </div>
+            </div>
         )}
       </CardContent>
     </Card>

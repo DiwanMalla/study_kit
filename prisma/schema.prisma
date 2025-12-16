@@ -17,6 +17,7 @@ model User {
   updatedAt DateTime   @updatedAt
   files     File[]
   studyKits StudyKit[]
+  assignments Assignment[]
 }
 
 model File {
@@ -32,8 +33,11 @@ model File {
   updatedAt        DateTime          @updatedAt
   extractedContent ExtractedContent?
   studyKit         StudyKit?
+  assignmentId     String?
+  assignment       Assignment?       @relation(fields: [assignmentId], references: [id])
   
   @@index([userId])
+  @@index([assignmentId])
 }
 
 model ExtractedContent {
@@ -112,6 +116,21 @@ model Conversation {
   updatedAt     DateTime              @updatedAt
   messages      ConversationMessage[]
   
+  @@index([userId])
+}
+
+model Assignment {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [clerkId])
+  title       String
+  description String?  @db.Text
+  status      String   @default("processing") // processing, completed, error
+  solution    String?  @db.Text
+  files       File[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
   @@index([userId])
 }
 

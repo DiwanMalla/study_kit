@@ -59,6 +59,7 @@ export const ModelName = {
   Quiz: 'Quiz',
   QuizQuestion: 'QuizQuestion',
   Conversation: 'Conversation',
+  Assignment: 'Assignment',
   ConversationMessage: 'ConversationMessage'
 } as const
 
@@ -99,7 +100,8 @@ export const FileScalarFieldEnum = {
   size: 'size',
   status: 'status',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  assignmentId: 'assignmentId'
 } as const
 
 export type FileScalarFieldEnum = (typeof FileScalarFieldEnum)[keyof typeof FileScalarFieldEnum]
@@ -178,6 +180,20 @@ export const ConversationScalarFieldEnum = {
 } as const
 
 export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
+
+
+export const AssignmentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  solution: 'solution',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AssignmentScalarFieldEnum = (typeof AssignmentScalarFieldEnum)[keyof typeof AssignmentScalarFieldEnum]
 
 
 export const ConversationMessageScalarFieldEnum = {

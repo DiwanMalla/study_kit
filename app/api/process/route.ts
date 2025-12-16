@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { fileId } = await request.json();
+    const { fileId, model } = await request.json();
 
     if (!fileId) {
       return new NextResponse("File ID is required", { status: 400 });
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     });
 
     // Generate study materials
-    const materials = await generateStudyMaterials(content);
+    const materials = await generateStudyMaterials(content, model || "auto");
 
     // Update study kit with summary
     await db.studyKit.update({

@@ -58,6 +58,11 @@ export type QuizQuestion = Prisma.QuizQuestionModel
  */
 export type Conversation = Prisma.ConversationModel
 /**
+ * Model Assignment
+ * 
+ */
+export type Assignment = Prisma.AssignmentModel
+/**
  * Model ConversationMessage
  * 
  */
