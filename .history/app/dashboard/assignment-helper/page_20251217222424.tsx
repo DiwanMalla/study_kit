@@ -8,8 +8,17 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
+  Trash,
 } from "lucide-react";
-import { AssignmentDeleteButton } from "./assignment-delete-button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,16 +29,41 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export default async function AssignmentHelperPage() {
-  const { userId } = await auth();
+export default function AssignmentHelperPageWrapper(props: any) {
+  // This wrapper is needed to use useState in a server component file
+  return <AssignmentHelperPage {...props} />;
+}
 
-  const assignments = userId
-    ? await db.assignment.findMany({
-        where: { userId },
-        orderBy: { createdAt: "desc" },
-        include: { files: true },
-      })
-    : [];
+function AssignmentHelperPage() {
+  const [assignments, setAssignments] = useState([]);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+
+  useEffect(() => {
+    fetchAssignments();
+  }, []);
+
+  async function fetchAssignments() {
+    const res = await fetch("/api/assignments");
+    if (res.ok) {
+      const data = await res.json();
+      setAssignments(data);
+    }
+  }
+
+  async function handleDelete(id: string) {
+    setIsDeleting(true);
+    const res = await fetch(`/api/assignments/${id}`, { method: "DELETE" });
+    if (res.status === 204) {
+      setAssignments((prev) => prev.filter((a: any) => a.id !== id));
+      setShowDialog(false);
+      setDeleteId(null);
+    } else {
+      alert("Failed to delete assignment.");
+    }
+    setIsDeleting(false);
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-8">
@@ -67,7 +101,7 @@ export default async function AssignmentHelperPage() {
           </Card>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {assignments.map((assignment) => (
+            {assignments.map((assignment: any) => (
               <div key={assignment.id} className="relative group">
                 <Link
                   href={`/dashboard/assignment-helper/${assignment.id}`}
@@ -99,12 +133,49 @@ export default async function AssignmentHelperPage() {
                     </CardContent>
                   </Card>
                 </Link>
-                <AssignmentDeleteButton assignmentId={assignment.id} />
+                <button
+                  className="absolute top-2 right-2 z-10 p-1 rounded hover:bg-red-100"
+                  onClick={() => {
+                    setDeleteId(assignment.id);
+                    setShowDialog(true);
+                  }}
+                  aria-label="Delete assignment"
+                >
+                  <Trash className="h-5 w-5 text-red-500" />
+                </button>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Assignment</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this assignment? This action
+              cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDialog(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => deleteId && handleDelete(deleteId)}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

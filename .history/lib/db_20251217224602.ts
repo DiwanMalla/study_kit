@@ -12,12 +12,6 @@ if (!accelerateUrl) {
   );
 }
 
-if (!accelerateUrl.startsWith("prisma+postgres://")) {
-  throw new Error(
-    "Invalid Accelerate URL. Set PRISMA_DATABASE_URL (or DATABASE_URL) to a prisma+postgres:// URL from Prisma Accelerate."
-  );
-}
-
 export const db =
   globalForPrisma.prisma ??
   new PrismaClient({

@@ -67,3 +67,8 @@ export type Assignment = Prisma.AssignmentModel
  * 
  */
 export type ConversationMessage = Prisma.ConversationMessageModel
+/**
+ * Model Summary
+ * 
+ */
+export type Summary = Prisma.SummaryModel

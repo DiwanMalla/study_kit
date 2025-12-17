@@ -19,6 +19,27 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+const [isDeleting, setIsDeleting] = useState(false);
+const handleDelete = async () => {
+  setIsDeleting(true);
+  try {
+    const res = await fetch(`/api/assignments/${assignment.id}`, {
+      method: "DELETE",
+    });
+    if (res.status === 204) {
+      router.push("/dashboard/assignment-helper");
+    } else {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+      alert("Failed to delete assignment.");
+    }
+  } catch (e) {
+    setIsDeleting(false);
+    setShowDeleteDialog(false);
+    alert("Failed to delete assignment.");
+  }
+};
 import {
   Card,
   CardContent,
@@ -55,28 +76,6 @@ export function AssignmentSolution({
   const router = useRouter();
   const [assignment, setAssignment] = useState<Assignment>(initialAssignment);
   const [isRetrying, setIsRetrying] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      const res = await fetch(`/api/assignments/${assignment.id}`, {
-        method: "DELETE",
-      });
-      if (res.status === 204) {
-        router.push("/dashboard/assignment-helper");
-      } else {
-        setIsDeleting(false);
-        setShowDeleteDialog(false);
-        alert("Failed to delete assignment.");
-      }
-    } catch (e) {
-      setIsDeleting(false);
-      setShowDeleteDialog(false);
-      alert("Failed to delete assignment.");
-    }
-  };
 
   const formatCreatedAt = (value: unknown) => {
     const date = value instanceof Date ? value : new Date(String(value));

@@ -60,7 +60,8 @@ export const ModelName = {
   QuizQuestion: 'QuizQuestion',
   Conversation: 'Conversation',
   Assignment: 'Assignment',
-  ConversationMessage: 'ConversationMessage'
+  ConversationMessage: 'ConversationMessage',
+  Summary: 'Summary'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -205,6 +206,19 @@ export const ConversationMessageScalarFieldEnum = {
 } as const
 
 export type ConversationMessageScalarFieldEnum = (typeof ConversationMessageScalarFieldEnum)[keyof typeof ConversationMessageScalarFieldEnum]
+
+
+export const SummaryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  sourceText: 'sourceText',
+  summaryText: 'summaryText',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SummaryScalarFieldEnum = (typeof SummaryScalarFieldEnum)[keyof typeof SummaryScalarFieldEnum]
 
 
 export const SortOrder = {

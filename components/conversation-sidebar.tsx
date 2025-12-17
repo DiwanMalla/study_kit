@@ -44,6 +44,7 @@ export function ConversationSidebar({
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     loadConversations();
@@ -102,9 +103,38 @@ export function ConversationSidebar({
     conv.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  if (!isOpen) {
+    return (
+      <div className="flex flex-col h-full border-r bg-card w-16 items-center py-4 gap-4 transition-all duration-300">
+        <Button
+          variant="ghost"
+          className="flex flex-col h-auto py-2 px-1 gap-1"
+          onClick={() => setIsOpen(true)}
+          title="Open conversation history"
+        >
+          <MessageSquare className="h-5 w-5" />
+          <span className="text-[10px] font-medium">History</span>
+        </Button>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col h-full border-r bg-card w-80">
+    <div className="flex flex-col h-full border-r bg-card w-80 transition-all duration-300">
       <div className="p-4 border-b space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold px-1">History</h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsOpen(false)}
+            title="Close conversation history"
+            className="h-8 w-8"
+          >
+            <MessageSquare className="h-4 w-4" />
+          </Button>
+        </div>
+
         <Button onClick={onNewConversation} className="w-full" size="sm">
           <MessageSquarePlus className="h-4 w-4 mr-2" />
           New Conversation

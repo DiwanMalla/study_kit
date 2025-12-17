@@ -393,7 +393,8 @@ export const ModelName = {
   QuizQuestion: 'QuizQuestion',
   Conversation: 'Conversation',
   Assignment: 'Assignment',
-  ConversationMessage: 'ConversationMessage'
+  ConversationMessage: 'ConversationMessage',
+  Summary: 'Summary'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -409,7 +410,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "file" | "extractedContent" | "studyKit" | "flashcard" | "quiz" | "quizQuestion" | "conversation" | "assignment" | "conversationMessage"
+    modelProps: "user" | "file" | "extractedContent" | "studyKit" | "flashcard" | "quiz" | "quizQuestion" | "conversation" | "assignment" | "conversationMessage" | "summary"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1153,6 +1154,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Summary: {
+      payload: Prisma.$SummaryPayload<ExtArgs>
+      fields: Prisma.SummaryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SummaryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SummaryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>
+        }
+        findFirst: {
+          args: Prisma.SummaryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SummaryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>
+        }
+        findMany: {
+          args: Prisma.SummaryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>[]
+        }
+        create: {
+          args: Prisma.SummaryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>
+        }
+        createMany: {
+          args: Prisma.SummaryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SummaryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>[]
+        }
+        delete: {
+          args: Prisma.SummaryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>
+        }
+        update: {
+          args: Prisma.SummaryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>
+        }
+        deleteMany: {
+          args: Prisma.SummaryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SummaryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SummaryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>[]
+        }
+        upsert: {
+          args: Prisma.SummaryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>
+        }
+        aggregate: {
+          args: Prisma.SummaryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSummary>
+        }
+        groupBy: {
+          args: Prisma.SummaryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SummaryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SummaryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SummaryCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1318,6 +1393,19 @@ export const ConversationMessageScalarFieldEnum = {
 } as const
 
 export type ConversationMessageScalarFieldEnum = (typeof ConversationMessageScalarFieldEnum)[keyof typeof ConversationMessageScalarFieldEnum]
+
+
+export const SummaryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  sourceText: 'sourceText',
+  summaryText: 'summaryText',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SummaryScalarFieldEnum = (typeof SummaryScalarFieldEnum)[keyof typeof SummaryScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1548,6 +1636,7 @@ export type GlobalOmitConfig = {
   conversation?: Prisma.ConversationOmit
   assignment?: Prisma.AssignmentOmit
   conversationMessage?: Prisma.ConversationMessageOmit
+  summary?: Prisma.SummaryOmit
 }
 
 /* Types for Logging */

@@ -67,7 +67,7 @@ export default async function AssignmentHelperPage() {
           </Card>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {assignments.map((assignment) => (
+            {assignments.map((assignment: any) => (
               <div key={assignment.id} className="relative group">
                 <Link
                   href={`/dashboard/assignment-helper/${assignment.id}`}
