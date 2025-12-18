@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prisma:push:accelerate": "dotenv -e .env.local -- prisma db push --schema=prisma/schema.prisma --config=prisma.accelerate.config.ts",
+    "prisma:push:local": "dotenv -e .env.local -- prisma db push --schema=prisma/schema.prisma --config=prisma.config.ts",
+    "prisma:migrate:deploy": "dotenv -e .env.local -- prisma migrate deploy --schema=prisma/schema.prisma --config=prisma.config.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.35.5",
