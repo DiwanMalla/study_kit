@@ -11,14 +11,28 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/assignments/${assignment.id}`, {
+        method: "DELETE",
+      });
+      if (res.status === 204) {
+        router.push("/dashboard/assignment-helper");
+      } else {
+        setIsDeleting(false);
+        setShowDeleteDialog(false);
+        alert("Failed to delete assignment.");
+      }
+    } catch (e) {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+      alert("Failed to delete assignment.");
+    }
+  };
 import {
   Card,
   CardContent,
@@ -55,28 +69,6 @@ export function AssignmentSolution({
   const router = useRouter();
   const [assignment, setAssignment] = useState<Assignment>(initialAssignment);
   const [isRetrying, setIsRetrying] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      const res = await fetch(`/api/assignments/${assignment.id}`, {
-        method: "DELETE",
-      });
-      if (res.status === 204) {
-        router.push("/dashboard/assignment-helper");
-      } else {
-        setIsDeleting(false);
-        setShowDeleteDialog(false);
-        alert("Failed to delete assignment.");
-      }
-    } catch (e) {
-      setIsDeleting(false);
-      setShowDeleteDialog(false);
-      alert("Failed to delete assignment.");
-    }
-  };
 
   const formatCreatedAt = (value: unknown) => {
     const date = value instanceof Date ? value : new Date(String(value));
@@ -231,10 +223,7 @@ export function AssignmentSolution({
           </div>
         </div>
         <div className="mt-4 sm:mt-0">
-          <Button
-            variant="destructive"
-            onClick={() => setShowDeleteDialog(true)}
-          >
+          <Button variant="destructive" onClick={() => setShowDeleteDialog(true)}>
             Delete Assignment
           </Button>
         </div>
@@ -245,23 +234,14 @@ export function AssignmentSolution({
           <DialogHeader>
             <DialogTitle>Delete Assignment</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this assignment? This action
-              cannot be undone.
+              Are you sure you want to delete this assignment? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowDeleteDialog(false)}
-              disabled={isDeleting}
-            >
+            <Button variant="outline" onClick={() => setShowDeleteDialog(false)} disabled={isDeleting}>
               Cancel
             </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={isDeleting}
-            >
+            <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
               {isDeleting ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>

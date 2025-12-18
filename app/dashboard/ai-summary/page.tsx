@@ -1,121 +1,89 @@
-"use client";
-
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
-import { FileText, ArrowRight, Loader2, Sparkles } from "lucide-react";
-import { ModelSelector, ModelType } from "@/components/model-selector";
-import { MarkdownViewer } from "@/components/markdown-viewer";
+import { auth } from "@clerk/nextjs/server";
+import { db } from "@/lib/db";
+import { format } from "date-fns";
+import { Plus, FileText, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function AISummaryPage() {
-  const [content, setContent] = useState("");
-  const [summary, setSummary] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [model, setModel] = useState<ModelType>("auto");
+export const dynamic = 'force-dynamic';
 
-  const handleGenerate = async () => {
-    if (!content) return;
+export default async function AISummaryPage() {
+  const { userId } = await auth();
 
-    setLoading(true);
-    setSummary("");
-
-    try {
-      const res = await fetch("/api/summary", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content, model }),
-      });
-
-      if (!res.ok) throw new Error("Failed to generate");
-
-      const data = await res.json();
-      setSummary(data.summary);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const summaries = userId
+    ? await db.summary.findMany({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+      })
+    : [];
 
   return (
-    <div className="space-y-6 container mx-auto p-6">
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="container mx-auto p-6 space-y-8">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">AI Summary</h1>
           <p className="text-muted-foreground">
-            Generate concise summaries from your materials.
+            Generate and manage your AI-powered summaries.
           </p>
         </div>
-        <Button asChild variant="outline">
-          <Link href="/dashboard">
-            Back to overview
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+            <Button asChild variant="outline">
+            <Link href="/dashboard">
+                Back to overview
+                <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+            </Button>
+            <Button asChild>
+            <Link href="/dashboard/ai-summary/new">
+                <Plus className="mr-2 h-4 w-4" />
+                New Summary
+            </Link>
+            </Button>
+        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="md:h-[600px] flex flex-col">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-primary" />
-              Input Content
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1 flex flex-col gap-4">
-            <Textarea
-              placeholder="Paste your study notes or text here..."
-              className="flex-1 resize-none p-4"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
-            <div className="space-y-4">
-              <ModelSelector value={model} onValueChange={setModel} />
-              <Button
-                className="w-full"
-                onClick={handleGenerate}
-                disabled={loading || !content}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating Summary...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Generate Summary
-                  </>
-                )}
-              </Button>
+      <div className="grid gap-6">
+        {summaries.length === 0 ? (
+          <Card className="flex flex-col items-center justify-center p-10 text-center border-dashed">
+            <div className="p-4 rounded-full bg-primary/10 mb-4">
+              <FileText className="h-8 w-8 text-primary" />
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="md:h-[600px] flex flex-col">
-          <CardHeader>
-            <CardTitle>Generated Summary</CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1 overflow-auto">
-            {summary ? (
-              <div className="rounded-lg border bg-muted/20 p-4 md:p-6">
-                <div className="mx-auto max-w-2xl">
-                  <MarkdownViewer
-                    content={summary}
-                    className="text-[15px] md:text-base leading-relaxed"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="h-full flex flex-col items-center justify-center text-muted-foreground text-center p-8 border-2 border-dashed rounded-lg bg-muted/20">
-                <FileText className="h-12 w-12 mb-4 opacity-50" />
-                <p>Your summary will appear here.</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            <CardTitle className="mb-2">No summaries yet</CardTitle>
+            <CardDescription className="max-w-md mb-6">
+              Create your first summary from any text content.
+            </CardDescription>
+            <Button asChild>
+              <Link href="/dashboard/ai-summary/new">Start Now</Link>
+            </Button>
+          </Card>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {summaries.map((summary) => (
+              <Link
+                key={summary.id}
+                href={`/dashboard/ai-summary/${summary.id}`}
+                className="block group"
+              >
+                <Card className="h-full transition-all hover:border-primary/50 hover:shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="text-lg line-clamp-1 group-hover:text-primary transition-colors">
+                      {summary.title}
+                    </CardTitle>
+                    <CardDescription className="line-clamp-2">
+                      {format(new Date(summary.createdAt), "MMM d, yyyy")}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground line-clamp-3">
+                        {summary.sourceText}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
