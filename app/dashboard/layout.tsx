@@ -1,4 +1,4 @@
-import { Sidebar } from "@/components/layout/sidebar";
+import { Sidebar } from "@/components/dashboard/Sidebar";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 
@@ -32,9 +32,11 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex bg-background">
+    <div className="flex h-screen overflow-hidden bg-background">
       <Sidebar />
-      <main className="flex-1 p-6 md:p-8 pt-6">{children}</main>
+      <main className="flex-1 h-full overflow-y-auto relative bg-background">
+        {children}
+      </main>
     </div>
   );
 }

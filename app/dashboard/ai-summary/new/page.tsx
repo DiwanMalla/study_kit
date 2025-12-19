@@ -5,10 +5,13 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { FileText, ArrowLeft, Loader2, Sparkles } from "lucide-react";
 import { ModelSelector, ModelType } from "@/components/model-selector";
 import { useToast } from "@/hooks/use-toast";
+
+export type SummaryLength = "short" | "medium" | "long";
 
 export default function NewSummaryPage() {
   const router = useRouter();
@@ -16,6 +19,7 @@ export default function NewSummaryPage() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [model, setModel] = useState<ModelType>("auto");
+  const [length, setLength] = useState<SummaryLength>("medium");
 
   const handleGenerate = async () => {
     if (!content) return;
@@ -26,7 +30,7 @@ export default function NewSummaryPage() {
       const res = await fetch("/api/summary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content, model }),
+        body: JSON.stringify({ content, model, length }),
       });
 
       if (!res.ok) throw new Error("Failed to generate");
@@ -82,28 +86,68 @@ export default function NewSummaryPage() {
             onChange={(e) => setContent(e.target.value)}
           />
           
-          <div className="flex flex-col sm:flex-row gap-4 items-end sm:items-center justify-between">
-            <div className="w-full sm:w-auto">
-                <ModelSelector value={model} onValueChange={setModel} />
+          <div className="space-y-4">
+            <div>
+              <Label className="text-sm font-medium mb-2 block">Summary Length</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={length === "short" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLength("short")}
+                  className="flex-1"
+                >
+                  Short
+                </Button>
+                <Button
+                  type="button"
+                  variant={length === "medium" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLength("medium")}
+                  className="flex-1"
+                >
+                  Medium
+                </Button>
+                <Button
+                  type="button"
+                  variant={length === "long" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLength("long")}
+                  className="flex-1"
+                >
+                  Long
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {length === "short" && "Quick overview with key points"}
+                {length === "medium" && "Balanced summary with main details"}
+                {length === "long" && "Comprehensive summary with in-depth coverage"}
+              </p>
             </div>
-            
-            <Button
-              className="w-full sm:w-auto min-w-[150px]"
-              onClick={handleGenerate}
-              disabled={loading || !content}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Generate Summary
-                </>
-              )}
-            </Button>
+
+            <div className="flex flex-col sm:flex-row gap-4 items-end sm:items-center justify-between">
+              <div className="w-full sm:w-auto">
+                  <ModelSelector value={model} onValueChange={setModel} />
+              </div>
+              
+              <Button
+                className="w-full sm:w-auto min-w-[150px]"
+                onClick={handleGenerate}
+                disabled={loading || !content}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Generate Summary
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

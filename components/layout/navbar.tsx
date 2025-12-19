@@ -26,7 +26,7 @@ export function Navbar() {
             </Link>
           </SignedIn>
           <Link
-            href="/#pricing"
+            href="/pricing"
             className="text-sm font-medium hover:underline"
           >
             Pricing
