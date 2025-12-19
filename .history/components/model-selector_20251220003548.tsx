@@ -21,11 +21,7 @@ export type ModelType =
   | "openai/gpt-oss-20b"
   | "openai/gpt-oss-120b"
   | "moonshotai/kimi-k2-instruct"
-  | "moonshotai/kimi-k2-instruct-0905"
-  | "or:mistralai/devstral-2-2512"
-  | "or:kwaipilot/kat-coder-pro-v1"
-  | "or:tngtech/deepseek-r1t2-chimera"
-  | "or:xiaomi/mimo-v2-flash";
+  | "moonshotai/kimi-k2-instruct-0905";
 
 interface ModelSelectorProps {
   value: ModelType;
@@ -97,38 +93,10 @@ export function ModelSelector({
               <span>Long Context — Kimi K2 (Groq)</span>
             </div>
           </SelectItem>
-
-          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-            OpenRouter (free)
-          </div>
-          <SelectItem value="or:mistralai/devstral-2-2512">
-            <div className="flex items-center gap-2">
-              <BrainCircuit className="h-4 w-4 text-primary" />
-              <span>Devstral 2 2512 (OpenRouter)</span>
-            </div>
-          </SelectItem>
-          <SelectItem value="or:kwaipilot/kat-coder-pro-v1">
-            <div className="flex items-center gap-2">
-              <BrainCircuit className="h-4 w-4 text-primary" />
-              <span>KAT-Coder-Pro V1 (OpenRouter)</span>
-            </div>
-          </SelectItem>
-          <SelectItem value="or:tngtech/deepseek-r1t2-chimera">
-            <div className="flex items-center gap-2">
-              <BrainCircuit className="h-4 w-4 text-primary" />
-              <span>DeepSeek R1T2 Chimera (OpenRouter)</span>
-            </div>
-          </SelectItem>
-          <SelectItem value="or:xiaomi/mimo-v2-flash">
-            <div className="flex items-center gap-2">
-              <BrainCircuit className="h-4 w-4 text-primary" />
-              <span>MiMo-V2-Flash (OpenRouter)</span>
-            </div>
-          </SelectItem>
         </SelectContent>
       </Select>
       <p className="mt-1.5 text-[0.8rem] text-muted-foreground">
-        Choose 'Auto' for the best balance, or pick a Groq/OpenRouter model.
+        Choose 'Auto' for the best balance, or pick a specific Groq model.
       </p>
     </div>
   );

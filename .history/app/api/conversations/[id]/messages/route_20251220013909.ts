@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SUBJECT_PROMPTS, MODE_INSTRUCTIONS } from "@/lib/conversation-utils";
 
-type ChatProvider = "gemini" | "groq" | "openrouter";
+type ChatProvider = "gemini" | "groq";
 
 function parseSelectedModel(value: unknown): {
   provider: ChatProvider;
@@ -41,6 +41,8 @@ function parseSelectedModel(value: unknown): {
   // Back-compat: unprefixed values are treated as Gemini model IDs.
   return { provider: "gemini", modelId: trimmed };
 }
+
+type ChatProvider = "gemini" | "groq" | "openrouter";
 
 // POST - Add message to conversation and get AI response
 export async function POST(

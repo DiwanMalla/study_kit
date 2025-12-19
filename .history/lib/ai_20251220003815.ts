@@ -102,8 +102,7 @@ async function openRouterChatCompletion(args: {
       Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
       "Content-Type": "application/json",
       // Optional but recommended by OpenRouter for attribution:
-      "HTTP-Referer":
-        process.env.OPENROUTER_SITE_URL || "http://localhost:3000",
+      "HTTP-Referer": process.env.OPENROUTER_SITE_URL || "http://localhost:3000",
       "X-Title": process.env.OPENROUTER_APP_NAME || "Super Student Kit",
     },
     body: JSON.stringify({
@@ -146,7 +145,7 @@ export interface StudyMaterials {
  */
 export async function generateSummary(
   content: string,
-  modelType: AnyModelType = "auto",
+  modelType: ModelType = "auto",
   length: SummaryLength = "medium"
 ): Promise<string> {
   const modelName = selectModel(modelType);
@@ -188,29 +187,17 @@ ${content.slice(0, 30000)} // Limit content to avoid token limits if super large
 `;
 
   try {
-    const messages = [
-      {
-        role: "system" as const,
-        content: "You are a helpful and expert study assistant.",
-      },
-      { role: "user" as const, content: prompt },
-    ];
-
-    if (isOpenRouterModel(modelName)) {
-      const completion = await openRouterChatCompletion({
-        model: modelName,
-        messages,
-        temperature: 0.5,
-        max_tokens: 2048,
-      });
-      return (
-        completion.choices?.[0]?.message?.content ||
-        "Failed to generate summary."
-      );
-    }
-
     const completion = await groq.chat.completions.create({
-      messages,
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful and expert study assistant.",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
       model: modelName,
       temperature: 0.5,
       max_tokens: 2048,
@@ -231,7 +218,7 @@ ${content.slice(0, 30000)} // Limit content to avoid token limits if super large
 export async function generateFlashcards(
   content: string,
   count: number = 10,
-  modelType: AnyModelType = "auto"
+  modelType: ModelType = "auto"
 ): Promise<GeneratedFlashcard[]> {
   const modelName = selectModel(modelType);
 
@@ -250,29 +237,23 @@ ${content.slice(0, 30000)}
 `;
 
   try {
-    const messages = [
-      {
-        role: "system" as const,
-        content: "You are a helpful study assistant that outputs JSON.",
-      },
-      { role: "user" as const, content: prompt },
-    ];
+    const completion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful study assistant that outputs JSON.",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      model: modelName,
+      temperature: 0.2, // Lower temp for structured output
+      response_format: { type: "json_object" },
+    });
 
-    const completion = isOpenRouterModel(modelName)
-      ? await openRouterChatCompletion({
-          model: modelName,
-          messages,
-          temperature: 0.2,
-          response_format: { type: "json_object" },
-        })
-      : await groq.chat.completions.create({
-          messages,
-          model: modelName,
-          temperature: 0.2,
-          response_format: { type: "json_object" },
-        });
-
-    const responseText = completion.choices?.[0]?.message?.content || "[]";
+    const responseText = completion.choices[0]?.message?.content || "[]";
 
     // Parse JSON
     try {
@@ -304,7 +285,7 @@ ${content.slice(0, 30000)}
 export async function generateQuizQuestions(
   content: string,
   count: number = 5,
-  modelType: AnyModelType = "auto"
+  modelType: ModelType = "auto"
 ): Promise<GeneratedQuizQuestion[]> {
   const modelName = selectModel(modelType);
 
@@ -324,29 +305,23 @@ ${content.slice(0, 30000)}
 `;
 
   try {
-    const messages = [
-      {
-        role: "system" as const,
-        content: "You are a helpful study assistant that outputs JSON.",
-      },
-      { role: "user" as const, content: prompt },
-    ];
+    const completion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful study assistant that outputs JSON.",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      model: modelName,
+      temperature: 0.2,
+      response_format: { type: "json_object" },
+    });
 
-    const completion = isOpenRouterModel(modelName)
-      ? await openRouterChatCompletion({
-          model: modelName,
-          messages,
-          temperature: 0.2,
-          response_format: { type: "json_object" },
-        })
-      : await groq.chat.completions.create({
-          messages,
-          model: modelName,
-          temperature: 0.2,
-          response_format: { type: "json_object" },
-        });
-
-    const responseText = completion.choices?.[0]?.message?.content || "[]";
+    const responseText = completion.choices[0]?.message?.content || "[]";
 
     try {
       const parsed = JSON.parse(responseText);
@@ -374,7 +349,7 @@ ${content.slice(0, 30000)}
  */
 export async function generateStudyMaterials(
   content: string,
-  modelType: AnyModelType = "auto"
+  modelType: ModelType = "auto"
 ): Promise<StudyMaterials> {
   // Run all generation in parallel for speed
   const [summary, flashcards, quizQuestions] = await Promise.all([

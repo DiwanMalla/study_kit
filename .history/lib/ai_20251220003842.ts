@@ -102,8 +102,7 @@ async function openRouterChatCompletion(args: {
       Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
       "Content-Type": "application/json",
       // Optional but recommended by OpenRouter for attribution:
-      "HTTP-Referer":
-        process.env.OPENROUTER_SITE_URL || "http://localhost:3000",
+      "HTTP-Referer": process.env.OPENROUTER_SITE_URL || "http://localhost:3000",
       "X-Title": process.env.OPENROUTER_APP_NAME || "Super Student Kit",
     },
     body: JSON.stringify({
@@ -189,10 +188,7 @@ ${content.slice(0, 30000)} // Limit content to avoid token limits if super large
 
   try {
     const messages = [
-      {
-        role: "system" as const,
-        content: "You are a helpful and expert study assistant.",
-      },
+      { role: "system" as const, content: "You are a helpful and expert study assistant." },
       { role: "user" as const, content: prompt },
     ];
 
@@ -203,10 +199,7 @@ ${content.slice(0, 30000)} // Limit content to avoid token limits if super large
         temperature: 0.5,
         max_tokens: 2048,
       });
-      return (
-        completion.choices?.[0]?.message?.content ||
-        "Failed to generate summary."
-      );
+      return completion.choices?.[0]?.message?.content || "Failed to generate summary.";
     }
 
     const completion = await groq.chat.completions.create({
@@ -216,9 +209,7 @@ ${content.slice(0, 30000)} // Limit content to avoid token limits if super large
       max_tokens: 2048,
     });
 
-    return (
-      completion.choices[0]?.message?.content || "Failed to generate summary."
-    );
+    return completion.choices[0]?.message?.content || "Failed to generate summary.";
   } catch (error) {
     console.error("Groq Summary Generation Error:", error);
     throw new Error("Failed to generate summary");
@@ -251,10 +242,7 @@ ${content.slice(0, 30000)}
 
   try {
     const messages = [
-      {
-        role: "system" as const,
-        content: "You are a helpful study assistant that outputs JSON.",
-      },
+      { role: "system" as const, content: "You are a helpful study assistant that outputs JSON." },
       { role: "user" as const, content: prompt },
     ];
 
@@ -325,10 +313,7 @@ ${content.slice(0, 30000)}
 
   try {
     const messages = [
-      {
-        role: "system" as const,
-        content: "You are a helpful study assistant that outputs JSON.",
-      },
+      { role: "system" as const, content: "You are a helpful study assistant that outputs JSON." },
       { role: "user" as const, content: prompt },
     ];
 

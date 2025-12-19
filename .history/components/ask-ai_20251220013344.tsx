@@ -79,8 +79,6 @@ const CHAT_MODELS = [
   { value: "groq:groq/compound-mini", label: "Groq • Compound Mini" },
 ];
 
-type OpenRouterModelItem = { id: string; name: string };
-
 export function EnhancedAskAI() {
   const [currentConversation, setCurrentConversation] =
     useState<Conversation | null>(null);
@@ -90,9 +88,6 @@ export function EnhancedAskAI() {
   const [subject, setSubject] = useState("general");
   const [mode, setMode] = useState("explain");
   const [selectedModel, setSelectedModel] = useState(CHAT_MODELS[0]?.value);
-  const [openRouterModels, setOpenRouterModels] = useState<
-    OpenRouterModelItem[]
-  >([]);
   const [refreshSidebar, setRefreshSidebar] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -106,30 +101,6 @@ export function EnhancedAskAI() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const loadOpenRouterModels = async () => {
-      try {
-        const res = await fetch("/api/models/openrouter");
-        if (!res.ok) return;
-
-        const data = (await res.json()) as { models?: OpenRouterModelItem[] };
-        if (cancelled) return;
-
-        const models = Array.isArray(data.models) ? data.models : [];
-        setOpenRouterModels(models);
-      } catch {
-        // Ignore; OpenRouter models are optional UI enrichment.
-      }
-    };
-
-    loadOpenRouterModels();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const createNewConversation = async (firstMessage?: string) => {
     try {
@@ -507,19 +478,6 @@ export function EnhancedAskAI() {
                     {m.label}
                   </SelectItem>
                 ))}
-
-                {openRouterModels.length > 0 && (
-                  <>
-                    {openRouterModels.map((m) => (
-                      <SelectItem
-                        key={`openrouter:${m.id}`}
-                        value={`openrouter:${m.id}`}
-                      >
-                        {`OpenRouter • ${m.name}`}
-                      </SelectItem>
-                    ))}
-                  </>
-                )}
               </SelectContent>
             </Select>
 
