@@ -413,7 +413,8 @@ export async function generateAssignmentSolution(
  - Solve the assignment step-by-step
  - Explain your reasoning clearly
  - If code is required, provide clean, commented code
- - Format the response in Markdown
+ - Provide at least 3-5 academic references or sources used for the solution
+ - Format the response in Markdown with clear headings: # Solution, # Explanation, and # References
  `;
 
   try {

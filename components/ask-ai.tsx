@@ -2,8 +2,25 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Send,
+  Loader2,
+  Download,
+  Trash2,
+  Plus,
+  Paperclip,
+  History,
+  Brain,
+  School,
+  Verified,
+  History as HistoryIcon,
+  Sliders,
+  Shapes,
+  Search,
+  Lightbulb,
+  ChevronDown,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -11,13 +28,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Send, Sparkles, Loader2, Download, Trash2 } from "lucide-react";
 import { MarkdownMessage } from "./markdown-message";
 import { ConversationSidebar } from "./conversation-sidebar";
-import {
-  exportConversationAsMarkdown,
-  generateConversationTitle,
-} from "@/lib/conversation-utils";
+import { exportConversationAsMarkdown } from "@/lib/conversation-utils";
+import { cn } from "@/lib/utils";
 
 interface Message {
   id: string;
@@ -36,47 +50,19 @@ interface Conversation {
 
 const SUBJECTS = [
   { value: "general", label: "General" },
-  { value: "mathematics", label: "Mathematics" },
-  { value: "science", label: "Science" },
-  { value: "programming", label: "Programming" },
-  { value: "history", label: "History" },
-  { value: "language", label: "Language" },
-];
-
-const MODES = [
   { value: "explain", label: "Explain" },
-  { value: "practice", label: "Practice" },
-  { value: "quiz", label: "Quiz" },
+  { value: "socratic", label: "Socratic" },
+  { value: "quiz me", label: "Quiz Me" },
 ];
 
 const CHAT_MODELS = [
-  // Gemini
-  { value: "gemini:gemini-2.5-flash", label: "Gemini • 2.5 Flash" },
-
-  // Groq (Text)
-  { value: "groq:llama-3.1-8b-instant", label: "Groq • Llama 3.1 8B Instant" },
+  { value: "gemini:gemini-1.5-pro", label: "Gemini 1.5 Pro", icon: "bolt" },
   {
     value: "groq:llama-3.3-70b-versatile",
-    label: "Groq • Llama 3.3 70B Versatile",
+    label: "Llama 3.3 (Groq)",
+    icon: null,
   },
-  {
-    value: "groq:meta-llama/llama-4-scout-17b-16e-instruct",
-    label: "Groq • Llama 4 Scout",
-  },
-  {
-    value: "groq:meta-llama/llama-4-maverick-17b-128e-instruct",
-    label: "Groq • Llama 4 Maverick",
-  },
-  { value: "groq:qwen/qwen3-32b", label: "Groq • Qwen3 32B" },
-  { value: "groq:openai/gpt-oss-120b", label: "Groq • GPT-OSS 120B" },
-  { value: "groq:openai/gpt-oss-20b", label: "Groq • GPT-OSS 20B" },
-  { value: "groq:moonshotai/kimi-k2-instruct", label: "Groq • Kimi K2" },
-  {
-    value: "groq:moonshotai/kimi-k2-instruct-0905",
-    label: "Groq • Kimi K2 (0905)",
-  },
-  { value: "groq:groq/compound", label: "Groq • Compound" },
-  { value: "groq:groq/compound-mini", label: "Groq • Compound Mini" },
+  { value: "openrouter:openai/gpt-4o", label: "GPT-4o", icon: null },
 ];
 
 type OpenRouterModelItem = { id: string; name: string };
@@ -88,7 +74,6 @@ export function EnhancedAskAI() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [subject, setSubject] = useState("general");
-  const [mode, setMode] = useState("explain");
   const [selectedModel, setSelectedModel] = useState(CHAT_MODELS[0]?.value);
   const [openRouterModels, setOpenRouterModels] = useState<
     OpenRouterModelItem[]
@@ -105,26 +90,20 @@ export function EnhancedAskAI() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages.length]);
 
   useEffect(() => {
     let cancelled = false;
-
     const loadOpenRouterModels = async () => {
       try {
         const res = await fetch("/api/models/openrouter");
         if (!res.ok) return;
-
         const data = (await res.json()) as { models?: OpenRouterModelItem[] };
         if (cancelled) return;
-
         const models = Array.isArray(data.models) ? data.models : [];
         setOpenRouterModels(models);
-      } catch {
-        // Ignore; OpenRouter models are optional UI enrichment.
-      }
+      } catch {}
     };
-
     loadOpenRouterModels();
     return () => {
       cancelled = true;
@@ -139,24 +118,14 @@ export function EnhancedAskAI() {
         body: JSON.stringify({
           firstMessage,
           subject: subject !== "general" ? subject : null,
-          mode,
+          mode: subject,
         }),
       });
-
       const data = await response.json();
-
       if (response.ok) {
-        setCurrentConversation({
-          ...data.conversation,
-          messages: [],
-        });
-        // Only clear UI messages when the user explicitly starts a new empty chat.
-        // When we create a conversation as part of sending the first message,
-        // we already rendered optimistic temp messages and should not wipe them.
-        if (!firstMessage) {
-          setMessages([]);
-        }
-        setRefreshSidebar((prev) => prev + 1); // Trigger sidebar refresh
+        setCurrentConversation({ ...data.conversation, messages: [] });
+        if (!firstMessage) setMessages([]);
+        setRefreshSidebar((prev) => prev + 1);
         return data.conversation.id;
       }
     } catch (error) {
@@ -169,12 +138,10 @@ export function EnhancedAskAI() {
     try {
       const response = await fetch(`/api/conversations/${id}`);
       const data = await response.json();
-
       if (response.ok) {
         setCurrentConversation(data.conversation);
         setMessages(data.conversation.messages);
-        setSubject(data.conversation.subject || "general");
-        setMode(data.conversation.mode);
+        setSubject(data.conversation.mode || "general");
       }
     } catch (error) {
       console.error("Error loading conversation:", error);
@@ -185,13 +152,10 @@ export function EnhancedAskAI() {
     setCurrentConversation(null);
     setMessages([]);
     setSubject("general");
-    setMode("explain");
   };
 
   const handleDeleteConversation = (id: string) => {
-    if (currentConversation?.id === id) {
-      handleNewConversation();
-    }
+    if (currentConversation?.id === id) handleNewConversation();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -201,7 +165,6 @@ export function EnhancedAskAI() {
     const userMessageContent = input;
     setInput("");
 
-    // Create temporary user message for immediate display
     const tempUserMessage: Message = {
       id: `temp-user-${Date.now()}`,
       role: "user",
@@ -209,7 +172,6 @@ export function EnhancedAskAI() {
       createdAt: new Date(),
     };
 
-    // Create temporary AI message for streaming
     const tempAiMessage: Message = {
       id: `temp-ai-${Date.now()}`,
       role: "assistant",
@@ -221,16 +183,12 @@ export function EnhancedAskAI() {
     setIsLoading(true);
 
     try {
-      // Create conversation if it doesn't exist
       let conversationId = currentConversation?.id;
       if (!conversationId) {
         conversationId = await createNewConversation(userMessageContent);
-        if (!conversationId) {
-          throw new Error("Failed to create conversation");
-        }
+        if (!conversationId) throw new Error("Failed to create conversation");
       }
 
-      // Send message and stream AI response
       const response = await fetch(
         `/api/conversations/${conversationId}/messages`,
         {
@@ -257,21 +215,15 @@ export function EnhancedAskAI() {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-
           sseBuffer += decoder.decode(value, { stream: true });
-
           while (true) {
             const eventEndIndex = sseBuffer.indexOf("\n\n");
             if (eventEndIndex === -1) break;
-
             const rawEvent = sseBuffer.slice(0, eventEndIndex);
             sseBuffer = sseBuffer.slice(eventEndIndex + 2);
-
             for (const line of rawEvent.split("\n")) {
               if (!line.startsWith("data: ")) continue;
-
               const data = JSON.parse(line.slice(6));
-
               if (data.text) {
                 accumulatedText += data.text;
                 setMessages((prev) =>
@@ -282,7 +234,6 @@ export function EnhancedAskAI() {
                   )
                 );
               }
-
               if (data.done) {
                 setMessages((prev) =>
                   prev
@@ -292,14 +243,6 @@ export function EnhancedAskAI() {
                     )
                     .concat([data.userMessage, data.aiMessage])
                 );
-
-                if (messages.length === 0 && currentConversation) {
-                  setCurrentConversation({
-                    ...currentConversation,
-                    title: generateConversationTitle(userMessageContent),
-                  });
-                }
-
                 setRefreshSidebar((prev) => prev + 1);
               }
             }
@@ -308,62 +251,27 @@ export function EnhancedAskAI() {
       }
     } catch (error: any) {
       console.error("Error:", error);
-      // Remove temp messages and show error
       setMessages((prev) =>
         prev.filter(
           (m) => m.id !== tempUserMessage.id && m.id !== tempAiMessage.id
         )
       );
-
-      const errorMessage: Message = {
-        id: `error-${Date.now()}`,
-        role: "assistant",
-        content: `Sorry, I encountered an error: ${error.message}. Please try again.`,
-        createdAt: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `error-${Date.now()}`,
+          role: "assistant",
+          content: `Error: ${error.message}`,
+          createdAt: new Date(),
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleExport = () => {
-    if (!currentConversation || messages.length === 0) return;
-
-    exportConversationAsMarkdown(
-      currentConversation.title,
-      messages,
-      currentConversation.subject || undefined,
-      currentConversation.mode
-    );
-  };
-
-  const handleClearConversation = () => {
-    if (!confirm("Are you sure you want to clear this conversation?")) return;
-    handleNewConversation();
-  };
-
-  const handleSubjectChange = async (newSubject: string) => {
-    setSubject(newSubject);
-
-    if (currentConversation) {
-      try {
-        await fetch(`/api/conversations/${currentConversation.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            subject: newSubject !== "general" ? newSubject : null,
-          }),
-        });
-      } catch (error) {
-        console.error("Error updating subject:", error);
-      }
-    }
-  };
-
   const handleModeChange = async (newMode: string) => {
-    setMode(newMode);
-
+    setSubject(newMode);
     if (currentConversation) {
       try {
         await fetch(`/api/conversations/${currentConversation.id}`, {
@@ -378,161 +286,357 @@ export function EnhancedAskAI() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-12rem)] gap-4">
-      <ConversationSidebar
-        activeConversationId={currentConversation?.id || null}
-        onSelectConversation={loadConversation}
-        onNewConversation={handleNewConversation}
-        onDeleteConversation={handleDeleteConversation}
-        refreshTrigger={refreshSidebar}
-      />
+    <div className="flex h-screen w-full bg-background overflow-hidden">
+      {/* Column 2: History Sidebar */}
+      <div className="w-64 border-r bg-surface/50 flex flex-col shrink-0">
+        <div className="p-4">
+          <Button
+            onClick={handleNewConversation}
+            className="w-full flex items-center justify-center gap-2 bg-foreground text-background py-6 rounded-lg font-bold hover:opacity-90 transition-opacity"
+          >
+            <Plus className="w-4 h-4" />
+            <span>New Chat</span>
+          </Button>
+        </div>
+        <div className="flex-1 overflow-hidden">
+          <ConversationSidebar
+            activeConversationId={currentConversation?.id || null}
+            onSelectConversation={loadConversation}
+            onDeleteConversation={handleDeleteConversation}
+            refreshTrigger={refreshSidebar}
+          />
+        </div>
+        <div className="p-3 border-t flex justify-between items-center text-muted-foreground">
+          <Button variant="destructive" size="icon" className="rounded-full bg-red-500 hover:bg-red-600 text-white shadow-sm shadow-red-500/20 border-none transition-all">
+            <Trash2 className="w-4 h-4" />
+          </Button>
+          <Button variant="ghost" size="icon" className="rounded-full">
+            <Download className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
 
-      <Card className="flex-1 flex flex-col">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b">
-          <CardTitle className="text-lg font-medium flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            {currentConversation?.title || "New Conversation"}
-          </CardTitle>
-
+      {/* Column 3: Main Chat area */}
+      <div className="flex-1 flex flex-col relative bg-background">
+        <header className="h-16 flex items-center justify-between px-6 border-b bg-background/80 backdrop-blur-sm z-10 sticky top-0">
           <div className="flex items-center gap-2">
-            <Select value={subject} onValueChange={handleSubjectChange}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {SUBJECTS.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>
-                    {s.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={mode} onValueChange={handleModeChange}>
-              <SelectTrigger className="w-[120px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {MODES.map((m) => (
-                  <SelectItem key={m.value} value={m.value}>
-                    {m.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {messages.length > 0 && (
-              <>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={handleExport}
-                  title="Export conversation"
-                >
-                  <Download className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={handleClearConversation}
-                  title="Clear conversation"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </>
-            )}
+            <h2 className="text-base font-bold">AI Tutor</h2>
+            <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 text-[10px] font-bold uppercase">
+              Online
+            </span>
           </div>
-        </CardHeader>
 
-        <CardContent className="flex-1 flex flex-col space-y-4 min-h-0 pt-4">
-          <div className="flex-1 overflow-y-auto space-y-4 pr-2">
-            {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
-                <Sparkles className="h-12 w-12 mb-4 text-primary/50" />
-                <p className="font-medium text-lg">Ask me anything!</p>
-                <p className="text-sm mt-2 max-w-md">
-                  I'm your AI tutor. Choose a subject and learning mode above,
-                  then start asking questions. I can explain concepts, generate
-                  practice problems, or quiz you on topics.
-                </p>
-              </div>
-            ) : (
-              <>
-                {messages.map((message) => (
-                  <MarkdownMessage
-                    key={message.id}
-                    content={message.content}
-                    role={message.role}
-                  />
-                ))}
-                {isLoading && (
-                  <div className="flex justify-start animate-in fade-in duration-300">
-                    <div className="bg-muted rounded-lg px-4 py-3 flex items-center gap-3">
-                      <div className="flex gap-1">
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        AI is thinking...
-                      </p>
+          <div className="flex bg-muted rounded-lg p-1">
+            {SUBJECTS.map((s) => (
+              <button
+                key={s.value}
+                onClick={() => handleModeChange(s.value)}
+                className={cn(
+                  "px-3 py-1.5 rounded-md text-xs font-medium transition-all",
+                  subject === s.value
+                    ? "bg-background shadow-sm font-bold text-foreground"
+                    : "text-muted-foreground hover:bg-background/50"
+                )}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </header>
+
+        <div className="flex-1 overflow-y-auto p-6 md:p-10 flex flex-col gap-6 scroll-smooth">
+          {messages.length === 0 ? (
+            <div className="flex flex-col gap-6 max-w-3xl mx-auto w-full mt-10">
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-sm text-primary-foreground">
+                  <Brain className="w-6 h-6" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <span className="text-xs font-bold uppercase tracking-tight opacity-70">
+                    Super Student AI
+                  </span>
+                  <div className="bg-card border p-6 rounded-2xl rounded-tl-none shadow-sm leading-relaxed">
+                    <p className="mb-4">
+                      Hello Student! 👋 I'm your personal AI Tutor. I'm here to
+                      help you master your subjects, explain complex topics, or
+                      prepare for upcoming exams.
+                    </p>
+                    <p className="mb-4 font-semibold text-sm">
+                      Here are a few ways I can help right now:
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {[
+                        {
+                          t: "📝 Summarize Notes",
+                          d: "Paste your lecture notes for a quick summary.",
+                        },
+                        {
+                          t: "🧪 Explain a Concept",
+                          d: "Stuck on a difficult topic? Let me break it down.",
+                        },
+                        {
+                          t: "📅 Create Study Plan",
+                          d: "Organize your week for maximum efficiency.",
+                        },
+                        {
+                          t: "❓ Practice Quiz",
+                          d: "Test your knowledge on any subject.",
+                        },
+                      ].map((item, i) => (
+                        <button
+                          key={i}
+                          onClick={() =>
+                            setInput(item.t.split(" ").slice(1).join(" "))
+                          }
+                          className="text-left p-3 rounded-xl border hover:bg-muted transition-colors text-sm"
+                        >
+                          <span className="block font-bold mb-1">{item.t}</span>
+                          <span className="text-muted-foreground text-xs">
+                            {item.d}
+                          </span>
+                        </button>
+                      ))}
                     </div>
                   </div>
-                )}
-              </>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="max-w-3xl mx-auto w-full space-y-6">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={cn(
+                    "flex gap-4 w-full",
+                    message.role === "user" ? "flex-row-reverse" : "flex-row"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm text-[10px] font-bold",
+                      message.role === "user"
+                        ? "bg-accent"
+                        : "bg-primary text-primary-foreground"
+                    )}
+                  >
+                    {message.role === "user" ? (
+                      "ME"
+                    ) : (
+                      <Brain className="w-5 h-5" />
+                    )}
+                  </div>
+                  <div
+                    className={cn(
+                      "flex flex-col gap-1 max-w-[85%] min-w-0",
+                      message.role === "user" ? "items-end" : "items-start"
+                    )}
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-tight opacity-50 px-1">
+                      {message.role === "user" ? "You" : "Super Student AI"}
+                    </span>
+                    <div
+                      className={cn(
+                        "p-4 rounded-2xl shadow-sm text-sm leading-relaxed overflow-hidden break-words w-full",
+                        message.role === "user"
+                          ? "bg-accent rounded-tr-none"
+                          : "bg-card border rounded-tl-none"
+                      )}
+                    >
+                      {message.role === "assistant" && !message.content ? (
+                        <div className="flex gap-1.5 h-4 items-center">
+                          <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                          <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                          <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
+                        </div>
+                      ) : (
+                        <MarkdownMessage
+                          content={message.content}
+                          role={message.role}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
 
-          <form onSubmit={handleSubmit} className="flex gap-2">
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask a question..."
-              disabled={isLoading}
-              className="flex-1"
-            />
+        <div className="p-6 border-t bg-background/50 backdrop-blur-sm">
+          <form
+            onSubmit={handleSubmit}
+            className="max-w-3xl mx-auto w-full flex flex-col gap-4"
+          >
+            <div className="relative group">
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e as any);
+                  }
+                }}
+                placeholder="Ask anything about your studies..."
+                className="w-full bg-card border rounded-2xl pl-4 pr-24 py-4 min-h-[80px] max-h-[240px] shadow-sm resize-none focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm transition-all"
+              />
+              <div className="absolute right-3 bottom-3 flex items-center gap-1">
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="rounded-xl text-muted-foreground"
+                >
+                  <Paperclip className="w-5 h-5" />
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isLoading || !input.trim()}
+                  className="bg-primary hover:brightness-105 text-primary-foreground px-4 rounded-xl shadow-lg transition-all h-10"
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  <span className="text-xs font-bold uppercase">Send</span>
+                </Button>
+              </div>
+            </div>
 
-            <Select
-              value={selectedModel}
-              onValueChange={setSelectedModel}
-              disabled={isLoading}
-            >
-              <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Model" />
-              </SelectTrigger>
-              <SelectContent>
-                {CHAT_MODELS.map((m) => (
-                  <SelectItem key={m.value} value={m.value}>
-                    {m.label}
-                  </SelectItem>
-                ))}
-
-                {openRouterModels.length > 0 && (
-                  <>
-                    {openRouterModels.map((m) => (
+            <div className="flex items-center justify-between text-[10px]">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5 text-muted-foreground font-bold uppercase">
+                  <Brain className="w-3.5 h-3.5" />
+                  <span>Model:</span>
+                </div>
+                <Select value={selectedModel} onValueChange={setSelectedModel}>
+                  <SelectTrigger className="h-8 w-[200px] rounded-full border-border bg-background text-[10px] font-bold uppercase">
+                    <SelectValue placeholder="Select Model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <div className="px-2 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                      Standard Models
+                    </div>
+                    {CHAT_MODELS.map((m) => (
                       <SelectItem
-                        key={`openrouter:${m.id}`}
-                        value={`openrouter:${m.id}`}
+                        key={m.value}
+                        value={m.value}
+                        className="text-[10px] font-bold uppercase"
                       >
-                        {`OpenRouter • ${m.name}`}
+                        <div className="flex items-center gap-2">
+                          <span>{m.label}</span>
+                          {m.icon && (
+                            <span className="material-symbols-outlined text-[12px] text-primary">
+                              bolt
+                            </span>
+                          )}
+                        </div>
                       </SelectItem>
                     ))}
-                  </>
-                )}
-              </SelectContent>
-            </Select>
-
-            <Button
-              type="submit"
-              disabled={isLoading || !input.trim()}
-              size="icon"
-            >
-              <Send className="h-4 w-4" />
-            </Button>
+                    {openRouterModels.length > 0 && (
+                      <>
+                        <div className="px-2 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider border-t mt-1">
+                          OpenRouter Models
+                        </div>
+                        {openRouterModels.map((m) => (
+                          <SelectItem
+                            key={m.id}
+                            value={`or:${m.id}`}
+                            className="text-[10px] font-bold uppercase"
+                          >
+                            {m.name}
+                          </SelectItem>
+                        ))}
+                      </>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+              <span className="text-muted-foreground opacity-50 font-medium">
+                Press Enter to send • Shift+Enter for new line
+              </span>
+            </div>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      {/* Column 4: Enhanced Features Sidebar */}
+      <aside className="w-80 border-l bg-surface/30 hidden xl:flex flex-col overflow-y-auto">
+        <div className="p-6">
+          <h3 className="text-sm font-bold uppercase tracking-wider mb-8 flex items-center gap-2">
+            <Verified className="w-4 h-4 text-primary" />
+            Enhanced Features
+          </h3>
+
+          <div className="flex flex-col gap-8">
+            {[
+              {
+                icon: <HistoryIcon className="w-5 h-5" />,
+                title: "Smart History",
+                desc: "Automatically organizes chats by subject and topic relevance.",
+                color: "bg-blue-500/10 text-blue-500",
+              },
+              {
+                icon: <Sliders className="w-5 h-5" />,
+                title: "Subject Modes",
+                desc: "Switch between Explain, Quiz, and Socratic modes instantly.",
+                color: "bg-purple-500/10 text-purple-500",
+              },
+              {
+                icon: <School className="w-5 h-5" />,
+                title: "Learning Styles",
+                desc: "Adapt responses to visual, auditory, or textual preferences.",
+                color: "bg-orange-500/10 text-orange-500",
+              },
+              {
+                icon: <Shapes className="w-5 h-5" />,
+                title: "Rich Formatting",
+                desc: "LaTeX math support, code blocks, and markdown tables.",
+                color: "bg-pink-500/10 text-pink-500",
+              },
+              {
+                icon: <Search className="w-5 h-5" />,
+                title: "Smart Search",
+                desc: "Search within conversations to find past explanations.",
+                color: "bg-teal-500/10 text-teal-500",
+              },
+            ].map((feature, i) => (
+              <div key={i} className="flex gap-4 group">
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110",
+                    feature.color
+                  )}
+                >
+                  {feature.icon}
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm font-bold">{feature.title}</h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    {feature.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 p-5 rounded-2xl bg-primary/5 border border-primary/10 relative overflow-hidden group">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <Lightbulb className="w-4 h-4 text-primary" />
+                <span className="text-sm font-bold">Pro Tip</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Type{" "}
+                <span className="font-mono bg-background px-1.5 py-0.5 rounded border border-border text-[10px]">
+                  /diagram
+                </span>{" "}
+                to ask the AI to generate a Mermaid.js chart for visual
+                learning.
+              </p>
+            </div>
+            <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all"></div>
+          </div>
+        </div>
+      </aside>
     </div>
   );
 }

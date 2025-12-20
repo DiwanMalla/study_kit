@@ -1,4 +1,6 @@
+"use client";
 import Link from "next/link";
+import { useState } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +17,134 @@ export function PricingContent({
 }: {
   ctaHref?: string;
 }) {
+  const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
+
+  const plans: Record<
+    "monthly" | "yearly",
+    Array<{
+      title: string;
+      price: string;
+      period?: string;
+      description: string;
+      features: string[];
+      buttonText: string;
+      variant?: "default" | "outline";
+      popular?: boolean;
+      href: string;
+    }>
+  > = {
+    monthly: [
+      {
+        title: "Free",
+        price: "$0",
+        description:
+          "Perfect for casual study sessions and trying out our AI features.",
+        features: [
+          "3 Study Kits per month",
+          "Basic AI Summaries",
+          "50 Flashcards per kit",
+          "Community Support",
+          "Standard AI Models",
+        ],
+        buttonText: "Get Started",
+        variant: "outline",
+        href: ctaHref,
+      },
+      {
+        title: "Pro",
+        price: "$9",
+        period: "/month",
+        description:
+          "Our most popular plan for serious students who need more power.",
+        features: [
+          "Unlimited Study Kits",
+          "Advanced AI Tutor",
+          "Exam Simulator",
+          "Study Planner & Analytics",
+          "Priority Email Support",
+          "Faster Processing",
+        ],
+        buttonText: "Start Free Trial",
+        variant: "default",
+        popular: true,
+        href: ctaHref,
+      },
+      {
+        title: "Ultimate",
+        price: "$15",
+        period: "/month",
+        description:
+          "For power users who want the absolute best AI models and features.",
+        features: [
+          "Everything in Pro",
+          "Premium Models (GPT-4o)",
+          "Collaborative Study Rooms",
+          "API Access",
+          "Dedicated Support",
+          "Beta Feature Access",
+        ],
+        buttonText: "Go Ultimate",
+        variant: "outline",
+        href: ctaHref,
+      },
+    ],
+    yearly: [
+      {
+        title: "Free",
+        price: "$0",
+        description:
+          "Perfect for casual study sessions and trying out our AI features.",
+        features: [
+          "3 Study Kits per month",
+          "Basic AI Summaries",
+          "50 Flashcards per kit",
+          "Community Support",
+          "Standard AI Models",
+        ],
+        buttonText: "Get Started",
+        variant: "outline",
+        href: ctaHref,
+      },
+      {
+        title: "Pro",
+        price: "$90",
+        period: "/year",
+        description:
+          "Save 17% with annual billing. Our most popular plan for serious students who need more power.",
+        features: [
+          "Unlimited Study Kits",
+          "Advanced AI Tutor",
+          "Exam Simulator",
+          "Study Planner & Analytics",
+          "Priority Email Support",
+          "Faster Processing",
+        ],
+        buttonText: "Start Free Trial",
+        variant: "default",
+        popular: true,
+        href: ctaHref,
+      },
+      {
+        title: "Ultimate",
+        price: "$150",
+        period: "/year",
+        description:
+          "Save 17% with annual billing. For power users who want the absolute best AI models and features.",
+        features: [
+          "Everything in Pro",
+          "Premium Models (GPT-4o)",
+          "Collaborative Study Rooms",
+          "API Access",
+          "Dedicated Support",
+          "Beta Feature Access",
+        ],
+        buttonText: "Go Ultimate",
+        variant: "outline",
+        href: ctaHref,
+      },
+    ],
+  };
+
   return (
     <>
       <div className="text-center mb-16 space-y-4">
@@ -25,59 +155,28 @@ export function PricingContent({
           Choose the plan that fits your study needs. Start for free and upgrade
           as you grow.
         </p>
+        <div className="flex justify-center gap-2 mt-6">
+          <Button
+            variant={billing === "monthly" ? "default" : "outline"}
+            onClick={() => setBilling("monthly")}
+            className={billing === "monthly" ? "font-bold" : ""}
+          >
+            Monthly
+          </Button>
+          <Button
+            variant={billing === "yearly" ? "default" : "outline"}
+            onClick={() => setBilling("yearly")}
+            className={billing === "yearly" ? "font-bold" : ""}
+          >
+            Yearly <span className="ml-1 text-xs text-primary">(Save 17%)</span>
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        <PricingCard
-          title="Free"
-          price="$0"
-          description="Perfect for casual study sessions and trying out our AI features."
-          features={[
-            "3 Study Kits per month",
-            "Basic AI Summaries",
-            "50 Flashcards per kit",
-            "Community Support",
-            "Standard AI Models",
-          ]}
-          buttonText="Get Started"
-          variant="outline"
-          href={ctaHref}
-        />
-        <PricingCard
-          title="Pro"
-          price="$9"
-          period="/month"
-          description="Our most popular plan for serious students who need more power."
-          features={[
-            "Unlimited Study Kits",
-            "Advanced AI Tutor",
-            "Exam Simulator",
-            "Study Planner & Analytics",
-            "Priority Email Support",
-            "Faster Processing",
-          ]}
-          buttonText="Start Free Trial"
-          variant="default"
-          popular
-          href={ctaHref}
-        />
-        <PricingCard
-          title="Ultimate"
-          price="$15"
-          period="/month"
-          description="For power users who want the absolute best AI models and features."
-          features={[
-            "Everything in Pro",
-            "Premium Models (GPT-4o)",
-            "Collaborative Study Rooms",
-            "API Access",
-            "Dedicated Support",
-            "Beta Feature Access",
-          ]}
-          buttonText="Go Ultimate"
-          variant="outline"
-          href={ctaHref}
-        />
+        {plans[billing].map((plan) => (
+          <PricingCard key={plan.title} {...plan} />
+        ))}
       </div>
 
       <div className="mt-24 max-w-3xl mx-auto bg-surface border border-border rounded-2xl p-8 text-center space-y-6">

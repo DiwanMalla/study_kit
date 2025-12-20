@@ -26,9 +26,5 @@ export default async function AssignmentPage({
         notFound();
     }
 
-    return (
-        <div className="container mx-auto p-6">
-            <AssignmentSolution initialAssignment={assignment} />
-        </div>
-    );
+    return <AssignmentSolution initialAssignment={assignment} />;
 }

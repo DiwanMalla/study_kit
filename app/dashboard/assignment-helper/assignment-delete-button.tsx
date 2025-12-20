@@ -51,9 +51,9 @@ export function AssignmentDeleteButton({
     <>
       <Button
         type="button"
-        variant="ghost"
+        variant="destructive"
         size="icon"
-        className="absolute top-2 right-2 z-10"
+        className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 text-white shadow-sm shadow-red-500/20 border-none transition-all opacity-0 group-hover:opacity-100"
         aria-label="Delete assignment"
         onClick={(e) => {
           e.preventDefault();
@@ -61,7 +61,7 @@ export function AssignmentDeleteButton({
           setOpen(true);
         }}
       >
-        <Trash className="h-4 w-4 text-destructive" />
+        <Trash className="h-3.5 w-3.5" />
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -91,6 +91,7 @@ export function AssignmentDeleteButton({
               variant="destructive"
               onClick={onDelete}
               disabled={isDeleting}
+              className="rounded-full px-8 py-2 font-bold bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/20"
             >
               {isDeleting ? "Deleting..." : "Delete"}
             </Button>

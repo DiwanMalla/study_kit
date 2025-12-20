@@ -30,6 +30,7 @@ export type SummaryMinAggregateOutputType = {
   title: string | null
   sourceText: string | null
   summaryText: string | null
+  length: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -40,6 +41,7 @@ export type SummaryMaxAggregateOutputType = {
   title: string | null
   sourceText: string | null
   summaryText: string | null
+  length: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,6 +52,7 @@ export type SummaryCountAggregateOutputType = {
   title: number
   sourceText: number
   summaryText: number
+  length: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -62,6 +65,7 @@ export type SummaryMinAggregateInputType = {
   title?: true
   sourceText?: true
   summaryText?: true
+  length?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -72,6 +76,7 @@ export type SummaryMaxAggregateInputType = {
   title?: true
   sourceText?: true
   summaryText?: true
+  length?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,6 +87,7 @@ export type SummaryCountAggregateInputType = {
   title?: true
   sourceText?: true
   summaryText?: true
+  length?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -165,6 +171,7 @@ export type SummaryGroupByOutputType = {
   title: string
   sourceText: string
   summaryText: string
+  length: string
   createdAt: Date
   updatedAt: Date
   _count: SummaryCountAggregateOutputType | null
@@ -196,6 +203,7 @@ export type SummaryWhereInput = {
   title?: Prisma.StringFilter<"Summary"> | string
   sourceText?: Prisma.StringFilter<"Summary"> | string
   summaryText?: Prisma.StringFilter<"Summary"> | string
+  length?: Prisma.StringFilter<"Summary"> | string
   createdAt?: Prisma.DateTimeFilter<"Summary"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Summary"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -207,6 +215,7 @@ export type SummaryOrderByWithRelationInput = {
   title?: Prisma.SortOrder
   sourceText?: Prisma.SortOrder
   summaryText?: Prisma.SortOrder
+  length?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -221,6 +230,7 @@ export type SummaryWhereUniqueInput = Prisma.AtLeast<{
   title?: Prisma.StringFilter<"Summary"> | string
   sourceText?: Prisma.StringFilter<"Summary"> | string
   summaryText?: Prisma.StringFilter<"Summary"> | string
+  length?: Prisma.StringFilter<"Summary"> | string
   createdAt?: Prisma.DateTimeFilter<"Summary"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Summary"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -232,6 +242,7 @@ export type SummaryOrderByWithAggregationInput = {
   title?: Prisma.SortOrder
   sourceText?: Prisma.SortOrder
   summaryText?: Prisma.SortOrder
+  length?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SummaryCountOrderByAggregateInput
@@ -248,6 +259,7 @@ export type SummaryScalarWhereWithAggregatesInput = {
   title?: Prisma.StringWithAggregatesFilter<"Summary"> | string
   sourceText?: Prisma.StringWithAggregatesFilter<"Summary"> | string
   summaryText?: Prisma.StringWithAggregatesFilter<"Summary"> | string
+  length?: Prisma.StringWithAggregatesFilter<"Summary"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Summary"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Summary"> | Date | string
 }
@@ -257,6 +269,7 @@ export type SummaryCreateInput = {
   title: string
   sourceText: string
   summaryText: string
+  length?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutSummariesInput
@@ -268,6 +281,7 @@ export type SummaryUncheckedCreateInput = {
   title: string
   sourceText: string
   summaryText: string
+  length?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -277,6 +291,7 @@ export type SummaryUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   sourceText?: Prisma.StringFieldUpdateOperationsInput | string
   summaryText?: Prisma.StringFieldUpdateOperationsInput | string
+  length?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutSummariesNestedInput
@@ -288,6 +303,7 @@ export type SummaryUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   sourceText?: Prisma.StringFieldUpdateOperationsInput | string
   summaryText?: Prisma.StringFieldUpdateOperationsInput | string
+  length?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -298,6 +314,7 @@ export type SummaryCreateManyInput = {
   title: string
   sourceText: string
   summaryText: string
+  length?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -307,6 +324,7 @@ export type SummaryUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   sourceText?: Prisma.StringFieldUpdateOperationsInput | string
   summaryText?: Prisma.StringFieldUpdateOperationsInput | string
+  length?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -317,6 +335,7 @@ export type SummaryUncheckedUpdateManyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   sourceText?: Prisma.StringFieldUpdateOperationsInput | string
   summaryText?: Prisma.StringFieldUpdateOperationsInput | string
+  length?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -337,6 +356,7 @@ export type SummaryCountOrderByAggregateInput = {
   title?: Prisma.SortOrder
   sourceText?: Prisma.SortOrder
   summaryText?: Prisma.SortOrder
+  length?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -347,6 +367,7 @@ export type SummaryMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   sourceText?: Prisma.SortOrder
   summaryText?: Prisma.SortOrder
+  length?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -357,6 +378,7 @@ export type SummaryMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   sourceText?: Prisma.SortOrder
   summaryText?: Prisma.SortOrder
+  length?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -408,6 +430,7 @@ export type SummaryCreateWithoutUserInput = {
   title: string
   sourceText: string
   summaryText: string
+  length?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -417,6 +440,7 @@ export type SummaryUncheckedCreateWithoutUserInput = {
   title: string
   sourceText: string
   summaryText: string
+  length?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -456,6 +480,7 @@ export type SummaryScalarWhereInput = {
   title?: Prisma.StringFilter<"Summary"> | string
   sourceText?: Prisma.StringFilter<"Summary"> | string
   summaryText?: Prisma.StringFilter<"Summary"> | string
+  length?: Prisma.StringFilter<"Summary"> | string
   createdAt?: Prisma.DateTimeFilter<"Summary"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Summary"> | Date | string
 }
@@ -465,6 +490,7 @@ export type SummaryCreateManyUserInput = {
   title: string
   sourceText: string
   summaryText: string
+  length?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -474,6 +500,7 @@ export type SummaryUpdateWithoutUserInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   sourceText?: Prisma.StringFieldUpdateOperationsInput | string
   summaryText?: Prisma.StringFieldUpdateOperationsInput | string
+  length?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -483,6 +510,7 @@ export type SummaryUncheckedUpdateWithoutUserInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   sourceText?: Prisma.StringFieldUpdateOperationsInput | string
   summaryText?: Prisma.StringFieldUpdateOperationsInput | string
+  length?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -492,6 +520,7 @@ export type SummaryUncheckedUpdateManyWithoutUserInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   sourceText?: Prisma.StringFieldUpdateOperationsInput | string
   summaryText?: Prisma.StringFieldUpdateOperationsInput | string
+  length?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -504,6 +533,7 @@ export type SummarySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   title?: boolean
   sourceText?: boolean
   summaryText?: boolean
+  length?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -515,6 +545,7 @@ export type SummarySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   title?: boolean
   sourceText?: boolean
   summaryText?: boolean
+  length?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -526,6 +557,7 @@ export type SummarySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   title?: boolean
   sourceText?: boolean
   summaryText?: boolean
+  length?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -537,11 +569,12 @@ export type SummarySelectScalar = {
   title?: boolean
   sourceText?: boolean
   summaryText?: boolean
+  length?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SummaryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "sourceText" | "summaryText" | "createdAt" | "updatedAt", ExtArgs["result"]["summary"]>
+export type SummaryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "sourceText" | "summaryText" | "length" | "createdAt" | "updatedAt", ExtArgs["result"]["summary"]>
 export type SummaryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -563,6 +596,7 @@ export type $SummaryPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     title: string
     sourceText: string
     summaryText: string
+    length: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["summary"]>
@@ -994,6 +1028,7 @@ export interface SummaryFieldRefs {
   readonly title: Prisma.FieldRef<"Summary", 'String'>
   readonly sourceText: Prisma.FieldRef<"Summary", 'String'>
   readonly summaryText: Prisma.FieldRef<"Summary", 'String'>
+  readonly length: Prisma.FieldRef<"Summary", 'String'>
   readonly createdAt: Prisma.FieldRef<"Summary", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Summary", 'DateTime'>
 }

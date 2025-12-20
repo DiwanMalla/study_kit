@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { UserButton, useUser, useClerk } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -48,9 +48,10 @@ const toolsNav = [
 export function Sidebar() {
   const pathname = usePathname();
   const { user } = useUser();
+  const { signOut } = useClerk();
 
   return (
-    <aside className="w-64 h-full flex flex-col border-r border-border bg-background shrink-0 transition-colors duration-300">
+    <aside className="w-64 h-full flex flex-col border-r border-border bg-background shrink-0 transition-colors duration-300 z-20">
       <div className="p-6">
         <div className="flex flex-col">
           <Link href="/dashboard" className="flex items-center gap-2 group">
@@ -72,7 +73,7 @@ export function Sidebar() {
               Super Student Kit
             </h1>
           </Link>
-          <p className="text-muted-foreground text-xs font-normal leading-normal mt-1 ml-10">
+          <p className="text-muted-foreground text-xs font-normal leading-normal mt-1">
             Basic Plan
           </p>
         </div>
@@ -84,22 +85,25 @@ export function Sidebar() {
             Main
           </p>
           <div className="space-y-1">
-            {mainNav.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                onClick={item.onClick}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-2.5 rounded-full transition-all group",
-                  pathname === item.href
-                    ? "bg-primary text-primary-foreground shadow-sm font-bold"
-                    : "text-muted-foreground hover:bg-surface border border-transparent hover:border-border font-medium"
-                )}
-              >
-                <item.icon className="w-5 h-5" />
-                <span className="text-sm">{item.name}</span>
-              </Link>
-            ))}
+            {mainNav.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={item.onClick}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-2.5 rounded-full transition-all group mb-1",
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-sm font-bold"
+                      : "text-muted-foreground hover:bg-surface border border-transparent hover:border-border font-medium"
+                  )}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span className="text-sm">{item.name}</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
 
@@ -108,21 +112,24 @@ export function Sidebar() {
             Tools
           </p>
           <div className="space-y-1">
-            {toolsNav.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-2.5 rounded-full transition-all group",
-                  pathname === item.href
-                    ? "bg-primary text-primary-foreground shadow-sm font-bold"
-                    : "text-muted-foreground hover:bg-surface border border-transparent hover:border-border font-medium"
-                )}
-              >
-                <item.icon className="w-5 h-5" />
-                <span className="text-sm">{item.name}</span>
-              </Link>
-            ))}
+            {toolsNav.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-2.5 rounded-full transition-all group mb-1",
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-sm font-bold"
+                      : "text-muted-foreground hover:bg-surface border border-transparent hover:border-border font-medium"
+                  )}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span className="text-sm">{item.name}</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </nav>
@@ -136,9 +143,12 @@ export function Sidebar() {
           <span className="text-sm font-medium">Settings</span>
         </Link>
 
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-surface border border-border">
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-surface border border-border shadow-sm">
           <UserButton afterSignOutUrl="/" />
-          <div className="flex flex-col min-w-0">
+          <div
+            className="flex flex-col min-w-0 cursor-pointer hover:opacity-70 transition-opacity"
+            onClick={() => signOut()}
+          >
             <span className="text-xs font-bold text-foreground truncate">
               {user?.fullName || "Alex Smith"}
             </span>

@@ -1,90 +1,77 @@
-import Link from "next/link";
-import { auth } from "@clerk/nextjs/server";
-import { db } from "@/lib/db";
-import { format } from "date-fns";
-import { Plus, FileText, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AISummaryList } from "@/components/dashboard/ai-summary-list";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-export default async function AISummaryPage() {
-  const { userId } = await auth();
+export const metadata = {
+  title: "AI Summary",
+  description: "Review your generated summaries and insights",
+};
 
-  const summaries = userId
-    ? await db.summary.findMany({
-        where: { userId },
-        orderBy: { createdAt: "desc" },
-      })
-    : [];
-
+export default function AISummaryPage() {
   return (
-    <div className="container mx-auto p-6 space-y-8">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">AI Summary</h1>
-          <p className="text-muted-foreground">
-            Generate and manage your AI-powered summaries.
-          </p>
+    <div className="max-w-full mx-auto flex flex-col h-full pt-10 px-4 md:px-0">
+      {/* Header */}
+      <header className="flex items-center justify-between gap-6 mb-8">
+        <div className="flex items-center gap-5">
+          <a
+            href="/dashboard"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark hover:border-primary text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all"
+          >
+            <span className="material-symbols-outlined">arrow_back</span>
+          </a>
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+              AI Summary
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              Review your generated summaries and insights
+            </p>
+          </div>
         </div>
-        <div className="flex gap-2">
-            <Button asChild variant="outline">
-            <Link href="/dashboard">
-                Back to overview
-                <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-            </Button>
-            <Button asChild>
-            <Link href="/dashboard/ai-summary/new">
-                <Plus className="mr-2 h-4 w-4" />
-                New Summary
-            </Link>
-            </Button>
+        <div className="hidden md:flex items-center gap-3">
+          <a
+            href="/dashboard/ai-summary/new"
+            className="px-5 py-3 rounded-full bg-primary hover:bg-[#ebe705] text-slate-900 font-bold shadow-sm flex items-center gap-2 transition-all transform active:scale-95"
+          >
+            <span className="material-symbols-outlined">add</span>
+            New Summary
+          </a>
+        </div>
+      </header>
+
+      {/* Info Banner */}
+      <div className="bg-surface border border-border rounded-2xl py-12 px-8 mb-10 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="max-w-xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary-darker dark:text-yellow-200 text-xs font-bold mb-3 border border-primary/20">
+              <span className="material-symbols-outlined text-[14px]">
+                auto_awesome
+              </span>
+              AI Powered
+            </div>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+              Turn hours of reading into minutes of learning
+            </h2>
+            <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              Upload your documents, paste text, or link articles. Our AI engine
+              extracts key points, generates concise summaries, and helps you
+              identify the most critical information for your studies in
+              seconds.
+            </p>
+          </div>
+          <div className="flex-shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-primary/20 text-yellow-700 dark:text-yellow-200 flex items-center justify-center">
+              <span className="material-symbols-outlined text-3xl">
+                library_books
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="grid gap-6">
-        {summaries.length === 0 ? (
-          <Card className="flex flex-col items-center justify-center p-10 text-center border-dashed">
-            <div className="p-4 rounded-full bg-primary/10 mb-4">
-              <FileText className="h-8 w-8 text-primary" />
-            </div>
-            <CardTitle className="mb-2">No summaries yet</CardTitle>
-            <CardDescription className="max-w-md mb-6">
-              Create your first summary from any text content.
-            </CardDescription>
-            <Button asChild>
-              <Link href="/dashboard/ai-summary/new">Start Now</Link>
-            </Button>
-          </Card>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {summaries.map((summary) => (
-              <Link
-                key={summary.id}
-                href={`/dashboard/ai-summary/${summary.id}`}
-                className="block group"
-              >
-                <Card className="h-full transition-all hover:border-primary/50 hover:shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-lg line-clamp-1 group-hover:text-primary transition-colors">
-                      {summary.title}
-                    </CardTitle>
-                    <CardDescription className="line-clamp-2">
-                      {format(new Date(summary.createdAt), "MMM d, yyyy")}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground line-clamp-3">
-                        {summary.sourceText}
-                    </p>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+      {/* Summary List */}
+      <AISummaryList />
     </div>
   );
 }

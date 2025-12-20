@@ -214,6 +214,7 @@ export const SummaryScalarFieldEnum = {
   title: 'title',
   sourceText: 'sourceText',
   summaryText: 'summaryText',
+  length: 'length',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

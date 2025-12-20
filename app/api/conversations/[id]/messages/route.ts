@@ -16,26 +16,48 @@ function parseSelectedModel(value: unknown): {
 
   const trimmed = value.trim();
 
-  // Prefix-based parsing (preserves model IDs that contain additional ':' like ':free')
+  // Prefix-based parsing
   if (trimmed.startsWith("groq:")) {
     return {
       provider: "groq",
-      modelId: trimmed.slice("groq:".length).trim() || "llama-3.3-70b-versatile",
+      modelId:
+        trimmed.slice("groq:".length).trim() || "llama-3.3-70b-versatile",
     };
   }
-  if (trimmed.startsWith("openrouter:")) {
+
+  if (trimmed.startsWith("openrouter:") || trimmed.startsWith("or:")) {
+    const prefix = trimmed.startsWith("openrouter:") ? "openrouter:" : "or:";
     return {
       provider: "openrouter",
-      modelId:
-        trimmed.slice("openrouter:".length).trim() ||
-        "openai/gpt-oss-20b:free",
+      modelId: trimmed.slice(prefix.length).trim() || "openai/gpt-oss-20b:free",
     };
   }
+
+  if (trimmed.startsWith("openai:")) {
+    return {
+      provider: "openrouter",
+      modelId: trimmed.slice("openai:".length).trim() || "openai/gpt-4o",
+    };
+  }
+
   if (trimmed.startsWith("gemini:")) {
     return {
       provider: "gemini",
       modelId: trimmed.slice("gemini:".length).trim() || "gemini-2.5-flash",
     };
+  }
+
+  // Handle models from ModelSelector that might not have prefixes
+  if (
+    trimmed.startsWith("llama-3") ||
+    trimmed.startsWith("qwen") ||
+    trimmed.includes("meta-llama/")
+  ) {
+    return { provider: "groq", modelId: trimmed };
+  }
+
+  if (trimmed.includes("/") || trimmed.includes("moonshotai/")) {
+    return { provider: "openrouter", modelId: trimmed };
   }
 
   // Back-compat: unprefixed values are treated as Gemini model IDs.
@@ -208,8 +230,7 @@ Please provide a helpful, clear response.`;
       if (!process.env.OPENROUTER_API_KEY) {
         return NextResponse.json(
           {
-            error:
-              "OPENROUTER_API_KEY is not set in environment variables",
+            error: "OPENROUTER_API_KEY is not set in environment variables",
           },
           { status: 500 }
         );
