@@ -63,7 +63,7 @@ async function extractWithGeminiVision(
   mimeType: string
 ): Promise<{ content: string; metadata: any }> {
   try {
-    // Use gemini-2.5-flash which supports multimodal content
+    // Use gemini-2.5-flash for the best extraction performance
     const modelName = "gemini-2.5-flash";
     const model = genAI.getGenerativeModel({ model: modelName });
 

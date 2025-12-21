@@ -1398,6 +1398,7 @@ export type ConversationMessageScalarFieldEnum = (typeof ConversationMessageScal
 export const SummaryScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  fileId: 'fileId',
   title: 'title',
   sourceText: 'sourceText',
   summaryText: 'summaryText',

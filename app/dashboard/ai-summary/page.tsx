@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function AISummaryPage() {
   return (
-    <div className="max-w-full mx-auto flex flex-col h-full pt-10 px-4 md:px-0">
+    <div className="w-full mx-auto flex flex-col h-full px-6 md:px-10 py-6 md:py-10">
       {/* Header */}
       <header className="flex items-center justify-between gap-6 mb-8">
         <div className="flex items-center gap-5">

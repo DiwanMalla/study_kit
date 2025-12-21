@@ -27,6 +27,7 @@ export type AggregateSummary = {
 export type SummaryMinAggregateOutputType = {
   id: string | null
   userId: string | null
+  fileId: string | null
   title: string | null
   sourceText: string | null
   summaryText: string | null
@@ -38,6 +39,7 @@ export type SummaryMinAggregateOutputType = {
 export type SummaryMaxAggregateOutputType = {
   id: string | null
   userId: string | null
+  fileId: string | null
   title: string | null
   sourceText: string | null
   summaryText: string | null
@@ -49,6 +51,7 @@ export type SummaryMaxAggregateOutputType = {
 export type SummaryCountAggregateOutputType = {
   id: number
   userId: number
+  fileId: number
   title: number
   sourceText: number
   summaryText: number
@@ -62,6 +65,7 @@ export type SummaryCountAggregateOutputType = {
 export type SummaryMinAggregateInputType = {
   id?: true
   userId?: true
+  fileId?: true
   title?: true
   sourceText?: true
   summaryText?: true
@@ -73,6 +77,7 @@ export type SummaryMinAggregateInputType = {
 export type SummaryMaxAggregateInputType = {
   id?: true
   userId?: true
+  fileId?: true
   title?: true
   sourceText?: true
   summaryText?: true
@@ -84,6 +89,7 @@ export type SummaryMaxAggregateInputType = {
 export type SummaryCountAggregateInputType = {
   id?: true
   userId?: true
+  fileId?: true
   title?: true
   sourceText?: true
   summaryText?: true
@@ -168,6 +174,7 @@ export type SummaryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type SummaryGroupByOutputType = {
   id: string
   userId: string
+  fileId: string | null
   title: string
   sourceText: string
   summaryText: string
@@ -200,6 +207,7 @@ export type SummaryWhereInput = {
   NOT?: Prisma.SummaryWhereInput | Prisma.SummaryWhereInput[]
   id?: Prisma.StringFilter<"Summary"> | string
   userId?: Prisma.StringFilter<"Summary"> | string
+  fileId?: Prisma.StringNullableFilter<"Summary"> | string | null
   title?: Prisma.StringFilter<"Summary"> | string
   sourceText?: Prisma.StringFilter<"Summary"> | string
   summaryText?: Prisma.StringFilter<"Summary"> | string
@@ -207,11 +215,13 @@ export type SummaryWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Summary"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Summary"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  file?: Prisma.XOR<Prisma.FileNullableScalarRelationFilter, Prisma.FileWhereInput> | null
 }
 
 export type SummaryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  fileId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrder
   sourceText?: Prisma.SortOrder
   summaryText?: Prisma.SortOrder
@@ -219,6 +229,7 @@ export type SummaryOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  file?: Prisma.FileOrderByWithRelationInput
 }
 
 export type SummaryWhereUniqueInput = Prisma.AtLeast<{
@@ -227,6 +238,7 @@ export type SummaryWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.SummaryWhereInput[]
   NOT?: Prisma.SummaryWhereInput | Prisma.SummaryWhereInput[]
   userId?: Prisma.StringFilter<"Summary"> | string
+  fileId?: Prisma.StringNullableFilter<"Summary"> | string | null
   title?: Prisma.StringFilter<"Summary"> | string
   sourceText?: Prisma.StringFilter<"Summary"> | string
   summaryText?: Prisma.StringFilter<"Summary"> | string
@@ -234,11 +246,13 @@ export type SummaryWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Summary"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Summary"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  file?: Prisma.XOR<Prisma.FileNullableScalarRelationFilter, Prisma.FileWhereInput> | null
 }, "id">
 
 export type SummaryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  fileId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrder
   sourceText?: Prisma.SortOrder
   summaryText?: Prisma.SortOrder
@@ -256,6 +270,7 @@ export type SummaryScalarWhereWithAggregatesInput = {
   NOT?: Prisma.SummaryScalarWhereWithAggregatesInput | Prisma.SummaryScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Summary"> | string
   userId?: Prisma.StringWithAggregatesFilter<"Summary"> | string
+  fileId?: Prisma.StringNullableWithAggregatesFilter<"Summary"> | string | null
   title?: Prisma.StringWithAggregatesFilter<"Summary"> | string
   sourceText?: Prisma.StringWithAggregatesFilter<"Summary"> | string
   summaryText?: Prisma.StringWithAggregatesFilter<"Summary"> | string
@@ -273,11 +288,13 @@ export type SummaryCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutSummariesInput
+  file?: Prisma.FileCreateNestedOneWithoutSummariesInput
 }
 
 export type SummaryUncheckedCreateInput = {
   id?: string
   userId: string
+  fileId?: string | null
   title: string
   sourceText: string
   summaryText: string
@@ -295,11 +312,13 @@ export type SummaryUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutSummariesNestedInput
+  file?: Prisma.FileUpdateOneWithoutSummariesNestedInput
 }
 
 export type SummaryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  fileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   sourceText?: Prisma.StringFieldUpdateOperationsInput | string
   summaryText?: Prisma.StringFieldUpdateOperationsInput | string
@@ -311,6 +330,7 @@ export type SummaryUncheckedUpdateInput = {
 export type SummaryCreateManyInput = {
   id?: string
   userId: string
+  fileId?: string | null
   title: string
   sourceText: string
   summaryText: string
@@ -332,6 +352,7 @@ export type SummaryUpdateManyMutationInput = {
 export type SummaryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  fileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   sourceText?: Prisma.StringFieldUpdateOperationsInput | string
   summaryText?: Prisma.StringFieldUpdateOperationsInput | string
@@ -353,6 +374,7 @@ export type SummaryOrderByRelationAggregateInput = {
 export type SummaryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  fileId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   sourceText?: Prisma.SortOrder
   summaryText?: Prisma.SortOrder
@@ -364,6 +386,7 @@ export type SummaryCountOrderByAggregateInput = {
 export type SummaryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  fileId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   sourceText?: Prisma.SortOrder
   summaryText?: Prisma.SortOrder
@@ -375,6 +398,7 @@ export type SummaryMaxOrderByAggregateInput = {
 export type SummaryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  fileId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   sourceText?: Prisma.SortOrder
   summaryText?: Prisma.SortOrder
@@ -425,6 +449,48 @@ export type SummaryUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.SummaryScalarWhereInput | Prisma.SummaryScalarWhereInput[]
 }
 
+export type SummaryCreateNestedManyWithoutFileInput = {
+  create?: Prisma.XOR<Prisma.SummaryCreateWithoutFileInput, Prisma.SummaryUncheckedCreateWithoutFileInput> | Prisma.SummaryCreateWithoutFileInput[] | Prisma.SummaryUncheckedCreateWithoutFileInput[]
+  connectOrCreate?: Prisma.SummaryCreateOrConnectWithoutFileInput | Prisma.SummaryCreateOrConnectWithoutFileInput[]
+  createMany?: Prisma.SummaryCreateManyFileInputEnvelope
+  connect?: Prisma.SummaryWhereUniqueInput | Prisma.SummaryWhereUniqueInput[]
+}
+
+export type SummaryUncheckedCreateNestedManyWithoutFileInput = {
+  create?: Prisma.XOR<Prisma.SummaryCreateWithoutFileInput, Prisma.SummaryUncheckedCreateWithoutFileInput> | Prisma.SummaryCreateWithoutFileInput[] | Prisma.SummaryUncheckedCreateWithoutFileInput[]
+  connectOrCreate?: Prisma.SummaryCreateOrConnectWithoutFileInput | Prisma.SummaryCreateOrConnectWithoutFileInput[]
+  createMany?: Prisma.SummaryCreateManyFileInputEnvelope
+  connect?: Prisma.SummaryWhereUniqueInput | Prisma.SummaryWhereUniqueInput[]
+}
+
+export type SummaryUpdateManyWithoutFileNestedInput = {
+  create?: Prisma.XOR<Prisma.SummaryCreateWithoutFileInput, Prisma.SummaryUncheckedCreateWithoutFileInput> | Prisma.SummaryCreateWithoutFileInput[] | Prisma.SummaryUncheckedCreateWithoutFileInput[]
+  connectOrCreate?: Prisma.SummaryCreateOrConnectWithoutFileInput | Prisma.SummaryCreateOrConnectWithoutFileInput[]
+  upsert?: Prisma.SummaryUpsertWithWhereUniqueWithoutFileInput | Prisma.SummaryUpsertWithWhereUniqueWithoutFileInput[]
+  createMany?: Prisma.SummaryCreateManyFileInputEnvelope
+  set?: Prisma.SummaryWhereUniqueInput | Prisma.SummaryWhereUniqueInput[]
+  disconnect?: Prisma.SummaryWhereUniqueInput | Prisma.SummaryWhereUniqueInput[]
+  delete?: Prisma.SummaryWhereUniqueInput | Prisma.SummaryWhereUniqueInput[]
+  connect?: Prisma.SummaryWhereUniqueInput | Prisma.SummaryWhereUniqueInput[]
+  update?: Prisma.SummaryUpdateWithWhereUniqueWithoutFileInput | Prisma.SummaryUpdateWithWhereUniqueWithoutFileInput[]
+  updateMany?: Prisma.SummaryUpdateManyWithWhereWithoutFileInput | Prisma.SummaryUpdateManyWithWhereWithoutFileInput[]
+  deleteMany?: Prisma.SummaryScalarWhereInput | Prisma.SummaryScalarWhereInput[]
+}
+
+export type SummaryUncheckedUpdateManyWithoutFileNestedInput = {
+  create?: Prisma.XOR<Prisma.SummaryCreateWithoutFileInput, Prisma.SummaryUncheckedCreateWithoutFileInput> | Prisma.SummaryCreateWithoutFileInput[] | Prisma.SummaryUncheckedCreateWithoutFileInput[]
+  connectOrCreate?: Prisma.SummaryCreateOrConnectWithoutFileInput | Prisma.SummaryCreateOrConnectWithoutFileInput[]
+  upsert?: Prisma.SummaryUpsertWithWhereUniqueWithoutFileInput | Prisma.SummaryUpsertWithWhereUniqueWithoutFileInput[]
+  createMany?: Prisma.SummaryCreateManyFileInputEnvelope
+  set?: Prisma.SummaryWhereUniqueInput | Prisma.SummaryWhereUniqueInput[]
+  disconnect?: Prisma.SummaryWhereUniqueInput | Prisma.SummaryWhereUniqueInput[]
+  delete?: Prisma.SummaryWhereUniqueInput | Prisma.SummaryWhereUniqueInput[]
+  connect?: Prisma.SummaryWhereUniqueInput | Prisma.SummaryWhereUniqueInput[]
+  update?: Prisma.SummaryUpdateWithWhereUniqueWithoutFileInput | Prisma.SummaryUpdateWithWhereUniqueWithoutFileInput[]
+  updateMany?: Prisma.SummaryUpdateManyWithWhereWithoutFileInput | Prisma.SummaryUpdateManyWithWhereWithoutFileInput[]
+  deleteMany?: Prisma.SummaryScalarWhereInput | Prisma.SummaryScalarWhereInput[]
+}
+
 export type SummaryCreateWithoutUserInput = {
   id?: string
   title: string
@@ -433,10 +499,12 @@ export type SummaryCreateWithoutUserInput = {
   length?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  file?: Prisma.FileCreateNestedOneWithoutSummariesInput
 }
 
 export type SummaryUncheckedCreateWithoutUserInput = {
   id?: string
+  fileId?: string | null
   title: string
   sourceText: string
   summaryText: string
@@ -477,6 +545,7 @@ export type SummaryScalarWhereInput = {
   NOT?: Prisma.SummaryScalarWhereInput | Prisma.SummaryScalarWhereInput[]
   id?: Prisma.StringFilter<"Summary"> | string
   userId?: Prisma.StringFilter<"Summary"> | string
+  fileId?: Prisma.StringNullableFilter<"Summary"> | string | null
   title?: Prisma.StringFilter<"Summary"> | string
   sourceText?: Prisma.StringFilter<"Summary"> | string
   summaryText?: Prisma.StringFilter<"Summary"> | string
@@ -485,8 +554,57 @@ export type SummaryScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Summary"> | Date | string
 }
 
+export type SummaryCreateWithoutFileInput = {
+  id?: string
+  title: string
+  sourceText: string
+  summaryText: string
+  length?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutSummariesInput
+}
+
+export type SummaryUncheckedCreateWithoutFileInput = {
+  id?: string
+  userId: string
+  title: string
+  sourceText: string
+  summaryText: string
+  length?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SummaryCreateOrConnectWithoutFileInput = {
+  where: Prisma.SummaryWhereUniqueInput
+  create: Prisma.XOR<Prisma.SummaryCreateWithoutFileInput, Prisma.SummaryUncheckedCreateWithoutFileInput>
+}
+
+export type SummaryCreateManyFileInputEnvelope = {
+  data: Prisma.SummaryCreateManyFileInput | Prisma.SummaryCreateManyFileInput[]
+  skipDuplicates?: boolean
+}
+
+export type SummaryUpsertWithWhereUniqueWithoutFileInput = {
+  where: Prisma.SummaryWhereUniqueInput
+  update: Prisma.XOR<Prisma.SummaryUpdateWithoutFileInput, Prisma.SummaryUncheckedUpdateWithoutFileInput>
+  create: Prisma.XOR<Prisma.SummaryCreateWithoutFileInput, Prisma.SummaryUncheckedCreateWithoutFileInput>
+}
+
+export type SummaryUpdateWithWhereUniqueWithoutFileInput = {
+  where: Prisma.SummaryWhereUniqueInput
+  data: Prisma.XOR<Prisma.SummaryUpdateWithoutFileInput, Prisma.SummaryUncheckedUpdateWithoutFileInput>
+}
+
+export type SummaryUpdateManyWithWhereWithoutFileInput = {
+  where: Prisma.SummaryScalarWhereInput
+  data: Prisma.XOR<Prisma.SummaryUpdateManyMutationInput, Prisma.SummaryUncheckedUpdateManyWithoutFileInput>
+}
+
 export type SummaryCreateManyUserInput = {
   id?: string
+  fileId?: string | null
   title: string
   sourceText: string
   summaryText: string
@@ -503,10 +621,12 @@ export type SummaryUpdateWithoutUserInput = {
   length?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  file?: Prisma.FileUpdateOneWithoutSummariesNestedInput
 }
 
 export type SummaryUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  fileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   sourceText?: Prisma.StringFieldUpdateOperationsInput | string
   summaryText?: Prisma.StringFieldUpdateOperationsInput | string
@@ -517,6 +637,51 @@ export type SummaryUncheckedUpdateWithoutUserInput = {
 
 export type SummaryUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  fileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceText?: Prisma.StringFieldUpdateOperationsInput | string
+  summaryText?: Prisma.StringFieldUpdateOperationsInput | string
+  length?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SummaryCreateManyFileInput = {
+  id?: string
+  userId: string
+  title: string
+  sourceText: string
+  summaryText: string
+  length?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SummaryUpdateWithoutFileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceText?: Prisma.StringFieldUpdateOperationsInput | string
+  summaryText?: Prisma.StringFieldUpdateOperationsInput | string
+  length?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutSummariesNestedInput
+}
+
+export type SummaryUncheckedUpdateWithoutFileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceText?: Prisma.StringFieldUpdateOperationsInput | string
+  summaryText?: Prisma.StringFieldUpdateOperationsInput | string
+  length?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SummaryUncheckedUpdateManyWithoutFileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   sourceText?: Prisma.StringFieldUpdateOperationsInput | string
   summaryText?: Prisma.StringFieldUpdateOperationsInput | string
@@ -530,6 +695,7 @@ export type SummaryUncheckedUpdateManyWithoutUserInput = {
 export type SummarySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
+  fileId?: boolean
   title?: boolean
   sourceText?: boolean
   summaryText?: boolean
@@ -537,11 +703,13 @@ export type SummarySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  file?: boolean | Prisma.Summary$fileArgs<ExtArgs>
 }, ExtArgs["result"]["summary"]>
 
 export type SummarySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
+  fileId?: boolean
   title?: boolean
   sourceText?: boolean
   summaryText?: boolean
@@ -549,11 +717,13 @@ export type SummarySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  file?: boolean | Prisma.Summary$fileArgs<ExtArgs>
 }, ExtArgs["result"]["summary"]>
 
 export type SummarySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
+  fileId?: boolean
   title?: boolean
   sourceText?: boolean
   summaryText?: boolean
@@ -561,11 +731,13 @@ export type SummarySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  file?: boolean | Prisma.Summary$fileArgs<ExtArgs>
 }, ExtArgs["result"]["summary"]>
 
 export type SummarySelectScalar = {
   id?: boolean
   userId?: boolean
+  fileId?: boolean
   title?: boolean
   sourceText?: boolean
   summaryText?: boolean
@@ -574,25 +746,30 @@ export type SummarySelectScalar = {
   updatedAt?: boolean
 }
 
-export type SummaryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "sourceText" | "summaryText" | "length" | "createdAt" | "updatedAt", ExtArgs["result"]["summary"]>
+export type SummaryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "fileId" | "title" | "sourceText" | "summaryText" | "length" | "createdAt" | "updatedAt", ExtArgs["result"]["summary"]>
 export type SummaryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  file?: boolean | Prisma.Summary$fileArgs<ExtArgs>
 }
 export type SummaryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  file?: boolean | Prisma.Summary$fileArgs<ExtArgs>
 }
 export type SummaryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  file?: boolean | Prisma.Summary$fileArgs<ExtArgs>
 }
 
 export type $SummaryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Summary"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    file: Prisma.$FilePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
+    fileId: string | null
     title: string
     sourceText: string
     summaryText: string
@@ -994,6 +1171,7 @@ readonly fields: SummaryFieldRefs;
 export interface Prisma__SummaryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  file<T extends Prisma.Summary$fileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Summary$fileArgs<ExtArgs>>): Prisma.Prisma__FileClient<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1025,6 +1203,7 @@ export interface Prisma__SummaryClient<T, Null = never, ExtArgs extends runtime.
 export interface SummaryFieldRefs {
   readonly id: Prisma.FieldRef<"Summary", 'String'>
   readonly userId: Prisma.FieldRef<"Summary", 'String'>
+  readonly fileId: Prisma.FieldRef<"Summary", 'String'>
   readonly title: Prisma.FieldRef<"Summary", 'String'>
   readonly sourceText: Prisma.FieldRef<"Summary", 'String'>
   readonly summaryText: Prisma.FieldRef<"Summary", 'String'>
@@ -1424,6 +1603,25 @@ export type SummaryDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Summaries to delete.
    */
   limit?: number
+}
+
+/**
+ * Summary.file
+ */
+export type Summary$fileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the File
+   */
+  select?: Prisma.FileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the File
+   */
+  omit?: Prisma.FileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FileInclude<ExtArgs> | null
+  where?: Prisma.FileWhereInput
 }
 
 /**

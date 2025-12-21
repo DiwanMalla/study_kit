@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { generateSummary } from "@/lib/ai";
+import { extractContent } from "@/lib/gemini";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -14,43 +15,92 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { sourceText, title, length } = await req.json();
+    const { sourceText, title, length, model, audience, fileId } = await req.json();
 
-    // Validate input
-    if (!sourceText || typeof sourceText !== "string") {
+    let finalContent = sourceText?.trim() || "";
+
+    // If fileId is provided, extract content from the file
+    if (fileId) {
+      const file = await db.file.findUnique({
+        where: { id: fileId, userId },
+        include: { extractedContent: true },
+      });
+
+      if (!file) {
+        return NextResponse.json({ error: "File not found" }, { status: 404 });
+      }
+
+      let content = file.extractedContent?.content;
+
+      if (!content) {
+        // Fetch the file from the URL
+        const response = await fetch(file.url);
+        if (!response.ok) {
+          throw new Error(`Failed to download file: ${file.name}`);
+        }
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        // Determine file type
+        let fileType = "pdf";
+        if (file.type.includes("presentation") || file.name.endsWith(".pptx")) {
+          fileType = "pptx";
+        } else if (file.type.startsWith("image/")) {
+          fileType = "image";
+        }
+
+        // Extract content
+        const extracted = await extractContent(buffer, fileType, file.type);
+        content = extracted.content;
+
+        // Save extracted content
+        await db.extractedContent.upsert({
+          where: { fileId: file.id },
+          update: {
+            content: content,
+            metadata: extracted.metadata as any,
+          },
+          create: {
+            fileId: file.id,
+            content: content,
+            metadata: extracted.metadata as any,
+          },
+        });
+      }
+
+      if (content) {
+        finalContent = content;
+      }
+    }
+
+    if (!finalContent || finalContent.length < 50) {
       return NextResponse.json(
-        { error: "Source text is required" },
+        { error: "Content is too short or missing (minimum 50 characters)" },
         { status: 400 }
       );
     }
 
-    const trimmedText = sourceText.trim();
-    if (trimmedText.length < 50) {
-      return NextResponse.json(
-        { error: "Content must be at least 50 characters long" },
-        { status: 400 }
-      );
-    }
-
-    // Generate summary using best AI model (Llama 3.3 70B via Groq)
-    const summaryText = await generateSummary(
-      trimmedText,
-      "auto", // Use best model automatically
-      length as "short" | "medium" | "long"
+    // Generate summary using selected AI model
+    const summaryData = await generateSummary(
+      finalContent,
+      model || "auto",
+      (length as "short" | "medium" | "long") || "medium"
     );
+
+    const { summary: summaryText, title: aiTitle, subject } = summaryData;
 
     // Generate title if not provided
     const finalTitle =
-      title?.trim() ||
-      `Summary of "${trimmedText.substring(0, 50).trim()}...".`;
+      title?.trim() || `${subject}: ${aiTitle}`;
 
     // Save to database
     const summary = await db.summary.create({
       data: {
         title: finalTitle,
-        sourceText: trimmedText,
+        sourceText: finalContent,
         summaryText,
         userId,
+        fileId: fileId || null,
         length: (length as "short" | "medium" | "long") || "medium",
       },
     });

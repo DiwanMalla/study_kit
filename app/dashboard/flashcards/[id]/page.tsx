@@ -27,13 +27,11 @@ export default async function FlashcardsDeckPage({
   if (!studyKit) notFound();
 
   return (
-    <div className="container mx-auto p-6 max-w-3xl">
-      <FlashcardStudy
-        flashcards={studyKit.flashcards}
-        studyKitId={id}
-        studyKitTitle={studyKit.title}
-        backHref="/dashboard/flashcards"
-      />
-    </div>
+    <FlashcardStudy
+      flashcards={studyKit.flashcards}
+      studyKitId={id}
+      studyKitTitle={studyKit.title}
+      backHref="/dashboard/flashcards"
+    />
   );
 }

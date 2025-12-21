@@ -31,24 +31,26 @@ export async function POST(request: Request) {
       },
     });
 
-    const { content, model, length } = await request.json();
+    const { content, model, length, audience, fileId } = await request.json();
 
-    if (!content) {
-      return new NextResponse("Content is required", { status: 400 });
+    if (!content && !fileId) {
+      return new NextResponse("Content or File is required", { status: 400 });
     }
 
-    const summaryText = await generateSummary(content, model || "auto", length || "medium");
+    const summaryData = await generateSummary(content, model || "auto", length || "medium");
+    const { summary: summaryText, title: aiTitle, subject } = summaryData;
 
-    // Generate a title from the first few words of the content or summary
-    const title = content.split(" ").slice(0, 5).join(" ") + "...";
+    // Generate a title using AI suggestion if available
+    const finalTitle = `${subject}: ${aiTitle}`;
 
     // Persist to database using the new Summary model
     const summary = await db.summary.create({
       data: {
         userId,
-        title,
-        sourceText: content,
+        title: finalTitle,
+        sourceText: content || "",
         summaryText: summaryText,
+        fileId: fileId || null,
       },
     });
 

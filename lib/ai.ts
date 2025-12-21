@@ -148,7 +148,7 @@ export async function generateSummary(
   content: string,
   modelType: AnyModelType = "auto",
   length: SummaryLength = "medium"
-): Promise<string> {
+): Promise<{ summary: string; title: string; subject: string }> {
   const modelName = selectModel(modelType);
 
   // Customize instructions based on length
@@ -172,53 +172,80 @@ export async function generateSummary(
 - Aim for 200-300 words`;
   }
 
-  const prompt = `You are an expert study assistant. Create a ${length} summary of the following study material.
+  const prompt = `You are an expert study assistant. Create a ${length} summary of the provided study material.
+  
+Return your response in EXACTLY this JSON format:
+{
+  "summary": "The detailed markdown summary...",
+  "title": "A short, professional title for the summary",
+  "subject": "The primary academic subject (e.g. Mathematics, Physics, History, Biology)"
+}
 
-Instructions:
+Instructions for the 'summary' field:
 ${lengthInstructions}
-- Highlight key concepts, definitions, and important points
-- Use Markdown headings with # and ## (not plain text titles)
-- Use '-' for bullet lists (not inline sentences)
-- Add blank lines between sections for readability
-- Keep paragraphs short (2-4 lines)
-- Format the response as clean Markdown only (no extra preface)
+- Use Markdown headings with # and ##
+- Use '-' for bullet lists
+- Highlight key definitions and important points
+- Return ONLY the JSON object.
 
 Study Material:
-${content.slice(0, 30000)} // Limit content to avoid token limits if super large
+${content.slice(0, 30000)}
 `;
 
   try {
     const messages = [
       {
         role: "system" as const,
-        content: "You are a helpful and expert study assistant.",
+        content: "You are a helpful and expert study assistant that always responds in JSON format.",
       },
       { role: "user" as const, content: prompt },
     ];
+
+    let responseText = "";
 
     if (isOpenRouterModel(modelName)) {
       const completion = await openRouterChatCompletion({
         model: modelName,
         messages,
-        temperature: 0.5,
-        max_tokens: 2048,
+        temperature: 0.3,
+        max_tokens: 3000,
+        response_format: { type: "json_object" },
       });
-      return (
-        completion.choices?.[0]?.message?.content ||
-        "Failed to generate summary."
-      );
+      responseText = completion.choices?.[0]?.message?.content || "";
+    } else {
+      const completion = await groq.chat.completions.create({
+        messages,
+        model: modelName,
+        temperature: 0.3,
+        max_tokens: 3000,
+        response_format: { type: "json_object" },
+      });
+      responseText = completion.choices[0]?.message?.content || "";
     }
 
-    const completion = await groq.chat.completions.create({
-      messages,
-      model: modelName,
-      temperature: 0.5,
-      max_tokens: 2048,
-    });
+    if (!responseText) {
+      throw new Error("No response from AI");
+    }
 
-    return (
-      completion.choices[0]?.message?.content || "Failed to generate summary."
-    );
+    try {
+      // Find JSON content even if wrapped in markdown code blocks
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+      const jsonString = jsonMatch ? jsonMatch[0] : responseText;
+      
+      const parsed = JSON.parse(jsonString);
+      return {
+        summary: parsed.summary || responseText,
+        title: parsed.title || "Untitled Summary",
+        subject: parsed.subject || "General",
+      };
+    } catch (e) {
+      console.error("Failed to parse AI summary JSON:", responseText);
+      return {
+        summary: responseText, // Fallback to raw text
+        title: "Untitled Summary",
+        subject: "General",
+      };
+    }
   } catch (error) {
     console.error("Groq Summary Generation Error:", error);
     throw new Error("Failed to generate summary");
@@ -377,14 +404,14 @@ export async function generateStudyMaterials(
   modelType: AnyModelType = "auto"
 ): Promise<StudyMaterials> {
   // Run all generation in parallel for speed
-  const [summary, flashcards, quizQuestions] = await Promise.all([
+  const [summaryData, flashcards, quizQuestions] = await Promise.all([
     generateSummary(content, modelType),
     generateFlashcards(content, 10, modelType),
     generateQuizQuestions(content, 5, modelType),
   ]);
 
   return {
-    summary,
+    summary: summaryData.summary,
     flashcards,
     quizQuestions,
   };

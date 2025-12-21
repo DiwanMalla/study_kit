@@ -260,6 +260,7 @@ export type FileWhereInput = {
   extractedContent?: Prisma.XOR<Prisma.ExtractedContentNullableScalarRelationFilter, Prisma.ExtractedContentWhereInput> | null
   studyKit?: Prisma.XOR<Prisma.StudyKitNullableScalarRelationFilter, Prisma.StudyKitWhereInput> | null
   assignment?: Prisma.XOR<Prisma.AssignmentNullableScalarRelationFilter, Prisma.AssignmentWhereInput> | null
+  summaries?: Prisma.SummaryListRelationFilter
 }
 
 export type FileOrderByWithRelationInput = {
@@ -277,6 +278,7 @@ export type FileOrderByWithRelationInput = {
   extractedContent?: Prisma.ExtractedContentOrderByWithRelationInput
   studyKit?: Prisma.StudyKitOrderByWithRelationInput
   assignment?: Prisma.AssignmentOrderByWithRelationInput
+  summaries?: Prisma.SummaryOrderByRelationAggregateInput
 }
 
 export type FileWhereUniqueInput = Prisma.AtLeast<{
@@ -297,6 +299,7 @@ export type FileWhereUniqueInput = Prisma.AtLeast<{
   extractedContent?: Prisma.XOR<Prisma.ExtractedContentNullableScalarRelationFilter, Prisma.ExtractedContentWhereInput> | null
   studyKit?: Prisma.XOR<Prisma.StudyKitNullableScalarRelationFilter, Prisma.StudyKitWhereInput> | null
   assignment?: Prisma.XOR<Prisma.AssignmentNullableScalarRelationFilter, Prisma.AssignmentWhereInput> | null
+  summaries?: Prisma.SummaryListRelationFilter
 }, "id">
 
 export type FileOrderByWithAggregationInput = {
@@ -346,6 +349,7 @@ export type FileCreateInput = {
   extractedContent?: Prisma.ExtractedContentCreateNestedOneWithoutFileInput
   studyKit?: Prisma.StudyKitCreateNestedOneWithoutFileInput
   assignment?: Prisma.AssignmentCreateNestedOneWithoutFilesInput
+  summaries?: Prisma.SummaryCreateNestedManyWithoutFileInput
 }
 
 export type FileUncheckedCreateInput = {
@@ -361,6 +365,7 @@ export type FileUncheckedCreateInput = {
   assignmentId?: string | null
   extractedContent?: Prisma.ExtractedContentUncheckedCreateNestedOneWithoutFileInput
   studyKit?: Prisma.StudyKitUncheckedCreateNestedOneWithoutFileInput
+  summaries?: Prisma.SummaryUncheckedCreateNestedManyWithoutFileInput
 }
 
 export type FileUpdateInput = {
@@ -376,6 +381,7 @@ export type FileUpdateInput = {
   extractedContent?: Prisma.ExtractedContentUpdateOneWithoutFileNestedInput
   studyKit?: Prisma.StudyKitUpdateOneWithoutFileNestedInput
   assignment?: Prisma.AssignmentUpdateOneWithoutFilesNestedInput
+  summaries?: Prisma.SummaryUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateInput = {
@@ -391,6 +397,7 @@ export type FileUncheckedUpdateInput = {
   assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   extractedContent?: Prisma.ExtractedContentUncheckedUpdateOneWithoutFileNestedInput
   studyKit?: Prisma.StudyKitUncheckedUpdateOneWithoutFileNestedInput
+  summaries?: Prisma.SummaryUncheckedUpdateManyWithoutFileNestedInput
 }
 
 export type FileCreateManyInput = {
@@ -490,6 +497,11 @@ export type FileSumOrderByAggregateInput = {
 export type FileScalarRelationFilter = {
   is?: Prisma.FileWhereInput
   isNot?: Prisma.FileWhereInput
+}
+
+export type FileNullableScalarRelationFilter = {
+  is?: Prisma.FileWhereInput | null
+  isNot?: Prisma.FileWhereInput | null
 }
 
 export type FileCreateNestedManyWithoutUserInput = {
@@ -612,6 +624,22 @@ export type FileUncheckedUpdateManyWithoutAssignmentNestedInput = {
   deleteMany?: Prisma.FileScalarWhereInput | Prisma.FileScalarWhereInput[]
 }
 
+export type FileCreateNestedOneWithoutSummariesInput = {
+  create?: Prisma.XOR<Prisma.FileCreateWithoutSummariesInput, Prisma.FileUncheckedCreateWithoutSummariesInput>
+  connectOrCreate?: Prisma.FileCreateOrConnectWithoutSummariesInput
+  connect?: Prisma.FileWhereUniqueInput
+}
+
+export type FileUpdateOneWithoutSummariesNestedInput = {
+  create?: Prisma.XOR<Prisma.FileCreateWithoutSummariesInput, Prisma.FileUncheckedCreateWithoutSummariesInput>
+  connectOrCreate?: Prisma.FileCreateOrConnectWithoutSummariesInput
+  upsert?: Prisma.FileUpsertWithoutSummariesInput
+  disconnect?: Prisma.FileWhereInput | boolean
+  delete?: Prisma.FileWhereInput | boolean
+  connect?: Prisma.FileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FileUpdateToOneWithWhereWithoutSummariesInput, Prisma.FileUpdateWithoutSummariesInput>, Prisma.FileUncheckedUpdateWithoutSummariesInput>
+}
+
 export type FileCreateWithoutUserInput = {
   id?: string
   name: string
@@ -624,6 +652,7 @@ export type FileCreateWithoutUserInput = {
   extractedContent?: Prisma.ExtractedContentCreateNestedOneWithoutFileInput
   studyKit?: Prisma.StudyKitCreateNestedOneWithoutFileInput
   assignment?: Prisma.AssignmentCreateNestedOneWithoutFilesInput
+  summaries?: Prisma.SummaryCreateNestedManyWithoutFileInput
 }
 
 export type FileUncheckedCreateWithoutUserInput = {
@@ -638,6 +667,7 @@ export type FileUncheckedCreateWithoutUserInput = {
   assignmentId?: string | null
   extractedContent?: Prisma.ExtractedContentUncheckedCreateNestedOneWithoutFileInput
   studyKit?: Prisma.StudyKitUncheckedCreateNestedOneWithoutFileInput
+  summaries?: Prisma.SummaryUncheckedCreateNestedManyWithoutFileInput
 }
 
 export type FileCreateOrConnectWithoutUserInput = {
@@ -694,6 +724,7 @@ export type FileCreateWithoutExtractedContentInput = {
   user: Prisma.UserCreateNestedOneWithoutFilesInput
   studyKit?: Prisma.StudyKitCreateNestedOneWithoutFileInput
   assignment?: Prisma.AssignmentCreateNestedOneWithoutFilesInput
+  summaries?: Prisma.SummaryCreateNestedManyWithoutFileInput
 }
 
 export type FileUncheckedCreateWithoutExtractedContentInput = {
@@ -708,6 +739,7 @@ export type FileUncheckedCreateWithoutExtractedContentInput = {
   updatedAt?: Date | string
   assignmentId?: string | null
   studyKit?: Prisma.StudyKitUncheckedCreateNestedOneWithoutFileInput
+  summaries?: Prisma.SummaryUncheckedCreateNestedManyWithoutFileInput
 }
 
 export type FileCreateOrConnectWithoutExtractedContentInput = {
@@ -738,6 +770,7 @@ export type FileUpdateWithoutExtractedContentInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
   studyKit?: Prisma.StudyKitUpdateOneWithoutFileNestedInput
   assignment?: Prisma.AssignmentUpdateOneWithoutFilesNestedInput
+  summaries?: Prisma.SummaryUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateWithoutExtractedContentInput = {
@@ -752,6 +785,7 @@ export type FileUncheckedUpdateWithoutExtractedContentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   studyKit?: Prisma.StudyKitUncheckedUpdateOneWithoutFileNestedInput
+  summaries?: Prisma.SummaryUncheckedUpdateManyWithoutFileNestedInput
 }
 
 export type FileCreateWithoutStudyKitInput = {
@@ -766,6 +800,7 @@ export type FileCreateWithoutStudyKitInput = {
   user: Prisma.UserCreateNestedOneWithoutFilesInput
   extractedContent?: Prisma.ExtractedContentCreateNestedOneWithoutFileInput
   assignment?: Prisma.AssignmentCreateNestedOneWithoutFilesInput
+  summaries?: Prisma.SummaryCreateNestedManyWithoutFileInput
 }
 
 export type FileUncheckedCreateWithoutStudyKitInput = {
@@ -780,6 +815,7 @@ export type FileUncheckedCreateWithoutStudyKitInput = {
   updatedAt?: Date | string
   assignmentId?: string | null
   extractedContent?: Prisma.ExtractedContentUncheckedCreateNestedOneWithoutFileInput
+  summaries?: Prisma.SummaryUncheckedCreateNestedManyWithoutFileInput
 }
 
 export type FileCreateOrConnectWithoutStudyKitInput = {
@@ -810,6 +846,7 @@ export type FileUpdateWithoutStudyKitInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
   extractedContent?: Prisma.ExtractedContentUpdateOneWithoutFileNestedInput
   assignment?: Prisma.AssignmentUpdateOneWithoutFilesNestedInput
+  summaries?: Prisma.SummaryUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateWithoutStudyKitInput = {
@@ -824,6 +861,7 @@ export type FileUncheckedUpdateWithoutStudyKitInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   extractedContent?: Prisma.ExtractedContentUncheckedUpdateOneWithoutFileNestedInput
+  summaries?: Prisma.SummaryUncheckedUpdateManyWithoutFileNestedInput
 }
 
 export type FileCreateWithoutAssignmentInput = {
@@ -838,6 +876,7 @@ export type FileCreateWithoutAssignmentInput = {
   user: Prisma.UserCreateNestedOneWithoutFilesInput
   extractedContent?: Prisma.ExtractedContentCreateNestedOneWithoutFileInput
   studyKit?: Prisma.StudyKitCreateNestedOneWithoutFileInput
+  summaries?: Prisma.SummaryCreateNestedManyWithoutFileInput
 }
 
 export type FileUncheckedCreateWithoutAssignmentInput = {
@@ -852,6 +891,7 @@ export type FileUncheckedCreateWithoutAssignmentInput = {
   updatedAt?: Date | string
   extractedContent?: Prisma.ExtractedContentUncheckedCreateNestedOneWithoutFileInput
   studyKit?: Prisma.StudyKitUncheckedCreateNestedOneWithoutFileInput
+  summaries?: Prisma.SummaryUncheckedCreateNestedManyWithoutFileInput
 }
 
 export type FileCreateOrConnectWithoutAssignmentInput = {
@@ -880,6 +920,82 @@ export type FileUpdateManyWithWhereWithoutAssignmentInput = {
   data: Prisma.XOR<Prisma.FileUpdateManyMutationInput, Prisma.FileUncheckedUpdateManyWithoutAssignmentInput>
 }
 
+export type FileCreateWithoutSummariesInput = {
+  id?: string
+  name: string
+  url: string
+  type: string
+  size: number
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutFilesInput
+  extractedContent?: Prisma.ExtractedContentCreateNestedOneWithoutFileInput
+  studyKit?: Prisma.StudyKitCreateNestedOneWithoutFileInput
+  assignment?: Prisma.AssignmentCreateNestedOneWithoutFilesInput
+}
+
+export type FileUncheckedCreateWithoutSummariesInput = {
+  id?: string
+  userId: string
+  name: string
+  url: string
+  type: string
+  size: number
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assignmentId?: string | null
+  extractedContent?: Prisma.ExtractedContentUncheckedCreateNestedOneWithoutFileInput
+  studyKit?: Prisma.StudyKitUncheckedCreateNestedOneWithoutFileInput
+}
+
+export type FileCreateOrConnectWithoutSummariesInput = {
+  where: Prisma.FileWhereUniqueInput
+  create: Prisma.XOR<Prisma.FileCreateWithoutSummariesInput, Prisma.FileUncheckedCreateWithoutSummariesInput>
+}
+
+export type FileUpsertWithoutSummariesInput = {
+  update: Prisma.XOR<Prisma.FileUpdateWithoutSummariesInput, Prisma.FileUncheckedUpdateWithoutSummariesInput>
+  create: Prisma.XOR<Prisma.FileCreateWithoutSummariesInput, Prisma.FileUncheckedCreateWithoutSummariesInput>
+  where?: Prisma.FileWhereInput
+}
+
+export type FileUpdateToOneWithWhereWithoutSummariesInput = {
+  where?: Prisma.FileWhereInput
+  data: Prisma.XOR<Prisma.FileUpdateWithoutSummariesInput, Prisma.FileUncheckedUpdateWithoutSummariesInput>
+}
+
+export type FileUpdateWithoutSummariesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
+  extractedContent?: Prisma.ExtractedContentUpdateOneWithoutFileNestedInput
+  studyKit?: Prisma.StudyKitUpdateOneWithoutFileNestedInput
+  assignment?: Prisma.AssignmentUpdateOneWithoutFilesNestedInput
+}
+
+export type FileUncheckedUpdateWithoutSummariesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  extractedContent?: Prisma.ExtractedContentUncheckedUpdateOneWithoutFileNestedInput
+  studyKit?: Prisma.StudyKitUncheckedUpdateOneWithoutFileNestedInput
+}
+
 export type FileCreateManyUserInput = {
   id?: string
   name: string
@@ -904,6 +1020,7 @@ export type FileUpdateWithoutUserInput = {
   extractedContent?: Prisma.ExtractedContentUpdateOneWithoutFileNestedInput
   studyKit?: Prisma.StudyKitUpdateOneWithoutFileNestedInput
   assignment?: Prisma.AssignmentUpdateOneWithoutFilesNestedInput
+  summaries?: Prisma.SummaryUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateWithoutUserInput = {
@@ -918,6 +1035,7 @@ export type FileUncheckedUpdateWithoutUserInput = {
   assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   extractedContent?: Prisma.ExtractedContentUncheckedUpdateOneWithoutFileNestedInput
   studyKit?: Prisma.StudyKitUncheckedUpdateOneWithoutFileNestedInput
+  summaries?: Prisma.SummaryUncheckedUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateManyWithoutUserInput = {
@@ -956,6 +1074,7 @@ export type FileUpdateWithoutAssignmentInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
   extractedContent?: Prisma.ExtractedContentUpdateOneWithoutFileNestedInput
   studyKit?: Prisma.StudyKitUpdateOneWithoutFileNestedInput
+  summaries?: Prisma.SummaryUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateWithoutAssignmentInput = {
@@ -970,6 +1089,7 @@ export type FileUncheckedUpdateWithoutAssignmentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   extractedContent?: Prisma.ExtractedContentUncheckedUpdateOneWithoutFileNestedInput
   studyKit?: Prisma.StudyKitUncheckedUpdateOneWithoutFileNestedInput
+  summaries?: Prisma.SummaryUncheckedUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateManyWithoutAssignmentInput = {
@@ -984,6 +1104,35 @@ export type FileUncheckedUpdateManyWithoutAssignmentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type FileCountOutputType
+ */
+
+export type FileCountOutputType = {
+  summaries: number
+}
+
+export type FileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  summaries?: boolean | FileCountOutputTypeCountSummariesArgs
+}
+
+/**
+ * FileCountOutputType without action
+ */
+export type FileCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FileCountOutputType
+   */
+  select?: Prisma.FileCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * FileCountOutputType without action
+ */
+export type FileCountOutputTypeCountSummariesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SummaryWhereInput
+}
 
 
 export type FileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1001,6 +1150,8 @@ export type FileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   extractedContent?: boolean | Prisma.File$extractedContentArgs<ExtArgs>
   studyKit?: boolean | Prisma.File$studyKitArgs<ExtArgs>
   assignment?: boolean | Prisma.File$assignmentArgs<ExtArgs>
+  summaries?: boolean | Prisma.File$summariesArgs<ExtArgs>
+  _count?: boolean | Prisma.FileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["file"]>
 
 export type FileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1052,6 +1203,8 @@ export type FileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   extractedContent?: boolean | Prisma.File$extractedContentArgs<ExtArgs>
   studyKit?: boolean | Prisma.File$studyKitArgs<ExtArgs>
   assignment?: boolean | Prisma.File$assignmentArgs<ExtArgs>
+  summaries?: boolean | Prisma.File$summariesArgs<ExtArgs>
+  _count?: boolean | Prisma.FileCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1069,6 +1222,7 @@ export type $FilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     extractedContent: Prisma.$ExtractedContentPayload<ExtArgs> | null
     studyKit: Prisma.$StudyKitPayload<ExtArgs> | null
     assignment: Prisma.$AssignmentPayload<ExtArgs> | null
+    summaries: Prisma.$SummaryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1479,6 +1633,7 @@ export interface Prisma__FileClient<T, Null = never, ExtArgs extends runtime.Typ
   extractedContent<T extends Prisma.File$extractedContentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$extractedContentArgs<ExtArgs>>): Prisma.Prisma__ExtractedContentClient<runtime.Types.Result.GetResult<Prisma.$ExtractedContentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   studyKit<T extends Prisma.File$studyKitArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$studyKitArgs<ExtArgs>>): Prisma.Prisma__StudyKitClient<runtime.Types.Result.GetResult<Prisma.$StudyKitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   assignment<T extends Prisma.File$assignmentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$assignmentArgs<ExtArgs>>): Prisma.Prisma__AssignmentClient<runtime.Types.Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  summaries<T extends Prisma.File$summariesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$summariesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SummaryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1968,6 +2123,30 @@ export type File$assignmentArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   include?: Prisma.AssignmentInclude<ExtArgs> | null
   where?: Prisma.AssignmentWhereInput
+}
+
+/**
+ * File.summaries
+ */
+export type File$summariesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Summary
+   */
+  select?: Prisma.SummarySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Summary
+   */
+  omit?: Prisma.SummaryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SummaryInclude<ExtArgs> | null
+  where?: Prisma.SummaryWhereInput
+  orderBy?: Prisma.SummaryOrderByWithRelationInput | Prisma.SummaryOrderByWithRelationInput[]
+  cursor?: Prisma.SummaryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SummaryScalarFieldEnum | Prisma.SummaryScalarFieldEnum[]
 }
 
 /**

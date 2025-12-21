@@ -74,10 +74,10 @@
     @apply bg-background text-foreground;
     font-family: "Spline Sans", sans-serif;
   }
-  button, 
-  [type='button'], 
-  [type='reset'], 
-  [type='submit'] {
+  button,
+  [type="button"],
+  [type="reset"],
+  [type="submit"] {
     cursor: pointer;
   }
 }

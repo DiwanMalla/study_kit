@@ -1,17 +1,11 @@
 "use client";
 
 import { useState, useRef } from "react";
-import {
-  Sparkles,
-  ChevronDown,
-  Upload,
-  Loader2,
-  CheckCircle,
-} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { ModelSelector, ModelType } from "@/components/model-selector";
+import { Upload, Loader2, CheckCircle, Sparkles } from "lucide-react";
 
 export function CreateStudyKit() {
   const [isUploading, setIsUploading] = useState(false);

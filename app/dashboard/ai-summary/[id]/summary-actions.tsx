@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Trash2, Copy, Check, Loader2 } from "lucide-react";
+import { Trash2, Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,7 +21,10 @@ interface SummaryActionsProps {
   summaryText: string;
 }
 
-export function SummaryActions({ summaryId, summaryText }: SummaryActionsProps) {
+export function SummaryActions({
+  summaryId,
+  summaryText,
+}: SummaryActionsProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -41,7 +43,7 @@ export function SummaryActions({ summaryId, summaryText }: SummaryActionsProps) 
         title: "Deleted",
         description: "Summary deleted successfully",
       });
-      
+
       router.push("/dashboard/ai-summary");
       router.refresh();
     } catch (error) {
@@ -65,25 +67,29 @@ export function SummaryActions({ summaryId, summaryText }: SummaryActionsProps) 
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <Button variant="outline" size="sm" onClick={handleCopy}>
-        {copied ? (
-          <Check className="h-4 w-4 mr-2" />
-        ) : (
-          <Copy className="h-4 w-4 mr-2" />
-        )}
-        {copied ? "Copied" : "Copy"}
-      </Button>
+    <div className="flex items-center gap-3">
+      <button
+        onClick={handleCopy}
+        className="flex-shrink-0 px-5 py-2.5 rounded-full bg-card border border-border hover:border-primary text-slate-700 dark:text-slate-200 font-medium shadow-sm flex items-center gap-2 transition-all hover:shadow-md active:scale-95 group"
+      >
+        <span className="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">
+          {copied ? "check" : "content_copy"}
+        </span>
+        {copied ? "Copied!" : "Copy Summary"}
+      </button>
 
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant="destructive" size="sm" disabled={isDeleting}>
+          <button
+            disabled={isDeleting}
+            className="flex-shrink-0 w-10 h-10 rounded-full bg-card border border-border hover:border-red-500 text-slate-500 hover:text-red-500 flex items-center justify-center transition-all hover:shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             {isDeleting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-                <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-4 w-4" />
             )}
-          </Button>
+          </button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>

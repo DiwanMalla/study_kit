@@ -55,11 +55,16 @@ export async function POST(request: Request) {
       content = extracted.content;
 
       // Save extracted content
-      await db.extractedContent.create({
-        data: {
+      await db.extractedContent.upsert({
+        where: { fileId: file.id },
+        update: {
+          content: content,
+          metadata: extracted.metadata as any,
+        },
+        create: {
           fileId: file.id,
           content: content,
-          metadata: extracted.metadata,
+          metadata: extracted.metadata as any,
         },
       });
     }

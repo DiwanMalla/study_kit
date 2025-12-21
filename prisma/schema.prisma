@@ -36,6 +36,7 @@ model File {
   studyKit         StudyKit?
   assignmentId     String?
   assignment       Assignment?       @relation(fields: [assignmentId], references: [id])
+  summaries        Summary[]
   
   @@index([userId])
   @@index([assignmentId])
@@ -150,6 +151,8 @@ model Summary {
   id          String   @id @default(cuid())
   userId      String
   user        User     @relation(fields: [userId], references: [clerkId])
+  fileId      String?
+  file        File?    @relation(fields: [fileId], references: [id])
   title       String
   sourceText  String   @db.Text
   summaryText String   @db.Text
@@ -158,5 +161,6 @@ model Summary {
   updatedAt   DateTime @updatedAt
 
   @@index([userId])
+  @@index([fileId])
 }
 

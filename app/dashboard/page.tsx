@@ -49,37 +49,37 @@ export default async function DashboardPage() {
     {
       title: "AI Tutor",
       description: "Chat with your notes and ask questions.",
-      icon: Bot,
+      icon: "smart_toy",
       href: "/dashboard/ai-tutor",
     },
     {
       title: "Assignment Helper",
       description: "Get homework help and step-by-step guides.",
-      icon: FileEdit,
+      icon: "edit_note",
       href: "/dashboard/assignment-helper",
     },
     {
       title: "AI Summary",
       description: "Summarize long documents in seconds.",
-      icon: FileText,
+      icon: "description",
       href: "/dashboard/ai-summary",
     },
     {
       title: "Flashcard Studio",
       description: "Generate flashcard decks instantly from files.",
-      icon: Layers,
+      icon: "layers",
       href: "/dashboard/flashcards",
     },
     {
       title: "AI Quiz",
       description: "Test your knowledge with adaptive quizzes.",
-      icon: CheckCircle,
+      icon: "quiz",
       href: "/dashboard/quiz",
     },
     {
       title: "Exam Prep",
       description: "Create comprehensive study guides.",
-      icon: GraduationCap,
+      icon: "school",
       href: "/dashboard/exam",
     },
   ];
@@ -95,8 +95,8 @@ export default async function DashboardPage() {
     hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
 
   return (
-    <div className="max-w-[1200px] mx-auto p-6 md:p-10 flex flex-col gap-8 pb-20">
-      <header className="flex flex-wrap justify-between items-end gap-4">
+    <div className="max-w-[1700px] mx-auto p-16 md:p-24 flex flex-col gap-12 pb-32">
+      <header className="flex flex-wrap justify-between items-end gap-12">
         <div className="flex flex-col gap-1">
           <h2 className="text-foreground text-3xl md:text-4xl font-black leading-tight tracking-tight">
             {greeting}, {user?.firstName || "Student"}
@@ -113,35 +113,35 @@ export default async function DashboardPage() {
       </header>
 
       {/* Stats Section */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <section className="grid grid-cols-2 md:grid-cols-4 gap-12">
         <StatCard
           label="Study Kits"
           value={studyKits.length}
-          icon={FolderOpen}
+          icon="folder_open"
           variant="primary"
         />
         <StatCard
           label="Flashcards Mastered"
           value={totalFlashcards}
-          icon={GraduationCap}
+          icon="school"
           variant="green"
         />
         <StatCard
           label="Quizzes Taken"
           value={totalQuizzes}
-          icon={CheckCircle}
+          icon="check_circle"
           variant="blue"
         />
         <StatCard
           label="Study Hours"
           value="0h"
-          icon={Clock}
+          icon="schedule"
           variant="purple"
         />
       </section>
 
       {/* Action Section */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-16">
         <CreateStudyKit />
 
         {/* Study Kits Library */}
@@ -189,7 +189,7 @@ export default async function DashboardPage() {
       </section>
 
       {/* AI Study Tools */}
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-12">
         <h3 className="text-xl font-bold text-foreground">AI Study Tools</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {tools.map((tool) => (
