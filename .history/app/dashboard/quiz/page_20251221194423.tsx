@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { db } from "@/lib/db";
 
@@ -19,20 +20,17 @@ function getColorClasses(color: string) {
     green: {
       bg: "bg-green-100 dark:bg-green-900/30",
       text: "text-green-600 dark:text-green-400",
-      badge:
-        "bg-green-50 dark:bg-green-900/10 text-green-600 dark:text-green-400",
+      badge: "bg-green-50 dark:bg-green-900/10 text-green-600 dark:text-green-400",
     },
     orange: {
       bg: "bg-orange-100 dark:bg-orange-900/30",
       text: "text-orange-600 dark:text-orange-400",
-      badge:
-        "bg-orange-50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400",
+      badge: "bg-orange-50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400",
     },
     purple: {
       bg: "bg-purple-100 dark:bg-purple-900/30",
       text: "text-purple-600 dark:text-purple-400",
-      badge:
-        "bg-purple-50 dark:bg-purple-900/10 text-purple-600 dark:text-purple-400",
+      badge: "bg-purple-50 dark:bg-purple-900/10 text-purple-600 dark:text-purple-400",
     },
     pink: {
       bg: "bg-pink-100 dark:bg-pink-900/30",
@@ -50,13 +48,8 @@ function getRelativeTime(date: Date) {
   if (days === 0) return "today";
   if (days === 1) return "1 day ago";
   if (days < 7) return `${days} days ago`;
-  if (days < 30)
-    return `${Math.floor(days / 7)} week${
-      Math.floor(days / 7) > 1 ? "s" : ""
-    } ago`;
-  return `${Math.floor(days / 30)} month${
-    Math.floor(days / 30) > 1 ? "s" : ""
-  } ago`;
+  if (days < 30) return `${Math.floor(days / 7)} week${Math.floor(days / 7) > 1 ? "s" : ""} ago`;
+  return `${Math.floor(days / 30)} month${Math.floor(days / 30) > 1 ? "s" : ""} ago`;
 }
 
 export default async function QuizPage() {
@@ -99,9 +92,7 @@ export default async function QuizPage() {
           {/* Quiz Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {quizzes.map((quiz) => {
-              const subjectInfo =
-                SUBJECT_ICON_COLOR[quiz.subject] ||
-                SUBJECT_ICON_COLOR["Psychology"];
+              const subjectInfo = SUBJECT_ICON_COLOR[quiz.subject] || SUBJECT_ICON_COLOR["Psychology"];
               const colors = getColorClasses(subjectInfo.color);
               return (
                 <div

@@ -50,6 +50,7 @@ export async function POST(request: Request) {
     });
 
     // 4. Create Quiz & Questions
+    let quizId = "";
     if (questions.length > 0) {
         const quiz = await db.quiz.create({
             data: {
@@ -57,6 +58,7 @@ export async function POST(request: Request) {
                 title: "Generated Quiz",
             }
         });
+        quizId = quiz.id;
 
         await db.quizQuestion.createMany({
             data: questions.map((q, index) => ({
@@ -70,7 +72,7 @@ export async function POST(request: Request) {
         });
     }
 
-    return NextResponse.json({ questions, studyKitId: studyKit.id });
+    return NextResponse.json({ questions, studyKitId: studyKit.id, id: quizId });
   } catch (error) {
     console.error("[QUIZ_GENERATE]", error);
     return new NextResponse("Internal Server Error", { status: 500 });

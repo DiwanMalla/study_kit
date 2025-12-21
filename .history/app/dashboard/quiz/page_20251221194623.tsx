@@ -179,21 +179,17 @@ export default async function QuizPage() {
               );
             })}
 
-            {/* Create New Quiz Card */}
-            <Link
-              href="/dashboard/quiz/new"
-              className="border-2 border-dashed border-border rounded-3xl p-6 flex flex-col items-center justify-center text-center hover:border-primary hover:bg-surface transition-all cursor-pointer group min-h-[250px]"
+            {/* No Quiz Like This Card */}
+            <div
+              className="border-2 border-dashed border-border rounded-3xl p-6 flex flex-col items-center justify-center text-center hover:border-primary hover:bg-surface transition-all cursor-default group min-h-[250px]"
             >
-              <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:text-primary group-hover:bg-primary/10 transition-colors flex items-center justify-center mb-4">
-                <span className="material-symbols-outlined text-3xl">add</span>
+              <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 transition-colors flex items-center justify-center mb-4">
+                <span className="material-symbols-outlined text-3xl">block</span>
               </div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-                Create New Quiz
+                No quiz like this
               </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Generate questions from your notes or create them manually.
-              </p>
-            </Link>
+            </div>
           </div>
         </div>
       </div>

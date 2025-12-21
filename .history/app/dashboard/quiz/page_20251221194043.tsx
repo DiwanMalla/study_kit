@@ -1,15 +1,59 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { db } from "@/lib/db";
+import { format } from "date-fns";
 
-const SUBJECT_ICON_COLOR: Record<string, { icon: string; color: string }> = {
-  Psychology: { icon: "psychology", color: "blue" },
-  Math: { icon: "functions", color: "green" },
-  History: { icon: "history_edu", color: "orange" },
-  "Computer Science": { icon: "terminal", color: "purple" },
-  Biology: { icon: "biotech", color: "pink" },
-};
+// Mock data - replace with actual data fetching
+const mockQuizzes = [
+  {
+    id: "1",
+    title: "Introduction to Behavioral Science",
+    subject: "Psychology",
+    questionCount: 25,
+    icon: "psychology",
+    color: "blue",
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+  },
+  {
+    id: "2",
+    title: "Calculus I: Derivatives & Limits",
+    subject: "Math",
+    questionCount: 15,
+    icon: "functions",
+    color: "green",
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+  },
+  {
+    id: "3",
+    title: "European History: 1900-1950",
+    subject: "History",
+    questionCount: 40,
+    icon: "history_edu",
+    color: "orange",
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+  },
+  {
+    id: "4",
+    title: "Data Structures: Trees & Graphs",
+    subject: "Computer Science",
+    questionCount: 20,
+    icon: "terminal",
+    color: "purple",
+    createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+  },
+  {
+    id: "5",
+    title: "Cellular Respiration & Photosynthesis",
+    subject: "Biology",
+    questionCount: 30,
+    icon: "biotech",
+    color: "pink",
+    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+  },
+];
 
-function getColorClasses(color: string) {
+const getColorClasses = (color: string) => {
   const colors: Record<string, { bg: string; text: string; badge: string }> = {
     blue: {
       bg: "bg-blue-100 dark:bg-blue-900/30",
@@ -41,12 +85,13 @@ function getColorClasses(color: string) {
     },
   };
   return colors[color] || colors.blue;
-}
+};
 
-function getRelativeTime(date: Date) {
+const getRelativeTime = (date: Date) => {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
   if (days === 0) return "today";
   if (days === 1) return "1 day ago";
   if (days < 7) return `${days} days ago`;
@@ -57,17 +102,12 @@ function getRelativeTime(date: Date) {
   return `${Math.floor(days / 30)} month${
     Math.floor(days / 30) > 1 ? "s" : ""
   } ago`;
-}
+};
 
-export default async function QuizPage() {
-  // Fetch quizzes and their question counts
-  const quizzes = await db.quiz.findMany({
-    include: {
-      questions: true,
-      studyKit: true,
-    },
-    orderBy: { createdAt: "desc" },
-  });
+export default function QuizPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [subjectFilter, setSubjectFilter] = useState("All Subjects");
+  const [sortOrder, setSortOrder] = useState("Newest First");
 
   return (
     <div className="w-full h-full bg-background overflow-y-auto p-6 md:p-10">
@@ -96,13 +136,48 @@ export default async function QuizPage() {
         </header>
 
         <div className="flex flex-col gap-8 pb-20">
+          {/* Filters */}
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[20px]">
+                search
+              </span>
+              <input
+                className="w-full bg-surface border border-border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
+                placeholder="Search quizzes..."
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-4">
+              <select
+                className="bg-surface border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer min-w-[160px]"
+                value={subjectFilter}
+                onChange={(e) => setSubjectFilter(e.target.value)}
+              >
+                <option>All Subjects</option>
+                <option>Science</option>
+                <option>History</option>
+                <option>Math</option>
+                <option>Languages</option>
+              </select>
+              <select
+                className="bg-surface border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer min-w-[160px]"
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+              >
+                <option>Newest First</option>
+                <option>Oldest First</option>
+                <option>Alphabetical</option>
+              </select>
+            </div>
+          </div>
+
           {/* Quiz Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {quizzes.map((quiz) => {
-              const subjectInfo =
-                SUBJECT_ICON_COLOR[quiz.subject] ||
-                SUBJECT_ICON_COLOR["Psychology"];
-              const colors = getColorClasses(subjectInfo.color);
+            {mockQuizzes.map((quiz) => {
+              const colors = getColorClasses(quiz.color);
               return (
                 <div
                   key={quiz.id}
@@ -114,7 +189,7 @@ export default async function QuizPage() {
                       className={`w-12 h-12 rounded-2xl ${colors.bg} ${colors.text} flex items-center justify-center`}
                     >
                       <span className="material-symbols-outlined">
-                        {subjectInfo.icon}
+                        {quiz.icon}
                       </span>
                     </div>
                     <div className="flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
@@ -155,7 +230,7 @@ export default async function QuizPage() {
                       <span className="material-symbols-outlined text-sm">
                         format_list_numbered
                       </span>
-                      {quiz.questions.length} Questions
+                      {quiz.questionCount} Questions
                     </span>
                     <span className="flex items-center gap-1">
                       <span className="material-symbols-outlined text-sm">

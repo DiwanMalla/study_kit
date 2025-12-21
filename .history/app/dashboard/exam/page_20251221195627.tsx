@@ -18,7 +18,7 @@ import {
   Play,
   RotateCcw,
   Brain,
-  FunctionSquare,
+  Function,
   BookOpen,
   Code,
   FlaskConical,
@@ -42,7 +42,7 @@ const exams = [
     id: 2,
     title: "Calculus Midterm Mock",
     subject: "Math",
-    icon: FunctionSquare,
+    icon: Function,
     color: "green",
     status: "not-started",
     questions: 30,
@@ -91,39 +91,33 @@ export default function ExamPrepPage() {
   const [sortBy, setSortBy] = useState("Newest First");
 
   const getColorClasses = (color: string) => {
-    const colors: Record<string, { bg: string; text: string; badge: string }> =
-      {
-        blue: {
-          bg: "bg-blue-100 dark:bg-blue-900/30",
-          text: "text-blue-600 dark:text-blue-400",
-          badge:
-            "bg-blue-50 dark:bg-blue-900/10 text-blue-600 dark:text-blue-400",
-        },
-        green: {
-          bg: "bg-green-100 dark:bg-green-900/30",
-          text: "text-green-600 dark:text-green-400",
-          badge:
-            "bg-green-50 dark:bg-green-900/10 text-green-600 dark:text-green-400",
-        },
-        orange: {
-          bg: "bg-orange-100 dark:bg-orange-900/30",
-          text: "text-orange-600 dark:text-orange-400",
-          badge:
-            "bg-orange-50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400",
-        },
-        purple: {
-          bg: "bg-purple-100 dark:bg-purple-900/30",
-          text: "text-purple-600 dark:text-purple-400",
-          badge:
-            "bg-purple-50 dark:bg-purple-900/10 text-purple-600 dark:text-purple-400",
-        },
-        pink: {
-          bg: "bg-pink-100 dark:bg-pink-900/30",
-          text: "text-pink-600 dark:text-pink-400",
-          badge:
-            "bg-pink-50 dark:bg-pink-900/10 text-pink-600 dark:text-pink-400",
-        },
-      };
+    const colors: Record<string, { bg: string; text: string; badge: string }> = {
+      blue: {
+        bg: "bg-blue-100 dark:bg-blue-900/30",
+        text: "text-blue-600 dark:text-blue-400",
+        badge: "bg-blue-50 dark:bg-blue-900/10 text-blue-600 dark:text-blue-400",
+      },
+      green: {
+        bg: "bg-green-100 dark:bg-green-900/30",
+        text: "text-green-600 dark:text-green-400",
+        badge: "bg-green-50 dark:bg-green-900/10 text-green-600 dark:text-green-400",
+      },
+      orange: {
+        bg: "bg-orange-100 dark:bg-orange-900/30",
+        text: "text-orange-600 dark:text-orange-400",
+        badge: "bg-orange-50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400",
+      },
+      purple: {
+        bg: "bg-purple-100 dark:bg-purple-900/30",
+        text: "text-purple-600 dark:text-purple-400",
+        badge: "bg-purple-50 dark:bg-purple-900/10 text-purple-600 dark:text-purple-400",
+      },
+      pink: {
+        bg: "bg-pink-100 dark:bg-pink-900/30",
+        text: "text-pink-600 dark:text-pink-400",
+        badge: "bg-pink-50 dark:bg-pink-900/10 text-pink-600 dark:text-pink-400",
+      },
+    };
     return colors[color] || colors.blue;
   };
 
@@ -159,9 +153,7 @@ export default function ExamPrepPage() {
             <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
               Avg. Score
             </p>
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-              78%
-            </h3>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">78%</h3>
           </div>
           <div className="ml-auto flex items-center text-green-600 text-xs font-bold bg-green-100 dark:bg-green-900/20 px-2 py-1 rounded-lg">
             <TrendingUp className="w-4 h-4 mr-0.5" /> +5%
@@ -176,9 +168,7 @@ export default function ExamPrepPage() {
             <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
               Exams Done
             </p>
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-              12
-            </h3>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">12</h3>
           </div>
         </div>
 
@@ -190,9 +180,7 @@ export default function ExamPrepPage() {
             <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
               Study Time
             </p>
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-              24h 30m
-            </h3>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">24h 30m</h3>
           </div>
         </div>
       </div>
@@ -248,9 +236,7 @@ export default function ExamPrepPage() {
               } rounded-3xl p-6 shadow-sm hover:border-primary transition-colors group relative flex flex-col`}
             >
               <div className="flex justify-between items-start mb-4">
-                <div
-                  className={`w-12 h-12 rounded-2xl ${colors.bg} ${colors.text} flex items-center justify-center`}
-                >
+                <div className={`w-12 h-12 rounded-2xl ${colors.bg} ${colors.text} flex items-center justify-center`}>
                   <Icon className="w-6 h-6" />
                 </div>
                 <div className="flex items-center gap-2">
@@ -284,9 +270,7 @@ export default function ExamPrepPage() {
               </div>
 
               <div className="mb-4">
-                <span
-                  className={`inline-block px-2 py-1 ${colors.badge} text-[10px] font-bold uppercase tracking-wider rounded-md mb-2`}
-                >
+                <span className={`inline-block px-2 py-1 ${colors.badge} text-[10px] font-bold uppercase tracking-wider rounded-md mb-2`}>
                   {exam.subject}
                 </span>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white leading-tight">
@@ -295,14 +279,9 @@ export default function ExamPrepPage() {
                 {exam.status === "in-progress" && (
                   <>
                     <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full mt-3 overflow-hidden">
-                      <div
-                        className="bg-primary h-full rounded-full"
-                        style={{ width: `${exam.progress}%` }}
-                      />
+                      <div className="bg-primary h-full rounded-full" style={{ width: `${exam.progress}%` }} />
                     </div>
-                    <p className="text-xs text-slate-500 mt-1 text-right">
-                      {exam.progress}% Completed
-                    </p>
+                    <p className="text-xs text-slate-500 mt-1 text-right">{exam.progress}% Completed</p>
                   </>
                 )}
               </div>
@@ -348,12 +327,9 @@ export default function ExamPrepPage() {
           <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:text-primary group-hover:bg-primary/10 transition-colors flex items-center justify-center mb-4">
             <Plus className="w-8 h-8" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-            Create New Mock Exam
-          </h3>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Create New Mock Exam</h3>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            Set up a custom exam with specific topics, duration, and question
-            count.
+            Set up a custom exam with specific topics, duration, and question count.
           </p>
         </div>
       </div>
