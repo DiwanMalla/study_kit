@@ -54,7 +54,6 @@ export async function POST(request: Request) {
     });
 
     // 4. Create Quiz & Questions
-
     let quizId = "";
     if (questions.length > 0) {
       const quiz = await db.quiz.create({
@@ -76,8 +75,6 @@ export async function POST(request: Request) {
           order: index,
         })),
       });
-    } else {
-      return new NextResponse("Failed to generate questions. Please try again with different content.", { status: 422 });
     }
 
     return NextResponse.json({
@@ -85,8 +82,6 @@ export async function POST(request: Request) {
       studyKitId: studyKit.id,
       id: quizId,
     });
-
-
   } catch (error) {
     console.error("[QUIZ_GENERATE]", error);
     return new NextResponse("Internal Server Error", { status: 500 });

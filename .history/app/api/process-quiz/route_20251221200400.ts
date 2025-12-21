@@ -11,8 +11,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { fileId, model, count, title, subject, difficulty, type } =
-      await request.json();
+    const { fileId, model, count, title, subject, difficulty, type } = await request.json();
 
     if (!fileId) {
       return new NextResponse("File ID is required", { status: 400 });
@@ -81,11 +80,7 @@ export async function POST(request: Request) {
     });
 
     // Generate quiz questions
-    const questions = await generateQuizQuestions(
-      content,
-      count || 10,
-      model || "auto"
-    );
+    const questions = await generateQuizQuestions(content, count || 10, model || "auto");
 
     // Create quiz
     let quizId = "";
@@ -108,10 +103,7 @@ export async function POST(request: Request) {
           explanation: q.explanation,
           order: index,
         })),
-
       });
-    } else {
-      return new NextResponse("Failed to generate questions. Please try again with different content.", { status: 422 });
     }
 
     // Update study kit status

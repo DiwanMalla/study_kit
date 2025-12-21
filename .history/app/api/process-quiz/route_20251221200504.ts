@@ -108,10 +108,7 @@ export async function POST(request: Request) {
           explanation: q.explanation,
           order: index,
         })),
-
       });
-    } else {
-      return new NextResponse("Failed to generate questions. Please try again with different content.", { status: 422 });
     }
 
     // Update study kit status

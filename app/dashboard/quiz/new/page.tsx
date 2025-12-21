@@ -12,9 +12,27 @@ type Difficulty = "easy" | "medium" | "hard";
 type ContentSource = "upload" | "paste";
 
 const MODELS = [
-  { id: "auto", name: "Standard (Fast)" },
-  { id: "llama-3.3-70b-versatile", name: "SuperTutor AI (Recommended)" },
-  { id: "gpt-4o", name: "GPT-4o (Reasoning)" },
+  { id: "auto", name: "Auto (Recommended)" },
+  { id: "llama-3.1-8b-instant", name: "Fast — Llama 3.1 8B" },
+  { id: "llama-3.3-70b-versatile", name: "Balanced — Llama 3.3 70B" },
+  {
+    id: "meta-llama/llama-4-scout-17b-16e-instruct",
+    name: "Reasoning — Llama 4 Scout",
+  },
+  {
+    id: "meta-llama/llama-4-maverick-17b-128e-instruct",
+    name: "Best — Llama 4 Maverick",
+  },
+  { id: "qwen/qwen3-32b", name: "Reasoning — Qwen3 32B" },
+  { id: "or:mistralai/devstral-2-2512", name: "Devstral 2 (OpenRouter)" },
+  {
+    id: "or:kwaipilot/kat-coder-pro-v1",
+    name: "KAT-Coder-Pro (OpenRouter)",
+  },
+  {
+    id: "or:tngtech/deepseek-r1t2-chimera",
+    name: "DeepSeek R1T2 (OpenRouter)",
+  },
 ];
 
 const SUBJECTS = [
@@ -120,14 +138,23 @@ export default function NewQuizPage() {
         body: JSON.stringify(body),
       });
 
-      if (!res.ok) throw new Error("Generation failed");
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || "Generation failed");
+      }
 
       const data = await res.json();
+      
+      if (!data.id) {
+        throw new Error("Failed to create quiz: No ID returned.");
+      }
+
       toast({ title: "Quiz Generated", description: "Redirecting to your new quiz..." });
       router.push(`/dashboard/quiz/${data.id}`);
     } catch (error) {
       console.error(error);
-      toast({ title: "Error", description: "Failed to generate quiz. Please try again.", variant: "destructive" });
+      const errorMessage = error instanceof Error ? error.message : "Failed to generate quiz. Please try again.";
+      toast({ title: "Error", description: errorMessage, variant: "destructive" });
     } finally {
       setLoading(false);
     }

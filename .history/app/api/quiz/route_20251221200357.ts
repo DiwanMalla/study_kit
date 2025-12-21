@@ -16,11 +16,7 @@ export async function POST(request: Request) {
       return new NextResponse("Content is required", { status: 400 });
     }
 
-    const questions = await generateQuizQuestions(
-      content,
-      count || 5,
-      model || "auto"
-    );
+    const questions = await generateQuizQuestions(content, count || 5, model || "auto");
 
     // Persist to database
     // 1. Create a "virtual" file
@@ -54,39 +50,30 @@ export async function POST(request: Request) {
     });
 
     // 4. Create Quiz & Questions
-
     let quizId = "";
     if (questions.length > 0) {
-      const quiz = await db.quiz.create({
-        data: {
-          studyKitId: studyKit.id,
-          title: title || "Generated Quiz",
-          subject: subject || "Psychology",
-        },
-      });
-      quizId = quiz.id;
+        const quiz = await db.quiz.create({
+            data: {
+                studyKitId: studyKit.id,
+                title: title || "Generated Quiz",
+                subject: subject || "Psychology",
+            }
+        });
+        quizId = quiz.id;
 
-      await db.quizQuestion.createMany({
-        data: questions.map((q, index) => ({
-          quizId: quiz.id,
-          question: q.question,
-          options: q.options, // Ensure your schema supports Json or string[]
-          correctAnswer: q.correctAnswer,
-          explanation: q.explanation,
-          order: index,
-        })),
-      });
-    } else {
-      return new NextResponse("Failed to generate questions. Please try again with different content.", { status: 422 });
+        await db.quizQuestion.createMany({
+            data: questions.map((q, index) => ({
+                quizId: quiz.id,
+                question: q.question,
+                options: q.options, // Ensure your schema supports Json or string[]
+                correctAnswer: q.correctAnswer,
+                explanation: q.explanation,
+                order: index,
+            }))
+        });
     }
 
-    return NextResponse.json({
-      questions,
-      studyKitId: studyKit.id,
-      id: quizId,
-    });
-
-
+    return NextResponse.json({ questions, studyKitId: studyKit.id, id: quizId });
   } catch (error) {
     console.error("[QUIZ_GENERATE]", error);
     return new NextResponse("Internal Server Error", { status: 500 });
