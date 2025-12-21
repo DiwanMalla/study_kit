@@ -2,18 +2,13 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { format } from "date-fns";
-import type { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
-
-type Deck = Prisma.StudyKitGetPayload<{
-  include: { _count: { select: { flashcards: true } } };
-}>;
 
 export default async function FlashcardsPage() {
   const { userId } = await auth();
 
-  const decks: Deck[] = userId
+  const decks = userId
     ? await db.studyKit.findMany({
         where: {
           userId,
@@ -21,6 +16,10 @@ export default async function FlashcardsPage() {
         },
         include: {
           _count: { select: { flashcards: true } },
+          flashcards: {
+            where: { reviewed: true },
+            select: { id: true },
+          },
         },
         orderBy: { createdAt: "desc" },
       })
@@ -34,7 +33,7 @@ export default async function FlashcardsPage() {
           <div className="flex items-start gap-5">
             <Link
               href="/dashboard"
-              className="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-surface border border-border hover:border-primary text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all group"
+              className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full bg-surface border border-border hover:border-primary text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all group"
             >
               <span className="material-symbols-outlined group-hover:-translate-x-0.5 transition-transform">
                 arrow_back
@@ -100,7 +99,7 @@ export default async function FlashcardsPage() {
                   </Link>
                 </div>
               </div>
-              <div className="shrink-0 w-full lg:w-auto flex flex-col gap-3">
+              <div className="flex-shrink-0 w-full lg:w-auto flex flex-col gap-3">
                 <div className="flex items-center gap-3 p-4 bg-card rounded-2xl border border-border shadow-sm">
                   <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center">
                     <span className="material-symbols-outlined">
@@ -161,8 +160,11 @@ export default async function FlashcardsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {decks.map((deck) => {
                 const totalCards = deck._count.flashcards;
-                const reviewedCards = 0;
-                const progressPercent = 0;
+                const reviewedCards = deck.flashcards.length;
+                const progressPercent =
+                  totalCards > 0
+                    ? Math.round((reviewedCards / totalCards) * 100)
+                    : 0;
                 return (
                   <div
                     key={deck.id}

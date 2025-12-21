@@ -29,17 +29,6 @@ export function FlashcardStudy({
   const [showAnswer, setShowAnswer] = useState(false);
   const [completed, setCompleted] = useState<Set<number>>(new Set());
 
-  // Initialize completed cards based on reviewed status
-  useEffect(() => {
-    const reviewedIndices = new Set<number>();
-    flashcards.forEach((card, index) => {
-      if ((card as any).reviewed) {
-        reviewedIndices.add(index);
-      }
-    });
-    setCompleted(reviewedIndices);
-  }, [flashcards]);
-
   const currentCard = flashcards[currentIndex];
   const progress = ((currentIndex + 1) / flashcards.length) * 100;
 
@@ -57,21 +46,8 @@ export function FlashcardStudy({
     }
   };
 
-  const markCompleted = async () => {
-    const newCompleted = new Set([...completed, currentIndex]);
-    setCompleted(newCompleted);
-
-    // Persist to database
-    try {
-      await fetch(`/api/flashcards/${currentCard.id}/review`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reviewed: true }),
-      });
-    } catch (error) {
-      console.error("Failed to save progress:", error);
-    }
-
+  const markCompleted = () => {
+    setCompleted(new Set([...completed, currentIndex]));
     if (currentIndex < flashcards.length - 1) {
       goNext();
     } else {
@@ -79,25 +55,10 @@ export function FlashcardStudy({
     }
   };
 
-  const reset = async () => {
+  const reset = () => {
     setCurrentIndex(0);
     setShowAnswer(false);
     setCompleted(new Set());
-
-    // Reset all in database
-    try {
-      await Promise.all(
-        flashcards.map((card) =>
-          fetch(`/api/flashcards/${card.id}/review`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reviewed: false }),
-          })
-        )
-      );
-    } catch (error) {
-      console.error("Failed to reset progress:", error);
-    }
   };
 
   const mastery = useMemo(() => {
@@ -200,12 +161,12 @@ export function FlashcardStudy({
 
   return (
     <div className="w-full h-full bg-background overflow-y-auto p-6 md:p-10 relative flex flex-col">
-      <div className="max-w-[1600px] mx-auto w-full flex flex-col h-full">
+      <div className="max-w-4xl mx-auto w-full flex flex-col h-full">
         <header className="flex items-center justify-between gap-6 mb-8">
           <div className="flex items-center gap-5">
             <Link
               href={resolvedBackHref}
-              className="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-surface border border-border hover:border-primary text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all group"
+              className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full bg-surface border border-border hover:border-primary text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all group"
             >
               <span className="material-symbols-outlined group-hover:-translate-x-0.5 transition-transform">
                 arrow_back
@@ -235,7 +196,11 @@ export function FlashcardStudy({
                 {mastery.label}
               </span>
             </div>
-            <Button variant="outline" className="rounded-full" onClick={reset}>
+            <Button
+              variant="outline"
+              className="rounded-full"
+              onClick={reset}
+            >
               <span className="material-symbols-outlined text-[18px] mr-2">
                 refresh
               </span>
@@ -244,15 +209,15 @@ export function FlashcardStudy({
           </div>
         </header>
 
-        <div className="w-full max-w-[1600px] h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mb-8 overflow-hidden relative mx-auto">
+        <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mb-8 overflow-hidden relative">
           <div
             className="absolute top-0 left-0 h-full bg-primary rounded-full"
             style={{ width: `${progress}%` }}
           />
         </div>
 
-        <div className="flex-1 flex flex-col items-center justify-center relative min-h-[400px] w-full max-w-[1600px] mx-auto">
-          <div className="relative w-full max-w-4xl mx-auto">
+        <div className="flex-1 flex flex-col items-center justify-center relative min-h-[400px]">
+          <div className="relative w-full max-w-2xl">
             <div
               role="button"
               tabIndex={0}
@@ -344,7 +309,7 @@ export function FlashcardStudy({
             </button>
           </div>
 
-          <div className="mt-8 mb-6 h-24 flex items-center justify-center w-full max-w-4xl mx-auto">
+          <div className="mt-8 mb-6 h-24 flex items-center justify-center w-full max-w-2xl mx-auto">
             <div className="grid grid-cols-4 gap-3 w-full">
               <div className="flex flex-col gap-1 group">
                 <button
@@ -432,7 +397,7 @@ export function FlashcardStudy({
           </div>
 
           {completed.size === flashcards.length && (
-            <div className="mt-10 w-full max-w-4xl mx-auto">
+            <div className="mt-10 w-full max-w-2xl">
               <div className="bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-900/40 rounded-3xl p-8 text-center">
                 <h3 className="text-xl font-bold text-emerald-700 dark:text-emerald-300">
                   All cards completed!
@@ -445,9 +410,7 @@ export function FlashcardStudy({
                     Study Again
                   </Button>
                   <Button asChild>
-                    <Link href={`/study-kit/${studyKitId}/quiz`}>
-                      Take Quiz
-                    </Link>
+                    <Link href={`/study-kit/${studyKitId}/quiz`}>Take Quiz</Link>
                   </Button>
                 </div>
               </div>

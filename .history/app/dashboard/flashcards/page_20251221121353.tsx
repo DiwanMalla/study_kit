@@ -2,18 +2,13 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { format } from "date-fns";
-import type { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
-
-type Deck = Prisma.StudyKitGetPayload<{
-  include: { _count: { select: { flashcards: true } } };
-}>;
 
 export default async function FlashcardsPage() {
   const { userId } = await auth();
 
-  const decks: Deck[] = userId
+  const decks = userId
     ? await db.studyKit.findMany({
         where: {
           userId,
@@ -28,13 +23,13 @@ export default async function FlashcardsPage() {
 
   return (
     <div className="w-full h-full bg-background overflow-y-auto p-6 md:p-10">
-      <div className="max-w-[1600px] mx-auto flex flex-col h-full">
+      <div className="max-w-6xl mx-auto flex flex-col h-full">
         {/* Header */}
         <header className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
           <div className="flex items-start gap-5">
             <Link
               href="/dashboard"
-              className="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-surface border border-border hover:border-primary text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all group"
+              className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full bg-surface border border-border hover:border-primary text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all group"
             >
               <span className="material-symbols-outlined group-hover:-translate-x-0.5 transition-transform">
                 arrow_back
@@ -75,9 +70,9 @@ export default async function FlashcardsPage() {
                   Create a new study set instantly
                 </h2>
                 <p className="text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
-                  Upload your lecture slides, PDF textbooks, or simply paste
-                  your notes. Our AI will generate key concepts and definitions
-                  for you in seconds.
+                  Upload your lecture slides, PDF textbooks, or simply paste your
+                  notes. Our AI will generate key concepts and definitions for
+                  you in seconds.
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <Link
@@ -100,7 +95,7 @@ export default async function FlashcardsPage() {
                   </Link>
                 </div>
               </div>
-              <div className="shrink-0 w-full lg:w-auto flex flex-col gap-3">
+              <div className="flex-shrink-0 w-full lg:w-auto flex flex-col gap-3">
                 <div className="flex items-center gap-3 p-4 bg-card rounded-2xl border border-border shadow-sm">
                   <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center">
                     <span className="material-symbols-outlined">
@@ -159,66 +154,59 @@ export default async function FlashcardsPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {decks.map((deck) => {
-                const totalCards = deck._count.flashcards;
-                const reviewedCards = 0;
-                const progressPercent = 0;
-                return (
-                  <div
-                    key={deck.id}
-                    className="bg-surface border border-border rounded-2xl p-6 shadow-sm hover:border-primary/50 transition-all group flex flex-col h-full"
+              {decks.map((deck) => (
+                <div
+                  key={deck.id}
+                  className="bg-surface border border-border rounded-2xl p-6 shadow-sm hover:border-primary/50 transition-all group flex flex-col h-full"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl font-bold">
+                      {deck.title.substring(0, 2).toUpperCase()}
+                    </div>
+                    <button className="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                      <span className="material-symbols-outlined">
+                        more_horiz
+                      </span>
+                    </button>
+                  </div>
+                  <Link
+                    href={`/dashboard/flashcards/${deck.id}`}
+                    className="block"
                   >
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl font-bold">
-                        {deck.title.substring(0, 2).toUpperCase()}
-                      </div>
-                      <button className="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-                        <span className="material-symbols-outlined">
-                          more_horiz
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1 group-hover:text-primary transition-colors">
+                      {deck.title}
+                    </h3>
+                  </Link>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2">
+                    {deck.summary || "No description available."}
+                  </p>
+                  <div className="mt-auto">
+                    <div className="flex items-center justify-between text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
+                      <span>{deck._count.flashcards} Cards</span>
+                      <span>{format(new Date(deck.createdAt), "MMM d")}</span>
+                    </div>
+                    <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full mb-6 overflow-hidden">
+                      <div
+                        className="h-full bg-slate-300 dark:bg-slate-600 rounded-full"
+                        style={{ width: "0%" }}
+                      ></div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Link
+                        href={`/dashboard/flashcards/${deck.id}`}
+                        className="flex-1 py-2 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold hover:opacity-90 transition-opacity text-center"
+                      >
+                        Review
+                      </Link>
+                      <button className="px-3 py-2 rounded-lg border border-border hover:bg-accent transition-colors text-slate-600 dark:text-slate-300">
+                        <span className="material-symbols-outlined text-[20px]">
+                          edit
                         </span>
                       </button>
                     </div>
-                    <Link
-                      href={`/dashboard/flashcards/${deck.id}`}
-                      className="block"
-                    >
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1 group-hover:text-primary transition-colors">
-                        {deck.title}
-                      </h3>
-                    </Link>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2">
-                      {deck.summary || "No description available."}
-                    </p>
-                    <div className="mt-auto">
-                      <div className="flex items-center justify-between text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
-                        <span>
-                          {reviewedCards}/{totalCards} Reviewed
-                        </span>
-                        <span>{format(new Date(deck.createdAt), "MMM d")}</span>
-                      </div>
-                      <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full mb-6 overflow-hidden">
-                        <div
-                          className="h-full bg-primary rounded-full transition-all duration-500"
-                          style={{ width: `${progressPercent}%` }}
-                        ></div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Link
-                          href={`/dashboard/flashcards/${deck.id}`}
-                          className="flex-1 py-2 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold hover:opacity-90 transition-opacity text-center"
-                        >
-                          Review
-                        </Link>
-                        <button className="px-3 py-2 rounded-lg border border-border hover:bg-accent transition-colors text-slate-600 dark:text-slate-300">
-                          <span className="material-symbols-outlined text-[20px]">
-                            edit
-                          </span>
-                        </button>
-                      </div>
-                    </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
 
               {/* Create Empty Set Card */}
               <Link

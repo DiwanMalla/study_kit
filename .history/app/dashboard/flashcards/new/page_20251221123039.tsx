@@ -45,8 +45,7 @@ export default function NewFlashcardsPage() {
 
   const [activeTab, setActiveTab] = useState<ActiveTab>("upload");
   const [setTitle, setSetTitle] = useState("");
-  // Language is always English (US) for now
-  const language = "English (US)";
+  const [language, setLanguage] = useState("English (US)");
   const [model, setModel] = useState<ModelType>("auto");
 
   const [content, setContent] = useState("");
@@ -225,7 +224,28 @@ export default function NewFlashcardsPage() {
                 />
               </div>
 
-              {/* Language selection removed: English only */}
+              <div className="col-span-1">
+                <Label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                  Language
+                </Label>
+                <div className="relative">
+                  <select
+                    className="w-full bg-transparent border border-border rounded-xl px-4 py-3 text-sm focus:ring-primary/20 appearance-none cursor-pointer dark:bg-slate-900 shadow-sm pr-10"
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                  >
+                    <option value="English (US)">English (US)</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="French">French</option>
+                    <option value="German">German</option>
+                  </select>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <span className="material-symbols-outlined text-[20px]">
+                      expand_more
+                    </span>
+                  </div>
+                </div>
+              </div>
 
               <div className="col-span-1">
                 <Label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">

@@ -45,17 +45,15 @@ export default function NewFlashcardsPage() {
 
   const [activeTab, setActiveTab] = useState<ActiveTab>("upload");
   const [setTitle, setSetTitle] = useState("");
-  // Language is always English (US) for now
-  const language = "English (US)";
+  const [language, setLanguage] = useState("English (US)");
   const [model, setModel] = useState<ModelType>("auto");
 
   const [content, setContent] = useState("");
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<
+    { id: string; name: string } | null
+  >(null);
 
   const handleFileUpload = async (file: File) => {
     setUploading(true);
@@ -76,7 +74,7 @@ export default function NewFlashcardsPage() {
         title: "File Uploaded",
         description: `${file.name} is ready for processing.`,
       });
-    } catch {
+    } catch (error) {
       toast({
         title: "Upload Error",
         description: "Failed to upload file. Please try again.",
@@ -177,12 +175,12 @@ export default function NewFlashcardsPage() {
 
   return (
     <div className="w-full mx-auto flex flex-col h-full px-6 md:px-10 py-6 md:py-10">
-      <div className="w-full max-w-[1600px] mx-auto flex flex-col h-full">
+      <div className="max-w-4xl mx-auto flex flex-col h-full">
         <header className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
           <div className="flex items-start gap-5">
             <Link
               href="/dashboard/flashcards"
-              className="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-surface border border-border hover:border-primary text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all group"
+              className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full bg-surface border border-border hover:border-primary text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all group"
             >
               <span className="material-symbols-outlined group-hover:-translate-x-0.5 transition-transform">
                 arrow_back
@@ -200,9 +198,9 @@ export default function NewFlashcardsPage() {
           </div>
         </header>
 
-        <div className="flex flex-col gap-6 pb-20 w-full max-w-[1600px] mx-auto">
+        <div className="flex flex-col gap-6 pb-20">
           {/* Set Details */}
-          <div className="bg-surface border border-border rounded-3xl p-6 md:p-8 shadow-sm w-full max-w-[1600px] mx-auto">
+          <div className="bg-surface border border-border rounded-3xl p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                 <span className="material-symbols-outlined">settings</span>
@@ -225,7 +223,28 @@ export default function NewFlashcardsPage() {
                 />
               </div>
 
-              {/* Language selection removed: English only */}
+              <div className="col-span-1">
+                <Label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                  Language
+                </Label>
+                <div className="relative">
+                  <select
+                    className="w-full bg-transparent border border-border rounded-xl px-4 py-3 text-sm focus:ring-primary/20 appearance-none cursor-pointer dark:bg-slate-900 shadow-sm pr-10"
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                  >
+                    <option value="English (US)">English (US)</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="French">French</option>
+                    <option value="German">German</option>
+                  </select>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <span className="material-symbols-outlined text-[20px]">
+                      expand_more
+                    </span>
+                  </div>
+                </div>
+              </div>
 
               <div className="col-span-1">
                 <Label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
@@ -254,7 +273,7 @@ export default function NewFlashcardsPage() {
           </div>
 
           {/* Source */}
-          <div className="bg-surface border border-border rounded-3xl overflow-hidden shadow-sm w-full max-w-[1600px] mx-auto">
+          <div className="bg-surface border border-border rounded-3xl overflow-hidden shadow-sm">
             <div className="flex border-b border-border">
               <button
                 type="button"
@@ -323,8 +342,7 @@ export default function NewFlashcardsPage() {
                       onDrop={onFileDrop}
                       className={cn(
                         "border-2 border-dashed border-border rounded-2xl p-10 flex flex-col items-center justify-center text-center cursor-pointer transition-colors bg-slate-50/50 dark:bg-black/20 group h-64 hover:border-primary hover:bg-primary/5",
-                        (uploading || loading) &&
-                          "opacity-50 pointer-events-none"
+                        (uploading || loading) && "opacity-50 pointer-events-none"
                       )}
                     >
                       <input
@@ -377,7 +395,7 @@ export default function NewFlashcardsPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-4 pt-4 w-full max-w-[1600px] mx-auto">
+          <div className="flex items-center justify-end gap-4 pt-4">
             <Link
               href="/dashboard/flashcards"
               className="px-6 py-3 rounded-xl text-slate-500 dark:text-slate-400 font-bold hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
@@ -413,6 +431,10 @@ export default function NewFlashcardsPage() {
               )}
             </button>
           </div>
+
+          {/* Reserved for future: setTitle + language */}
+          <input type="hidden" value={setTitle} readOnly />
+          <input type="hidden" value={language} readOnly />
         </div>
       </div>
     </div>

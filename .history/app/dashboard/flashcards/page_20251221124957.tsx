@@ -2,7 +2,7 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { format } from "date-fns";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 
 export const dynamic = "force-dynamic";
 

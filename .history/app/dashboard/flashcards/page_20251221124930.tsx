@@ -2,18 +2,13 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { format } from "date-fns";
-import type { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
-
-type Deck = Prisma.StudyKitGetPayload<{
-  include: { _count: { select: { flashcards: true } } };
-}>;
 
 export default async function FlashcardsPage() {
   const { userId } = await auth();
 
-  const decks: Deck[] = userId
+  const decks = userId
     ? await db.studyKit.findMany({
         where: {
           userId,
@@ -159,7 +154,7 @@ export default async function FlashcardsPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {decks.map((deck) => {
+              {decks.map((deck: any) => {
                 const totalCards = deck._count.flashcards;
                 const reviewedCards = 0;
                 const progressPercent = 0;

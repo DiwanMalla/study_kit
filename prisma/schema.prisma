@@ -1,7 +1,6 @@
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -78,6 +77,7 @@ model Flashcard {
   question   String   @db.Text
   answer     String   @db.Text
   order      Int      @default(0)
+  reviewed   Boolean  @default(false)
   createdAt  DateTime @default(now())
   
   @@index([studyKitId])

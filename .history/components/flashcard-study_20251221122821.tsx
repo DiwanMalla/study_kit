@@ -29,17 +29,6 @@ export function FlashcardStudy({
   const [showAnswer, setShowAnswer] = useState(false);
   const [completed, setCompleted] = useState<Set<number>>(new Set());
 
-  // Initialize completed cards based on reviewed status
-  useEffect(() => {
-    const reviewedIndices = new Set<number>();
-    flashcards.forEach((card, index) => {
-      if ((card as any).reviewed) {
-        reviewedIndices.add(index);
-      }
-    });
-    setCompleted(reviewedIndices);
-  }, [flashcards]);
-
   const currentCard = flashcards[currentIndex];
   const progress = ((currentIndex + 1) / flashcards.length) * 100;
 
@@ -57,21 +46,8 @@ export function FlashcardStudy({
     }
   };
 
-  const markCompleted = async () => {
-    const newCompleted = new Set([...completed, currentIndex]);
-    setCompleted(newCompleted);
-
-    // Persist to database
-    try {
-      await fetch(`/api/flashcards/${currentCard.id}/review`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reviewed: true }),
-      });
-    } catch (error) {
-      console.error("Failed to save progress:", error);
-    }
-
+  const markCompleted = () => {
+    setCompleted(new Set([...completed, currentIndex]));
     if (currentIndex < flashcards.length - 1) {
       goNext();
     } else {
@@ -79,25 +55,10 @@ export function FlashcardStudy({
     }
   };
 
-  const reset = async () => {
+  const reset = () => {
     setCurrentIndex(0);
     setShowAnswer(false);
     setCompleted(new Set());
-
-    // Reset all in database
-    try {
-      await Promise.all(
-        flashcards.map((card) =>
-          fetch(`/api/flashcards/${card.id}/review`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reviewed: false }),
-          })
-        )
-      );
-    } catch (error) {
-      console.error("Failed to reset progress:", error);
-    }
   };
 
   const mastery = useMemo(() => {
