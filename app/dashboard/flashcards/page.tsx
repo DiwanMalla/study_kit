@@ -7,7 +7,10 @@ import type { Prisma } from "@prisma/client";
 export const dynamic = "force-dynamic";
 
 type Deck = Prisma.StudyKitGetPayload<{
-  include: { _count: { select: { flashcards: true } } };
+  include: { 
+    _count: { select: { flashcards: true } },
+    flashcards: { where: { reviewed: true }, select: { id: true } }
+  };
 }>;
 
 export default async function FlashcardsPage() {
@@ -21,6 +24,10 @@ export default async function FlashcardsPage() {
         },
         include: {
           _count: { select: { flashcards: true } },
+          flashcards: {
+            where: { reviewed: true },
+            select: { id: true }
+          }
         },
         orderBy: { createdAt: "desc" },
       })
@@ -161,8 +168,8 @@ export default async function FlashcardsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {decks.map((deck) => {
                 const totalCards = deck._count.flashcards;
-                const reviewedCards = 0;
-                const progressPercent = 0;
+                const reviewedCards = deck.flashcards.length;
+                const progressPercent = totalCards > 0 ? Math.round((reviewedCards / totalCards) * 100) : 0;
                 return (
                   <div
                     key={deck.id}
