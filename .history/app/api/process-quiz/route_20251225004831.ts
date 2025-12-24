@@ -108,15 +108,12 @@ export async function POST(request: Request) {
           options: q.options,
           correctAnswer: q.correctAnswer,
           explanation: q.explanation,
-          type: q.type || type || "mcq",
           order: index,
         })),
+
       });
     } else {
-      return new NextResponse(
-        "Failed to generate questions. Please try again with different content.",
-        { status: 422 }
-      );
+      return new NextResponse("Failed to generate questions. Please try again with different content.", { status: 422 });
     }
 
     // Update study kit status

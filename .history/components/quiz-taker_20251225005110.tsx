@@ -348,15 +348,12 @@ export function QuizTaker({
           <div className="flex items-center gap-3 mb-4">
             <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-blue-100 dark:border-blue-900/30">
               <CircleDot className="w-3.5 h-3.5" />
-              {currentQuestion.type === "true_false" ||
-              (currentQuestion.options.length === 2 &&
-                currentQuestion.options.includes("True"))
+              {currentQuestion.options.length === 2 &&
+              currentQuestion.options.includes("True")
                 ? "True / False"
-                : currentQuestion.type === "fill_blanks" ||
-                  currentQuestion.question.includes("____")
+                : currentQuestion.question.includes("____")
                 ? "Fill in the Blanks"
-                : currentQuestion.type === "short_answer" ||
-                  currentQuestion.options.length === 1
+                : currentQuestion.options.length === 1
                 ? "Short Answer"
                 : "Multiple Choice"}
             </span>

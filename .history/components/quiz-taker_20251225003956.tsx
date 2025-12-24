@@ -24,7 +24,6 @@ interface QuizQuestion {
   options: string[];
   correctAnswer: number;
   explanation: string | null;
-  type?: string;
 }
 
 interface QuizTakerProps {
@@ -205,10 +204,7 @@ export function QuizTaker({
           >
             Try Again
           </Button>
-          <Button
-            asChild
-            className="bg-primary text-primary-foreground font-bold px-8 py-6 rounded-xl text-lg shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
-          >
+          <Button asChild className="bg-primary text-primary-foreground font-bold px-8 py-6 rounded-xl text-lg shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all">
             <Link href="/dashboard/quiz">Back to Quiz List</Link>
           </Button>
         </div>
@@ -316,7 +312,7 @@ export function QuizTaker({
           <Button
             variant="ghost"
             size="icon"
-            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-surface rounded-full transition-colors"
+            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-surface-dark rounded-full transition-colors"
             onClick={() => router.push("/dashboard/quiz")}
             title="Exit Quiz"
           >
@@ -343,22 +339,12 @@ export function QuizTaker({
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto w-full bg-surface border border-border rounded-3xl p-6 md:p-10 shadow-sm flex-1 flex flex-col min-h-[400px]">
+      <div className="max-w-4xl mx-auto w-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-3xl p-6 md:p-10 shadow-sm flex-1 flex flex-col min-h-[400px]">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-blue-100 dark:border-blue-900/30">
               <CircleDot className="w-3.5 h-3.5" />
-              {currentQuestion.type === "true_false" ||
-              (currentQuestion.options.length === 2 &&
-                currentQuestion.options.includes("True"))
-                ? "True / False"
-                : currentQuestion.type === "fill_blanks" ||
-                  currentQuestion.question.includes("____")
-                ? "Fill in the Blanks"
-                : currentQuestion.type === "short_answer" ||
-                  currentQuestion.options.length === 1
-                ? "Short Answer"
-                : "Multiple Choice"}
+              Multiple Choice
             </span>
             <span className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-500 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-yellow-100 dark:border-yellow-900/30">
               5 Points
@@ -410,7 +396,7 @@ export function QuizTaker({
                     } transition-all flex items-center justify-center`}
                   >
                     {isSelected && (
-                      <div className="w-3 h-3 rounded-full bg-primary-foreground"></div>
+                      <div className="w-3 h-3 rounded-full bg-slate-900"></div>
                     )}
                   </div>
                 </div>
@@ -444,7 +430,7 @@ export function QuizTaker({
           </div>
         )}
 
-        <div className="mt-auto pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="mt-auto pt-8 border-t border-border-light dark:border-border-dark flex flex-col sm:flex-row justify-between items-center gap-4">
           <button
             className="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 group disabled:opacity-50"
             onClick={handlePrevious}

@@ -418,15 +418,13 @@ ${content.slice(0, 30000)}
  */
 export async function generateStudyMaterials(
   content: string,
-  modelType: AnyModelType = "auto",
-  quizType: string = "mcq",
-  difficulty: string = "medium"
+  modelType: AnyModelType = "auto"
 ): Promise<StudyMaterials> {
   // Run all generation in parallel for speed
   const [summaryData, flashcards, quizQuestions] = await Promise.all([
     generateSummary(content, modelType),
     generateFlashcards(content, 10, modelType),
-    generateQuizQuestions(content, 5, modelType, quizType, difficulty),
+    generateQuizQuestions(content, 5, modelType),
   ]);
 
   return {

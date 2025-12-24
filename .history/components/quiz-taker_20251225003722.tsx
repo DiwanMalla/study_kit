@@ -3,17 +3,17 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  ArrowLeft,
-  ArrowRight,
-  CheckCircle,
-  XCircle,
-  Trophy,
-  Timer,
-  X,
-  Brain,
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  CheckCircle, 
+  XCircle, 
+  Trophy, 
+  Timer, 
+  X, 
+  Brain, 
   Flag,
-  CircleDot,
+  CircleDot
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -24,7 +24,6 @@ interface QuizQuestion {
   options: string[];
   correctAnswer: number;
   explanation: string | null;
-  type?: string;
 }
 
 interface QuizTakerProps {
@@ -47,9 +46,6 @@ export function QuizTaker({
   const [showResult, setShowResult] = useState(false);
   const [quizComplete, setQuizComplete] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes
-  const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(
-    new Set()
-  );
 
   useEffect(() => {
     if (quizComplete) return;
@@ -116,8 +112,6 @@ export function QuizTaker({
     setAnswers(new Map());
     setShowResult(false);
     setQuizComplete(false);
-    setTimeLeft(15 * 60);
-    setFlaggedQuestions(new Set());
   };
 
   if (questions.length === 0) {
@@ -128,13 +122,9 @@ export function QuizTaker({
         </div>
         <h2 className="text-2xl font-bold mb-2">No Questions Found</h2>
         <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md">
-          This quiz doesn't have any questions yet. Try another one or create
-          some questions.
+          This quiz doesn't have any questions yet. Try another one or create some questions.
         </p>
-        <Button
-          asChild
-          className="bg-primary text-primary-foreground font-bold px-8 py-6 rounded-xl"
-        >
+        <Button asChild className="bg-primary text-slate-900 font-bold px-8 py-6 rounded-xl">
           <Link href="/dashboard/quiz">Back to Quiz List</Link>
         </Button>
       </div>
@@ -149,47 +139,30 @@ export function QuizTaker({
       <div className="max-w-4xl mx-auto w-full py-10 px-6">
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-24 h-24 bg-primary/10 rounded-full mb-6">
-            <Trophy
-              className={`h-12 w-12 ${
-                percentage >= 70 ? "text-yellow-500" : "text-slate-400"
-              }`}
-            />
+            <Trophy className={`h-12 w-12 ${percentage >= 70 ? "text-yellow-500" : "text-slate-400"}`} />
           </div>
           <h1 className="text-4xl font-bold mb-2">Quiz Completed!</h1>
           <p className="text-slate-500 dark:text-slate-400 text-lg">
-            Here's how you performed in{" "}
-            <span className="font-bold text-slate-900 dark:text-white">
-              {quizTitle}
-            </span>
+            Here's how you performed in <span className="font-bold text-slate-900 dark:text-white">{quizTitle}</span>
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Card className="bg-surface border-border rounded-3xl overflow-hidden shadow-sm">
+          <Card className="bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark rounded-3xl overflow-hidden shadow-sm">
             <CardContent className="p-8 text-center">
-              <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">
-                Score
-              </p>
-              <h3 className="text-5xl font-black text-slate-900 dark:text-white">
-                {percentage}%
-              </h3>
+              <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Score</p>
+              <h3 className="text-5xl font-black text-slate-900 dark:text-white">{percentage}%</h3>
             </CardContent>
           </Card>
-          <Card className="bg-surface border-border rounded-3xl overflow-hidden shadow-sm">
+          <Card className="bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark rounded-3xl overflow-hidden shadow-sm">
             <CardContent className="p-8 text-center">
-              <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">
-                Correct
-              </p>
-              <h3 className="text-5xl font-black text-slate-900 dark:text-white">
-                {score}/{questions.length}
-              </h3>
+              <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Correct</p>
+              <h3 className="text-5xl font-black text-slate-900 dark:text-white">{score}/{questions.length}</h3>
             </CardContent>
           </Card>
-          <Card className="bg-surface border-border rounded-3xl overflow-hidden shadow-sm">
+          <Card className="bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark rounded-3xl overflow-hidden shadow-sm">
             <CardContent className="p-8 text-center">
-              <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">
-                Time Spent
-              </p>
+              <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Time Spent</p>
               <h3 className="text-5xl font-black text-slate-900 dark:text-white">
                 {Math.floor((15 * 60 - timeLeft) / 60)}m
               </h3>
@@ -198,17 +171,14 @@ export function QuizTaker({
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-          <Button
-            variant="outline"
+          <Button 
+            variant="outline" 
             onClick={resetQuiz}
             className="px-8 py-6 rounded-xl border-2 border-slate-200 dark:border-slate-700 font-bold text-lg hover:bg-slate-50 dark:hover:bg-white/5"
           >
             Try Again
           </Button>
-          <Button
-            asChild
-            className="bg-primary text-primary-foreground font-bold px-8 py-6 rounded-xl text-lg shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
-          >
+          <Button asChild className="bg-primary text-slate-900 font-bold px-8 py-6 rounded-xl text-lg shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all">
             <Link href="/dashboard/quiz">Back to Quiz List</Link>
           </Button>
         </div>
@@ -220,55 +190,24 @@ export function QuizTaker({
             const isCorrect = userAnswer === q.correctAnswer;
 
             return (
-              <Card
-                key={q.id}
-                className="bg-surface border-border rounded-2xl overflow-hidden shadow-sm"
-              >
+              <Card key={q.id} className="bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark rounded-2xl overflow-hidden shadow-sm">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div
-                      className={`mt-1 p-1 rounded-full ${
-                        isCorrect
-                          ? "bg-green-100 text-green-600"
-                          : "bg-red-100 text-red-600"
-                      }`}
-                    >
-                      {isCorrect ? (
-                        <CheckCircle className="h-5 w-5" />
-                      ) : (
-                        <XCircle className="h-5 w-5" />
-                      )}
+                    <div className={`mt-1 p-1 rounded-full ${isCorrect ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>
+                      {isCorrect ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
                     </div>
                     <div className="flex-1">
-                      <p className="text-lg font-bold text-slate-900 dark:text-white mb-4">
-                        {q.question}
-                      </p>
+                      <p className="text-lg font-bold text-slate-900 dark:text-white mb-4">{q.question}</p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div
-                          className={`p-4 rounded-xl border ${
-                            isCorrect
-                              ? "border-green-200 bg-green-50/50 dark:bg-green-900/10"
-                              : "border-red-200 bg-red-50/50 dark:bg-red-900/10"
-                          }`}
-                        >
-                          <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
-                            Your Answer
-                          </p>
-                          <p
-                            className={`font-bold ${
-                              isCorrect
-                                ? "text-green-700 dark:text-green-400"
-                                : "text-red-700 dark:text-red-400"
-                            }`}
-                          >
+                        <div className={`p-4 rounded-xl border ${isCorrect ? "border-green-200 bg-green-50/50 dark:bg-green-900/10" : "border-red-200 bg-red-50/50 dark:bg-red-900/10"}`}>
+                          <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Your Answer</p>
+                          <p className={`font-bold ${isCorrect ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"}`}>
                             {q.options[userAnswer!]}
                           </p>
                         </div>
                         {!isCorrect && (
                           <div className="p-4 rounded-xl border border-green-200 bg-green-50/50 dark:bg-green-900/10">
-                            <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
-                              Correct Answer
-                            </p>
+                            <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Correct Answer</p>
                             <p className="font-bold text-green-700 dark:text-green-400">
                               {q.options[q.correctAnswer]}
                             </p>
@@ -278,9 +217,7 @@ export function QuizTaker({
                       {q.explanation && (
                         <div className="mt-4 p-4 bg-slate-50 dark:bg-black/20 rounded-xl border border-slate-100 dark:border-slate-800">
                           <p className="text-sm text-slate-600 dark:text-slate-400">
-                            <span className="font-bold text-slate-900 dark:text-white">
-                              Explanation:{" "}
-                            </span>
+                            <span className="font-bold text-slate-900 dark:text-white">Explanation: </span>
                             {q.explanation}
                           </p>
                         </div>
@@ -297,7 +234,7 @@ export function QuizTaker({
   }
 
   return (
-    <div className="flex-1 h-full overflow-y-auto bg-background p-6 md:p-10 relative flex flex-col">
+    <div className="flex-1 h-full overflow-y-auto bg-white dark:bg-[#1a190b] p-6 md:p-10 relative flex flex-col">
       <header className="max-w-4xl mx-auto w-full mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-2">
@@ -316,7 +253,7 @@ export function QuizTaker({
           <Button
             variant="ghost"
             size="icon"
-            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-surface rounded-full transition-colors"
+            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-surface-dark rounded-full transition-colors"
             onClick={() => router.push("/dashboard/quiz")}
             title="Exit Quiz"
           >
@@ -329,9 +266,7 @@ export function QuizTaker({
         <div className="flex justify-between items-end text-sm font-bold text-slate-500 dark:text-slate-400 mb-3">
           <span className="text-slate-900 dark:text-white">
             Question {currentIndex + 1}{" "}
-            <span className="text-slate-400 font-normal">
-              of {questions.length}
-            </span>
+            <span className="text-slate-400 font-normal">of {questions.length}</span>
           </span>
           <span>{Math.round(progress)}% Completed</span>
         </div>
@@ -343,22 +278,12 @@ export function QuizTaker({
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto w-full bg-surface border border-border rounded-3xl p-6 md:p-10 shadow-sm flex-1 flex flex-col min-h-[400px]">
+      <div className="max-w-4xl mx-auto w-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-3xl p-6 md:p-10 shadow-sm flex-1 flex flex-col min-h-[400px]">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-blue-100 dark:border-blue-900/30">
               <CircleDot className="w-3.5 h-3.5" />
-              {currentQuestion.type === "true_false" ||
-              (currentQuestion.options.length === 2 &&
-                currentQuestion.options.includes("True"))
-                ? "True / False"
-                : currentQuestion.type === "fill_blanks" ||
-                  currentQuestion.question.includes("____")
-                ? "Fill in the Blanks"
-                : currentQuestion.type === "short_answer" ||
-                  currentQuestion.options.length === 1
-                ? "Short Answer"
-                : "Multiple Choice"}
+              Multiple Choice
             </span>
             <span className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-500 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-yellow-100 dark:border-yellow-900/30">
               5 Points
@@ -372,10 +297,8 @@ export function QuizTaker({
         <div className="space-y-4 mb-10">
           {currentQuestion.options.map((option, idx) => {
             const isSelected = selectedAnswer === idx;
-            const isCorrect =
-              showResult && idx === currentQuestion.correctAnswer;
-            const isWrong =
-              showResult && isSelected && idx !== currentQuestion.correctAnswer;
+            const isCorrect = showResult && idx === currentQuestion.correctAnswer;
+            const isWrong = showResult && isSelected && idx !== currentQuestion.correctAnswer;
 
             let borderClass = "border-transparent";
             let bgClass = "bg-slate-50 dark:bg-black/20";
@@ -402,32 +325,16 @@ export function QuizTaker({
                 onClick={() => handleSelect(idx)}
               >
                 <div className="flex items-center justify-center shrink-0 mt-0.5">
-                  <div
-                    className={`w-6 h-6 rounded-full border-2 ${
-                      isSelected
-                        ? "border-primary bg-primary"
-                        : "border-slate-300"
-                    } transition-all flex items-center justify-center`}
-                  >
-                    {isSelected && (
-                      <div className="w-3 h-3 rounded-full bg-primary-foreground"></div>
-                    )}
+                  <div className={`w-6 h-6 rounded-full border-2 ${isSelected ? 'border-primary bg-primary' : 'border-slate-300'} transition-all flex items-center justify-center`}>
+                    {isSelected && <div className="w-3 h-3 rounded-full bg-slate-900"></div>}
                   </div>
                 </div>
                 <div className="flex-1">
-                  <span
-                    className={`text-lg ${textClass} group-hover:text-slate-900 dark:group-hover:text-white transition-colors`}
-                  >
+                  <span className={`text-lg ${textClass} group-hover:text-slate-900 dark:group-hover:text-white transition-colors`}>
                     {option}
                   </span>
                 </div>
-                <span
-                  className={`text-sm font-bold ${
-                    isSelected
-                      ? "text-primary"
-                      : "text-slate-300 dark:text-slate-600"
-                  } group-hover:text-slate-400 px-2`}
-                >
+                <span className={`text-sm font-bold ${isSelected ? 'text-primary' : 'text-slate-300 dark:text-slate-600'} group-hover:text-slate-400 px-2`}>
                   {String.fromCharCode(65 + idx)}
                 </span>
               </label>
@@ -444,7 +351,7 @@ export function QuizTaker({
           </div>
         )}
 
-        <div className="mt-auto pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="mt-auto pt-8 border-t border-border-light dark:border-border-dark flex flex-col sm:flex-row justify-between items-center gap-4">
           <button
             className="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 group disabled:opacity-50"
             onClick={handlePrevious}
@@ -454,32 +361,9 @@ export function QuizTaker({
             Previous
           </button>
           <div className="w-full sm:w-auto flex items-center gap-3">
-            <button
-              className={`flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold transition-colors flex items-center justify-center gap-2 ${
-                flaggedQuestions.has(currentIndex)
-                  ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-              }`}
-              onClick={() => {
-                const newFlagged = new Set(flaggedQuestions);
-                if (newFlagged.has(currentIndex)) {
-                  newFlagged.delete(currentIndex);
-                } else {
-                  newFlagged.add(currentIndex);
-                }
-                setFlaggedQuestions(newFlagged);
-              }}
-            >
-              <Flag
-                className={`w-5 h-5 ${
-                  flaggedQuestions.has(currentIndex) ? "fill-current" : ""
-                }`}
-              />
-              Review Later
-            </button>
             {!showResult ? (
               <button
-                className="flex-1 sm:flex-none px-8 py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-1 active:translate-y-0 active:shadow-md transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
+                className="flex-1 sm:flex-none px-8 py-3 bg-primary text-slate-900 rounded-xl font-bold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-1 active:translate-y-0 active:shadow-md transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
                 onClick={handleSubmit}
                 disabled={selectedAnswer === null}
               >
@@ -488,12 +372,10 @@ export function QuizTaker({
               </button>
             ) : (
               <button
-                className="flex-1 sm:flex-none px-8 py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-1 active:translate-y-0 active:shadow-md transition-all flex items-center justify-center gap-2 group"
+                className="flex-1 sm:flex-none px-8 py-3 bg-primary text-slate-900 rounded-xl font-bold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-1 active:translate-y-0 active:shadow-md transition-all flex items-center justify-center gap-2 group"
                 onClick={handleNext}
               >
-                {currentIndex < questions.length - 1
-                  ? "Next Question"
-                  : "See Results"}
+                {currentIndex < questions.length - 1 ? "Next Question" : "See Results"}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
             )}

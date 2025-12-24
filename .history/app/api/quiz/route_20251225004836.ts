@@ -10,8 +10,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { content, count, model, title, subject, type, difficulty } =
-      await request.json();
+    const { content, count, model, title, subject, type, difficulty } = await request.json();
 
     if (!content) {
       return new NextResponse("Content is required", { status: 400 });
@@ -76,15 +75,11 @@ export async function POST(request: Request) {
           options: q.options, // Ensure your schema supports Json or string[]
           correctAnswer: q.correctAnswer,
           explanation: q.explanation,
-          type: q.type || type || "mcq",
           order: index,
         })),
       });
     } else {
-      return new NextResponse(
-        "Failed to generate questions. Please try again with different content.",
-        { status: 422 }
-      );
+      return new NextResponse("Failed to generate questions. Please try again with different content.", { status: 422 });
     }
 
     return NextResponse.json({
@@ -92,6 +87,8 @@ export async function POST(request: Request) {
       studyKitId: studyKit.id,
       id: quizId,
     });
+
+
   } catch (error) {
     console.error("[QUIZ_GENERATE]", error);
     return new NextResponse("Internal Server Error", { status: 500 });

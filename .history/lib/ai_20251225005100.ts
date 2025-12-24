@@ -339,6 +339,30 @@ export async function generateQuizQuestions(
 ): Promise<GeneratedQuizQuestion[]> {
   const modelName = selectModel(modelType);
 
+  let typeInstructions = "";
+  if (quizType === "true_false") {
+    typeInstructions = `
+- Create True/False questions.
+- Each question should have exactly 2 options: ["True", "False"].
+- Indicate the correct answer index (0 for True, 1 for False).`;
+  } else if (quizType === "short_answer") {
+    typeInstructions = `
+- Create short answer questions.
+- For "options", provide a single string representing the ideal concise answer.
+- Set "correctAnswer" to 0.`;
+  } else if (quizType === "fill_blanks") {
+    typeInstructions = `
+- Create fill-in-the-blank questions.
+- Use "____" (four underscores) to represent the blank space in the question text.
+- Provide 4 options that could fit the blank, with only one being correct.
+- Indicate the correct answer index (0-3).`;
+  } else {
+    typeInstructions = `
+- Create multiple choice questions.
+- Each question should have 4 options.
+- Indicate the correct answer index (0-3).`;
+  }
+
   const prompt = `You are an expert study assistant. Create ${count} ${quizType.replace(
     "_",
     " "
@@ -353,7 +377,7 @@ ${
     ? '- This MUST be a True/False quiz.\n- Each question MUST have exactly 2 options: ["True", "False"].\n- Indicate the correct answer index (0 for True, 1 for False).'
     : quizType === "short_answer"
     ? '- This MUST be a short answer quiz.\n- For "options", provide a single string representing the ideal concise answer.\n- Set "correctAnswer" to 0.'
-    : "- This MUST be a multiple choice quiz.\n- Each question MUST have 4 options.\n- Indicate the correct answer index (0-3)."
+    : '- This MUST be a multiple choice quiz.\n- Each question MUST have 4 options.\n- Indicate the correct answer index (0-3).'
 }
 
 General Instructions:
@@ -418,15 +442,13 @@ ${content.slice(0, 30000)}
  */
 export async function generateStudyMaterials(
   content: string,
-  modelType: AnyModelType = "auto",
-  quizType: string = "mcq",
-  difficulty: string = "medium"
+  modelType: AnyModelType = "auto"
 ): Promise<StudyMaterials> {
   // Run all generation in parallel for speed
   const [summaryData, flashcards, quizQuestions] = await Promise.all([
     generateSummary(content, modelType),
     generateFlashcards(content, 10, modelType),
-    generateQuizQuestions(content, 5, modelType, quizType, difficulty),
+    generateQuizQuestions(content, 5, modelType),
   ]);
 
   return {

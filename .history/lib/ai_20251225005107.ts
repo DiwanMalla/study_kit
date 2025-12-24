@@ -353,7 +353,7 @@ ${
     ? '- This MUST be a True/False quiz.\n- Each question MUST have exactly 2 options: ["True", "False"].\n- Indicate the correct answer index (0 for True, 1 for False).'
     : quizType === "short_answer"
     ? '- This MUST be a short answer quiz.\n- For "options", provide a single string representing the ideal concise answer.\n- Set "correctAnswer" to 0.'
-    : "- This MUST be a multiple choice quiz.\n- Each question MUST have 4 options.\n- Indicate the correct answer index (0-3)."
+    : '- This MUST be a multiple choice quiz.\n- Each question MUST have 4 options.\n- Indicate the correct answer index (0-3).'
 }
 
 General Instructions:
@@ -418,15 +418,13 @@ ${content.slice(0, 30000)}
  */
 export async function generateStudyMaterials(
   content: string,
-  modelType: AnyModelType = "auto",
-  quizType: string = "mcq",
-  difficulty: string = "medium"
+  modelType: AnyModelType = "auto"
 ): Promise<StudyMaterials> {
   // Run all generation in parallel for speed
   const [summaryData, flashcards, quizQuestions] = await Promise.all([
     generateSummary(content, modelType),
     generateFlashcards(content, 10, modelType),
-    generateQuizQuestions(content, 5, modelType, quizType, difficulty),
+    generateQuizQuestions(content, 5, modelType),
   ]);
 
   return {

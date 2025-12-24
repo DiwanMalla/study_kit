@@ -76,7 +76,6 @@ export async function POST(request: Request) {
           options: q.options, // Ensure your schema supports Json or string[]
           correctAnswer: q.correctAnswer,
           explanation: q.explanation,
-          type: q.type || type || "mcq",
           order: index,
         })),
       });

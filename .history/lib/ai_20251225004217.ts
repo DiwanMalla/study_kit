@@ -133,7 +133,6 @@ export interface GeneratedQuizQuestion {
   options: string[];
   correctAnswer: number;
   explanation: string;
-  type?: string;
 }
 
 export interface StudyMaterials {
@@ -197,8 +196,7 @@ ${content.slice(0, 30000)}
     const messages = [
       {
         role: "system" as const,
-        content:
-          "You are a helpful and expert study assistant that always responds in JSON format.",
+        content: "You are a helpful and expert study assistant that always responds in JSON format.",
       },
       { role: "user" as const, content: prompt },
     ];
@@ -233,7 +231,7 @@ ${content.slice(0, 30000)}
       // Find JSON content even if wrapped in markdown code blocks
       const jsonMatch = responseText.match(/\{[\s\S]*\}/);
       const jsonString = jsonMatch ? jsonMatch[0] : responseText;
-
+      
       const parsed = JSON.parse(jsonString);
       return {
         summary: parsed.summary || responseText,
@@ -333,34 +331,19 @@ ${content.slice(0, 30000)}
 export async function generateQuizQuestions(
   content: string,
   count: number = 5,
-  modelType: AnyModelType = "auto",
-  quizType: string = "mcq",
-  difficulty: string = "medium"
+  modelType: AnyModelType = "auto"
 ): Promise<GeneratedQuizQuestion[]> {
   const modelName = selectModel(modelType);
 
-  const prompt = `You are an expert study assistant. Create ${count} ${quizType.replace(
-    "_",
-    " "
-  )} quiz questions from the following study material.
-The difficulty level should be ${difficulty}.
+  const prompt = `You are an expert study assistant. Create ${count} multiple choice quiz questions from the following study material.
 
-CRITICAL INSTRUCTIONS FOR QUIZ TYPE "${quizType}":
-${
-  quizType === "fill_blanks"
-    ? '- This MUST be a fill-in-the-blank quiz.\n- You MUST include "____" (at least four underscores) in the question text where the blank should be.\n- Provide 4 options that could fit the blank, with only one being correct.'
-    : quizType === "true_false"
-    ? '- This MUST be a True/False quiz.\n- Each question MUST have exactly 2 options: ["True", "False"].\n- Indicate the correct answer index (0 for True, 1 for False).'
-    : quizType === "short_answer"
-    ? '- This MUST be a short answer quiz.\n- For "options", provide a single string representing the ideal concise answer.\n- Set "correctAnswer" to 0.'
-    : "- This MUST be a multiple choice quiz.\n- Each question MUST have 4 options.\n- Indicate the correct answer index (0-3)."
-}
-
-General Instructions:
+Instructions:
 - Create exactly ${count} questions
-- Provide a concise but meaningful explanation for the correct answer. It MUST be specific to the question and explain *why* the chosen answer is correct based on the study material. Avoid generic explanations.
+- Each question should have 4 options
+- Indicate the correct answer index (0-3)
+- Provide a simple, complete, and clear explanation for the correct answer. Keep it short, sweet, and meaningful.
 - Return the response ONLY as a JSON array of objects
-- Field names: "question", "options" (array of strings), "correctAnswer" (number), "explanation", "type" (set this to "${quizType}")
+- Field names: "question", "options" (array of strings), "correctAnswer" (number), "explanation"
 - Do not include any markdown formatting or code blocks outside the JSON
 
 Study Material:
@@ -418,15 +401,13 @@ ${content.slice(0, 30000)}
  */
 export async function generateStudyMaterials(
   content: string,
-  modelType: AnyModelType = "auto",
-  quizType: string = "mcq",
-  difficulty: string = "medium"
+  modelType: AnyModelType = "auto"
 ): Promise<StudyMaterials> {
   // Run all generation in parallel for speed
   const [summaryData, flashcards, quizQuestions] = await Promise.all([
     generateSummary(content, modelType),
     generateFlashcards(content, 10, modelType),
-    generateQuizQuestions(content, 5, modelType, quizType, difficulty),
+    generateQuizQuestions(content, 5, modelType),
   ]);
 
   return {
