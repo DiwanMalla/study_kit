@@ -18,6 +18,7 @@ model User {
   studyKits StudyKit[]
   assignments Assignment[]
   summaries   Summary[]
+  exams       Exam[]
 }
 
 model File {
@@ -166,3 +167,35 @@ model Summary {
   @@index([fileId])
 }
 
+
+model Exam {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [clerkId])
+  title       String
+  subject     String?
+  description String?  @db.Text
+  difficulty  String   @default("medium") // easy, medium, hard
+  duration    Int      @default(30) // in minutes
+  status      String   @default("draft") // draft, generating, ready, completed
+  score       Int?
+  questions   ExamQuestion[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model ExamQuestion {
+  id            String   @id @default(cuid())
+  examId        String
+  exam          Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  question      String   @db.Text
+  options       Json     // Array of options
+  correctAnswer Int      // Index of correct option
+  explanation   String?  @db.Text
+  type          String?  @default("mcq") // mcq, true_false, short_essay
+  order         Int      @default(0)
+
+  @@index([examId])
+}
