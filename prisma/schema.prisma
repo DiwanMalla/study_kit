@@ -12,6 +12,8 @@ model User {
   email     String     @unique
   name      String?
   clerkId   String     @unique
+  settings  Json?      // Store user preferences like enabled models
+
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   files     File[]
@@ -19,6 +21,7 @@ model User {
   assignments Assignment[]
   summaries   Summary[]
   exams       Exam[]
+  examAttempts ExamAttempt[]
 }
 
 model File {
@@ -180,10 +183,27 @@ model Exam {
   status      String   @default("draft") // draft, generating, ready, completed
   score       Int?
   questions   ExamQuestion[]
+  attempts    ExamAttempt[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([userId])
+}
+
+model ExamAttempt {
+  id              String   @id @default(cuid())
+  examId          String
+  exam            Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User     @relation(fields: [userId], references: [clerkId])
+  answers         Json     // Array of [questionIndex, optionIndex] pairs
+  score           Int
+  timeSpentSeconds Int?
+  createdAt       DateTime @default(now())
+
+  @@index([examId])
+  @@index([userId])
+  @@index([examId, createdAt])
 }
 
 model ExamQuestion {

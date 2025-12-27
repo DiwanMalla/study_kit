@@ -5,6 +5,7 @@ import { ToolCard } from "@/components/dashboard/ToolCard";
 import { CreateStudyKit } from "@/components/dashboard/create-study-kit";
 import { db } from "@/lib/db";
 import { cn } from "@/lib/utils";
+import { getUserSettings } from "@/app/actions/settings";
 import {
   Bot,
   FileEdit,
@@ -17,11 +18,17 @@ import {
   ChevronDown,
   Sparkles,
   Folder,
+  SmartToy,
+  EditNote,
+  Description,
+  Quiz,
+  School,
 } from "lucide-react";
 
 export default async function DashboardPage() {
   const user = await currentUser();
   const { userId } = await auth();
+  const settings = await getUserSettings();
 
   const studyKits = userId
     ? await db.studyKit.findMany({
@@ -142,7 +149,7 @@ export default async function DashboardPage() {
 
       {/* Action Section */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-16">
-        <CreateStudyKit />
+        <CreateStudyKit enabledModels={settings.enabledModels} />
 
         {/* Study Kits Library */}
         <div className="lg:col-span-1 bg-surface rounded-xl border border-border p-6 shadow-sm flex flex-col h-full">

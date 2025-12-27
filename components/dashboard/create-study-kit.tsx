@@ -7,7 +7,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ModelSelector, ModelType } from "@/components/model-selector";
 import { Upload, Loader2, CheckCircle, Sparkles } from "lucide-react";
 
-export function CreateStudyKit() {
+interface CreateStudyKitProps {
+  enabledModels?: string[];
+}
+
+export function CreateStudyKit({ enabledModels }: CreateStudyKitProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [status, setStatus] = useState<string>("");
@@ -144,6 +148,8 @@ export function CreateStudyKit() {
           <ModelSelector
             value={model}
             onValueChange={setModel}
+            enabledModels={enabledModels}
+            excludeCategories={['image']}
             className="w-full"
           />
         </div>

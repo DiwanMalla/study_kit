@@ -9,7 +9,7 @@ import {
   Download,
   Trash2,
   Plus,
-  Paperclip,
+  Image,
   History,
   Brain,
   School,
@@ -32,6 +32,7 @@ import { MarkdownMessage } from "./markdown-message";
 import { ConversationSidebar } from "./conversation-sidebar";
 import { exportConversationAsMarkdown } from "@/lib/conversation-utils";
 import { cn } from "@/lib/utils";
+import { ModelSelector } from "@/components/model-selector";
 
 interface Message {
   id: string;
@@ -48,6 +49,13 @@ interface Conversation {
   messages: Message[];
 }
 
+type PendingMediaItem = {
+  id: string;
+  file: File;
+  previewUrl: string;
+  kind: "image" | "video";
+};
+
 const SUBJECTS = [
   { value: "general", label: "General" },
   { value: "explain", label: "Explain" },
@@ -55,31 +63,96 @@ const SUBJECTS = [
   { value: "quiz me", label: "Quiz Me" },
 ];
 
-const CHAT_MODELS = [
-  { value: "gemini:gemini-1.5-pro", label: "Gemini 1.5 Pro", icon: "bolt" },
-  {
-    value: "groq:llama-3.3-70b-versatile",
-    label: "Llama 3.3 (Groq)",
-    icon: null,
-  },
-  { value: "openrouter:openai/gpt-4o", label: "GPT-4o", icon: null },
-];
-
 type OpenRouterModelItem = { id: string; name: string };
 
-export function EnhancedAskAI() {
+interface EnhancedAskAIProps {
+  enabledModels?: string[];
+}
+
+export function EnhancedAskAI({ enabledModels }: EnhancedAskAIProps) {
   const [currentConversation, setCurrentConversation] =
     useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [subject, setSubject] = useState("general");
-  const [selectedModel, setSelectedModel] = useState(CHAT_MODELS[0]?.value);
-  const [openRouterModels, setOpenRouterModels] = useState<
-    OpenRouterModelItem[]
-  >([]);
+  const [selectedModel, setSelectedModel] = useState("auto");
   const [refreshSidebar, setRefreshSidebar] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const mediaInputRef = useRef<HTMLInputElement>(null);
+  const [pendingMedia, setPendingMedia] = useState<PendingMediaItem[]>([]);
+
+  const handlePickMedia = () => {
+    mediaInputRef.current?.click();
+  };
+
+  const handleMediaSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    // Allow re-selecting the same file(s)
+    e.target.value = "";
+
+    if (files.length === 0 || isLoading) return;
+
+    const nextItems: PendingMediaItem[] = files
+      .filter((f) =>
+        f.type.startsWith("image/") || f.type.startsWith("video/")
+      )
+      .map((file) => {
+        const kind = file.type.startsWith("video/") ? "video" : "image";
+        return {
+          id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          file,
+          previewUrl: URL.createObjectURL(file),
+          kind,
+        };
+      });
+
+    const combined = [...pendingMedia, ...nextItems];
+    const hasVideo = combined.some((m) => m.kind === "video");
+    if (hasVideo && combined.length !== 1) {
+      // Clean up URLs we just created
+      for (const item of nextItems) URL.revokeObjectURL(item.previewUrl);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `error-${Date.now()}`,
+          role: "assistant",
+          content:
+            "Only a single video is supported. Please attach one video, or attach multiple images.",
+          createdAt: new Date(),
+        },
+      ]);
+      return;
+    }
+
+    setPendingMedia(combined);
+  };
+
+  const removePendingMedia = (id: string) => {
+    setPendingMedia((prev) => {
+      const item = prev.find((x) => x.id === id);
+      if (item) URL.revokeObjectURL(item.previewUrl);
+      return prev.filter((x) => x.id !== id);
+    });
+  };
+
+  const clearPendingMedia = () => {
+    setPendingMedia((prev) => {
+      for (const item of prev) URL.revokeObjectURL(item.previewUrl);
+      return [];
+    });
+  };
+
+  const uploadMediaToBlob = async (file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch("/api/upload", { method: "POST", body: form });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(text || "Upload failed");
+    }
+    return (await res.json()) as { url: string; type: string; name: string };
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
@@ -91,24 +164,6 @@ export function EnhancedAskAI() {
   useEffect(() => {
     scrollToBottom();
   }, [messages.length]);
-
-  useEffect(() => {
-    let cancelled = false;
-    const loadOpenRouterModels = async () => {
-      try {
-        const res = await fetch("/api/models/openrouter");
-        if (!res.ok) return;
-        const data = (await res.json()) as { models?: OpenRouterModelItem[] };
-        if (cancelled) return;
-        const models = Array.isArray(data.models) ? data.models : [];
-        setOpenRouterModels(models);
-      } catch {}
-    };
-    loadOpenRouterModels();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const createNewConversation = async (firstMessage?: string) => {
     try {
@@ -160,7 +215,110 @@ export function EnhancedAskAI() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (isLoading) return;
+
+    const hasMedia = pendingMedia.length > 0;
+    if (!input.trim() && !hasMedia) return;
+
+    // Media messages can be submitted with empty text
+    const query = (input.trim() || "Describe the scene").trim();
+
+    if (hasMedia) {
+      const itemsSnapshot = [...pendingMedia];
+      setInput("");
+      clearPendingMedia();
+
+      // Upload media first so we can embed URLs in the chat message.
+      const uploads = await Promise.all(itemsSnapshot.map((m) => uploadMediaToBlob(m.file)));
+
+      const attachmentsMarkdown = uploads
+        .map((u) => {
+          if (u.type?.startsWith("image/")) {
+            return `![${u.name || "image"}](${u.url})`;
+          }
+          if (u.type?.startsWith("video/")) {
+            // Render via raw HTML; MarkdownMessage enables rehypeRaw.
+            return `<video controls src="${u.url}" style="max-width:100%; border-radius:12px;"></video>`;
+          }
+          return `[${u.name || "file"}](${u.url})`;
+        })
+        .join("\n\n");
+
+      const userMessageContent = `${query}\n\n${attachmentsMarkdown}`.trim();
+
+      const tempUserMessage: Message = {
+        id: `temp-user-${Date.now()}`,
+        role: "user",
+        content: userMessageContent,
+        createdAt: new Date(),
+      };
+
+      const tempAiMessage: Message = {
+        id: `temp-ai-${Date.now()}`,
+        role: "assistant",
+        content: "",
+        createdAt: new Date(),
+      };
+
+      setMessages((prev) => [...prev, tempUserMessage, tempAiMessage]);
+      setIsLoading(true);
+
+      try {
+        let conversationId = currentConversation?.id;
+        if (!conversationId) {
+          conversationId = await createNewConversation(query);
+          if (!conversationId) throw new Error("Failed to create conversation");
+        }
+
+        const form = new FormData();
+        form.set("query", query);
+        form.set("message", userMessageContent);
+        for (const u of uploads) {
+          form.append("mediaUrl", u.url);
+        }
+
+        const response = await fetch(`/api/conversations/${conversationId}/media`, {
+          method: "POST",
+          body: form,
+        });
+
+        if (!response.ok) {
+          const data = await response.json().catch(() => null);
+          throw new Error(data?.details || data?.error || "Failed to analyze media");
+        }
+
+        const data = (await response.json()) as {
+          userMessage: Message;
+          aiMessage: Message;
+        };
+
+        setMessages((prev) =>
+          prev
+            .filter((m) => m.id !== tempUserMessage.id && m.id !== tempAiMessage.id)
+            .concat([data.userMessage, data.aiMessage])
+        );
+
+        setRefreshSidebar((prev) => prev + 1);
+      } catch (error: unknown) {
+        console.error("Media error:", error);
+        setMessages((prev) =>
+          prev.filter((m) => m.id !== tempUserMessage.id && m.id !== tempAiMessage.id)
+        );
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `error-${Date.now()}`,
+            role: "assistant",
+            content: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+            createdAt: new Date(),
+          },
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+
+      return;
+    }
 
     const userMessageContent = input;
     setInput("");
@@ -307,7 +465,11 @@ export function EnhancedAskAI() {
           />
         </div>
         <div className="p-3 border-t flex justify-between items-center text-muted-foreground">
-          <Button variant="destructive" size="icon" className="rounded-full bg-red-500 hover:bg-red-600 text-white shadow-sm shadow-red-500/20 border-none transition-all">
+          <Button
+            variant="destructive"
+            size="icon"
+            className="rounded-full bg-red-500 hover:bg-red-600 text-white shadow-sm shadow-red-500/20 border-none transition-all"
+          >
             <Trash2 className="w-4 h-4" />
           </Button>
           <Button variant="ghost" size="icon" className="rounded-full">
@@ -436,7 +598,7 @@ export function EnhancedAskAI() {
                     </span>
                     <div
                       className={cn(
-                        "p-4 rounded-2xl shadow-sm text-sm leading-relaxed overflow-hidden break-words w-full",
+                        "p-4 rounded-2xl shadow-sm text-sm leading-relaxed overflow-hidden wrap-break-word w-full",
                         message.role === "user"
                           ? "bg-accent rounded-tr-none"
                           : "bg-card border rounded-tl-none"
@@ -468,7 +630,51 @@ export function EnhancedAskAI() {
             onSubmit={handleSubmit}
             className="max-w-3xl mx-auto w-full flex flex-col gap-4"
           >
+            <input
+              ref={mediaInputRef}
+              type="file"
+              className="hidden"
+              accept="image/png,image/jpeg,image/webp,video/mp4,video/webm,video/quicktime"
+              multiple
+              onChange={handleMediaSelected}
+            />
             <div className="relative group">
+              {pendingMedia.length > 0 && (
+                <div className="mb-3 rounded-2xl border bg-card p-3">
+                  <div className="flex flex-wrap gap-3">
+                    {pendingMedia.map((m) => (
+                      <div
+                        key={m.id}
+                        className="relative w-20 h-20 rounded-xl overflow-hidden border bg-muted"
+                      >
+                        {m.kind === "image" ? (
+                          <img
+                            src={m.previewUrl}
+                            alt={m.file.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <video
+                            src={m.previewUrl}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => removePendingMedia(m.id)}
+                          className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white text-xs font-bold flex items-center justify-center"
+                          aria-label="Remove attachment"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-2 text-[10px] text-muted-foreground font-medium">
+                    Attachments will be sent with your message.
+                  </div>
+                </div>
+              )}
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -487,8 +693,10 @@ export function EnhancedAskAI() {
                   size="icon"
                   variant="ghost"
                   className="rounded-xl text-muted-foreground"
+                  onClick={handlePickMedia}
+                  disabled={isLoading}
                 >
-                  <Paperclip className="w-5 h-5" />
+                  <Image className="w-5 h-5" />
                 </Button>
                 <Button
                   type="submit"
@@ -503,52 +711,14 @@ export function EnhancedAskAI() {
 
             <div className="flex items-center justify-between text-[10px]">
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1.5 text-muted-foreground font-bold uppercase">
-                  <Brain className="w-3.5 h-3.5" />
-                  <span>Model:</span>
-                </div>
-                <Select value={selectedModel} onValueChange={setSelectedModel}>
-                  <SelectTrigger className="h-8 w-[200px] rounded-full border-border bg-background text-[10px] font-bold uppercase">
-                    <SelectValue placeholder="Select Model" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <div className="px-2 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                      Standard Models
-                    </div>
-                    {CHAT_MODELS.map((m) => (
-                      <SelectItem
-                        key={m.value}
-                        value={m.value}
-                        className="text-[10px] font-bold uppercase"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span>{m.label}</span>
-                          {m.icon && (
-                            <span className="material-symbols-outlined text-[12px] text-primary">
-                              bolt
-                            </span>
-                          )}
-                        </div>
-                      </SelectItem>
-                    ))}
-                    {openRouterModels.length > 0 && (
-                      <>
-                        <div className="px-2 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider border-t mt-1">
-                          OpenRouter Models
-                        </div>
-                        {openRouterModels.map((m) => (
-                          <SelectItem
-                            key={m.id}
-                            value={`or:${m.id}`}
-                            className="text-[10px] font-bold uppercase"
-                          >
-                            {m.name}
-                          </SelectItem>
-                        ))}
-                      </>
-                    )}
-                  </SelectContent>
-                </Select>
+                <ModelSelector
+                  value={selectedModel}
+                  onValueChange={setSelectedModel}
+                  enabledModels={enabledModels}
+                  hideLabel
+                  hideDescription
+                  className="w-[200px]"
+                />
               </div>
               <span className="text-muted-foreground opacity-50 font-medium">
                 Press Enter to send • Shift+Enter for new line

@@ -1,11 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { ModelSelector } from "@/components/model-selector";
+import { getUserSettings } from "@/app/actions/settings";
 
 type QuizType = "mcq" | "true_false" | "fill_blanks" | "short_answer";
 type Difficulty = "easy" | "medium" | "hard";
@@ -59,9 +61,18 @@ export default function NewQuizPage() {
   const [model, setModel] = useState("auto");
   const [source, setSource] = useState<ContentSource>("upload");
   const [textPreview, setTextPreview] = useState("");
+  const [enabledModels, setEnabledModels] = useState<string[] | undefined>(undefined);
   
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    getUserSettings().then((settings) => {
+      if (settings?.enabledModels) {
+        setEnabledModels(settings.enabledModels);
+      }
+    });
+  }, []);
   const [uploadedFile, setUploadedFile] = useState<{
     id: string;
     name: string;
@@ -287,13 +298,14 @@ export default function NewQuizPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">AI Model</label>
-                  <select 
-                    className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
+                  <ModelSelector
                     value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                  >
-                    {MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                  </select>
+                    onValueChange={setModel}
+                    enabledModels={enabledModels}
+                    hideLabel
+                    excludeCategories={['image']}
+                    className="w-full"
+                  />
                 </div>
               </div>
 

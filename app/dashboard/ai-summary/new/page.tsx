@@ -20,58 +20,11 @@ import { cn } from "@/lib/utils";
 
 export type SummaryLength = "short" | "medium" | "long";
 
-const MODELS = [
-  {
-    id: "auto",
-    name: "Auto (Recommended)",
-    description: "Best balance of speed and quality",
-  },
-  {
-    id: "llama-3.1-8b-instant",
-    name: "Fast — Llama 3.1 8B",
-    description: "Ultra-fast responses",
-  },
-  {
-    id: "llama-3.3-70b-versatile",
-    name: "Balanced — Llama 3.3 70B",
-    description: "Great for academic content",
-  },
-  {
-    id: "meta-llama/llama-4-scout-17b-16e-instruct",
-    name: "Reasoning — Llama 4 Scout",
-    description: "Deep understanding",
-  },
-  {
-    id: "meta-llama/llama-4-maverick-17b-128e-instruct",
-    name: "Best — Llama 4 Maverick",
-    description: "Highest quality outputs",
-  },
-  {
-    id: "qwen/qwen3-32b",
-    name: "Reasoning — Qwen3 32B",
-    description: "Excellent at complex tasks",
-  },
-  {
-    id: "or:nvidia/llama-3.1-nemotron-70b-instruct",
-    name: "Powerful — NVIDIA Nemotron 70B",
-    description: "State-of-the-art reasoning",
-  },
-  {
-    id: "or:mistralai/devstral-2-2512",
-    name: "Devstral 2 (OpenRouter)",
-    description: "Open source excellence",
-  },
-  {
-    id: "or:kwaipilot/kat-coder-pro-v1",
-    name: "KAT-Coder-Pro (OpenRouter)",
-    description: "Strong coding & logic",
-  },
-  {
-    id: "or:tngtech/deepseek-r1t2-chimera",
-    name: "DeepSeek R1T2 (OpenRouter)",
-    description: "Specialized reasoning",
-  },
-];
+import { ModelSelector } from "@/components/model-selector";
+import { getUserSettings } from "@/app/actions/settings";
+import { useEffect } from "react";
+
+
 
 export default function NewSummaryPage() {
   const router = useRouter();
@@ -84,6 +37,15 @@ export default function NewSummaryPage() {
   const [length, setLength] = useState<SummaryLength>("medium");
   const [model, setModel] = useState("auto");
   const [audience, setAudience] = useState("University Student");
+  const [enabledModels, setEnabledModels] = useState<string[] | undefined>(undefined);
+
+  useEffect(() => {
+    getUserSettings().then((settings) => {
+      if (settings?.enabledModels) {
+        setEnabledModels(settings.enabledModels);
+      }
+    });
+  }, []);
 
   // File upload state
   const [uploading, setUploading] = useState(false);
@@ -233,22 +195,14 @@ export default function NewSummaryPage() {
                     AI Model
                   </Label>
                   <div className="relative">
-                    <select
-                      className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm focus:ring-primary/20 appearance-none cursor-pointer shadow-sm pr-10"
+                    <ModelSelector
                       value={model}
-                      onChange={(e) => setModel(e.target.value)}
-                    >
-                      {MODELS.map((m) => (
-                        <option key={m.id} value={m.id}>
-                          {m.name}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                      <span className="material-symbols-outlined text-[20px]">
-                        expand_more
-                      </span>
-                    </div>
+                      onValueChange={setModel}
+                      enabledModels={enabledModels}
+                      hideLabel
+                      excludeCategories={['image']}
+                      className="w-full"
+                    />
                   </div>
                 </div>
                 <div className="text-left">

@@ -1,9 +1,12 @@
 import { EnhancedAskAI } from "@/components/ask-ai";
+import { getUserSettings } from "@/app/actions/settings";
 
-export default function AITutorPage() {
+export default async function AITutorPage() {
+  const settings = await getUserSettings();
+  
   return (
     <div className="h-full w-full overflow-hidden">
-      <EnhancedAskAI />
+      <EnhancedAskAI enabledModels={settings.enabledModels} />
     </div>
   );
 }
