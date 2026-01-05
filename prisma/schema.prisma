@@ -13,6 +13,9 @@ model User {
   name      String?
   clerkId   String     @unique
   settings  Json?      // Store user preferences like enabled models
+  subscriptionPlan String @default("free") // free, pro, ultimate
+  subscriptionStatus String @default("active") // active, cancelled, expired
+  subscriptionEndsAt DateTime?
 
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -135,6 +138,10 @@ model Assignment {
   description String?  @db.Text
   status      String   @default("processing") // processing, completed, error
   solution    String?  @db.Text
+  modelUsed   String?  // Track which AI model was used
+  images      Json?    // Store generated images data
+  wordDocUrl  String?  // URL to generated Word document
+  judgeScore  Float?   // Quality score from AI judge
   files       File[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

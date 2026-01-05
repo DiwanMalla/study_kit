@@ -2,7 +2,15 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { extractContent } from "@/lib/gemini";
-import { generateAssignmentSolution } from "@/lib/ai";
+import { generateAssignmentSolutionWithJudge } from "@/lib/assignment-judge";
+import {
+  getAssignmentModelForPlan,
+  getJudgeModels,
+  hasPremiumAccess,
+} from "@/lib/assignment-models";
+import { createAssignmentWordDocument } from "@/lib/word-generator";
+import { qwenImageGeneration } from "@/lib/ai";
+import { put } from "@vercel/blob";
 
 async function fetchWithTimeout(url: string, timeoutMs: number) {
   const controller = new AbortController();
@@ -150,27 +158,99 @@ export async function POST(
       );
     }
 
-    // Generate solution
-    const solution = await withTimeout(
-      generateAssignmentSolution(
+    // Get user's subscription plan
+    const user = await db.user.findUnique({
+      where: { clerkId: userId },
+      select: { subscriptionPlan: true },
+    });
+
+    const plan = user?.subscriptionPlan || "free";
+    const useJudge = hasPremiumAccess(plan);
+    const models = getJudgeModels(plan);
+
+    // Generate solution with optional AI judge
+    const result = await withTimeout(
+      generateAssignmentSolutionWithJudge(
         assignment.title,
         assignment.description,
-        combinedContent
+        combinedContent,
+        useJudge,
+        models
       ),
-      120_000,
+      180_000, // Increased timeout for judge system
       "Timed out generating assignment solution"
     );
 
-    // Update assignment with solution
+    // Process images if needed
+    let finalSolution = result.solution;
+    const generatedImages: string[] = [];
+    const diagramRegex = /\[(?:DIAGRAM|IMAGE):\s*([^\]]+)\]/gi;
+    const matches = [...finalSolution.matchAll(diagramRegex)];
+
+    if (matches.length > 0) {
+      for (const match of matches) {
+        const fullTag = match[0];
+        const description = match[1];
+
+        try {
+          // Generate image using Qwen
+          const imageUrl = await qwenImageGeneration(
+            `Academic diagram for: ${description}. Professional, clear, educational style.`
+          );
+
+          // Download and upload to Vercel Blob
+          const imgRes = await fetch(imageUrl);
+          const imgBlob = await imgRes.blob();
+          const { url: blobUrl } = await put(
+            `assignments/${assignment.id}/diagram-${Date.now()}.png`,
+            imgBlob,
+            { access: "public" }
+          );
+
+          // Replace tag with markdown image
+          finalSolution = finalSolution.replace(
+            fullTag,
+            `\n\n![${description}](${blobUrl})\n\n`
+          );
+          generatedImages.push(blobUrl);
+        } catch (error) {
+          console.error(`Failed to generate image for: ${description}`, error);
+          // Remove the tag if generation fails to keep it clean
+          finalSolution = finalSolution.replace(fullTag, "");
+        }
+      }
+    }
+
+    // Generate Word document
+    let wordDocUrl: string | null = null;
+    try {
+      wordDocUrl = await createAssignmentWordDocument(
+        finalSolution,
+        assignment.id,
+        assignment.title
+      );
+    } catch (error) {
+      console.error("Failed to generate Word document:", error);
+      // Don't fail the whole process if Word generation fails
+    }
+
+    // Update assignment with solution and metadata
     await db.assignment.update({
       where: { id },
       data: {
         status: "completed",
-        solution: solution,
+        solution: finalSolution,
+        modelUsed: result.modelUsed,
+        images: generatedImages,
+        judgeScore: result.judgeResult
+          ? result.judgeResult.scores.find((s) => s.model === result.modelUsed)
+              ?.score
+          : null,
+        wordDocUrl,
       },
     });
 
-    return NextResponse.json({ success: true, solution });
+    return NextResponse.json({ success: true, solution: finalSolution });
   } catch (error) {
     console.error("[ASSIGNMENT_SOLVE]", error);
 

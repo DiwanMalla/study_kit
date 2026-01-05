@@ -121,7 +121,7 @@ export function AssignmentList({ initialAssignments }: AssignmentListProps) {
   };
 
   return (
-    <div className="w-full flex flex-col h-full py-6">
+    <div className="w-full flex flex-col h-full py-6 px-10">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">

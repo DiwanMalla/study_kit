@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { AssignmentSolutionView } from "@/components/dashboard/assignment-solution-view";
 
 interface File {
   id: string;
@@ -31,6 +32,9 @@ interface Assignment {
   solution: string | null;
   createdAt: Date;
   files: File[];
+  modelUsed?: string | null;
+  wordDocUrl?: string | null;
+  judgeScore?: number | null;
 }
 
 export function AssignmentSolution({
@@ -217,6 +221,25 @@ export function AssignmentSolution({
                 </span>
                 Applied Science
               </span>
+              {assignment.modelUsed && (
+                <span className="flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[18px]">
+                    smart_toy
+                  </span>
+                  <span className="font-medium">{assignment.modelUsed}</span>
+                </span>
+              )}
+              {assignment.judgeScore !== null &&
+                assignment.judgeScore !== undefined && (
+                  <span className="flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-[18px] text-green-500">
+                      verified
+                    </span>
+                    <span className="font-medium text-green-600 dark:text-green-400">
+                      Quality Score: {Math.round(assignment.judgeScore)}%
+                    </span>
+                  </span>
+                )}
             </div>
           </div>
         </div>
@@ -387,77 +410,19 @@ export function AssignmentSolution({
               </div>
             </div>
           ) : (
-            <div className="bg-surface border border-border rounded-xl shadow-sm flex flex-col h-full min-h-[600px]">
-              <div className="p-6 border-b flex items-center justify-between sticky top-0 bg-surface/80 backdrop-blur-md z-10 rounded-t-xl">
-                <h2 className="text-lg font-bold flex items-center gap-2 tracking-tight">
-                  <span className="material-symbols-outlined text-primary text-[24px]">
-                    psychology
-                  </span>
-                  AI Solution
-                </h2>
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-9 w-9 rounded-xl hover:bg-muted"
-                    title="Copy to clipboard"
-                    onClick={() => {
-                      navigator.clipboard.writeText(assignment.solution || "");
-                    }}
-                  >
-                    <span className="material-symbols-outlined text-[20px]">
-                      content_copy
-                    </span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-9 w-9 rounded-xl hover:bg-muted"
-                    title="Regenerate"
-                    onClick={retrySolve}
-                    disabled={isRetrying}
-                  >
-                    <span
-                      className={cn(
-                        "material-symbols-outlined text-[20px]",
-                        isRetrying && "animate-spin text-primary"
-                      )}
-                    >
-                      refresh
-                    </span>
-                  </Button>
-                </div>
-              </div>
-
-              <div className="p-8 md:p-10 flex-1">
-                <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none text-muted-foreground">
-                  {/* We split solution for the new design but here we just render them together or separated as before */}
-                  <div className="mb-10">
-                    <h4 className="text-foreground font-bold text-lg mb-4 uppercase tracking-tighter flex items-center gap-2">
-                      <div className="w-1.5 h-6 bg-primary rounded-full"></div>
-                      Final Answer
-                    </h4>
-                    <MarkdownViewer
-                      content={(solution || assignment.solution || "").trim()}
-                      className="text-base leading-relaxed bg-muted/20 p-6 rounded-2xl border border-border/50"
-                    />
-                  </div>
-
-                  {explanation.trim() && (
-                    <div className="mt-12 pt-12 border-t border-dashed border-border">
-                      <h4 className="text-foreground font-bold text-lg mb-4 uppercase tracking-tighter flex items-center gap-2 text-indigo-500">
-                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full"></div>
-                        Explanation & Reasoning
-                      </h4>
-                      <MarkdownViewer
-                        content={explanation}
-                        className="text-base leading-relaxed"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            <AssignmentSolutionView
+              title={assignment.title}
+              solution={assignment.solution}
+              status={assignment.status}
+              modelUsed={assignment.modelUsed}
+              judgeScore={assignment.judgeScore}
+              wordDocUrl={assignment.wordDocUrl}
+              onCopy={() => {
+                navigator.clipboard.writeText(assignment.solution || "");
+              }}
+              onRegenerate={retrySolve}
+              isRegenerating={isRetrying}
+            />
           )}
         </div>
       </div>

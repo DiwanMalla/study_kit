@@ -264,6 +264,59 @@ export async function qwenImageGeneration(
   return imageUrl;
 }
 
+// Qwen Chat (Alibaba DashScope) completion
+export async function qwenChatCompletion(args: {
+  model: string;
+  messages: Array<{ role: "system" | "user" | "assistant"; content: string }>;
+  temperature?: number;
+  max_tokens?: number;
+  response_format?: any;
+}): Promise<any> {
+  if (!process.env.ALIBABA_MODEL_API_KEY) {
+    throw new Error("ALIBABA_MODEL_API_KEY is not set");
+  }
+
+  const res = await fetch(
+    "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text-generation/generation",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.ALIBABA_MODEL_API_KEY}`,
+        "Content-Type": "application/json",
+        "X-DashScope-SSE": "disable",
+      },
+      body: JSON.stringify({
+        model: args.model,
+        input: {
+          messages: args.messages,
+        },
+        parameters: {
+          result_format: "message",
+          temperature: args.temperature ?? 0.7,
+          max_tokens: args.max_tokens ?? 2000,
+        },
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Qwen request failed (${res.status}): ${text}`);
+  }
+
+  const data = await res.json();
+  // Normalize to OpenAI-like format for compatibility
+  return {
+    choices: [
+      {
+        message: {
+          content: data.output.choices[0].message.content,
+        },
+      },
+    ],
+  };
+}
+
 export interface GeneratedFlashcard {
   question: string;
   answer: string;
