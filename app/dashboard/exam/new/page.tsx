@@ -40,10 +40,10 @@ import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  model: z.string().default("llama-3.3-70b-versatile"), // Default to best open model
-  difficulty: z.string().default("medium"),
-  questionCount: z.number().min(5).max(100).default(20),
-  duration: z.number().min(5).default(45),
+  model: z.string().default("llama-3.3-70b-versatile").optional(),
+  difficulty: z.string().default("medium").optional(),
+  questionCount: z.number().min(5).max(100).default(20).optional(),
+  duration: z.number().min(5).default(45).optional(),
   questionTypes: z
     .array(z.string())
     .min(1, "Select at least one question type"),
@@ -589,7 +589,8 @@ export default function CreateExamPage() {
                       Model
                     </span>
                     <span className="font-bold text-slate-900 dark:text-white">
-                      {form.watch("model").includes("70b")
+                      {form.watch("model") &&
+                      form.watch("model")!.includes("70b")
                         ? "Advanced"
                         : "Fast"}
                     </span>

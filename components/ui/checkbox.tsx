@@ -72,12 +72,8 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       onClickCapture,
       onMouseDownCapture,
       onMouseUpCapture,
-      onMouseEnterCapture,
-      onMouseLeaveCapture,
       onPointerDownCapture,
       onPointerUpCapture,
-      onPointerEnterCapture,
-      onPointerLeaveCapture,
       onTouchStartCapture,
       onTouchEndCapture,
       onTouchCancelCapture,
@@ -139,7 +135,6 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         )}
         onChange={(e) => {
           onCheckedChange?.(e.target.checked);
-          rest.onChange?.(e);
         }}
         onBlur={onBlur}
         onFocus={onFocus}
@@ -187,12 +182,8 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         onClickCapture={onClickCapture}
         onMouseDownCapture={onMouseDownCapture}
         onMouseUpCapture={onMouseUpCapture}
-        onMouseEnterCapture={onMouseEnterCapture}
-        onMouseLeaveCapture={onMouseLeaveCapture}
         onPointerDownCapture={onPointerDownCapture}
         onPointerUpCapture={onPointerUpCapture}
-        onPointerEnterCapture={onPointerEnterCapture}
-        onPointerLeaveCapture={onPointerLeaveCapture}
         onTouchStartCapture={onTouchStartCapture}
         onTouchEndCapture={onTouchEndCapture}
         onTouchCancelCapture={onTouchCancelCapture}

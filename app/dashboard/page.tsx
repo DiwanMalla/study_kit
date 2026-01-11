@@ -4,26 +4,8 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { ToolCard } from "@/components/dashboard/ToolCard";
 import { CreateStudyKit } from "@/components/dashboard/create-study-kit";
 import { db } from "@/lib/db";
-import { cn } from "@/lib/utils";
 import { getUserSettings } from "@/app/actions/settings";
-import {
-  Bot,
-  FileEdit,
-  FileText,
-  Layers,
-  CheckCircle,
-  GraduationCap,
-  FolderOpen,
-  Clock,
-  ChevronDown,
-  Sparkles,
-  Folder,
-  SmartToy,
-  EditNote,
-  Description,
-  Quiz,
-  School,
-} from "lucide-react";
+import { Sparkles, Folder } from "lucide-react";
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -44,11 +26,11 @@ export default async function DashboardPage() {
     : [];
 
   const totalFlashcards = studyKits.reduce(
-    (acc, kit) => acc + kit.flashcards.length,
+    (acc: number, kit: any) => acc + kit.flashcards.length,
     0
   );
   const totalQuizzes = studyKits.reduce(
-    (acc, kit) => acc + kit.quizzes.length,
+    (acc: number, kit: any) => acc + kit.quizzes.length,
     0
   );
 
@@ -163,7 +145,7 @@ export default async function DashboardPage() {
                 <p className="text-sm">No kits yet</p>
               </div>
             ) : (
-              studyKits.map((kit) => (
+              studyKits.map((kit: any) => (
                 <Link
                   key={kit.id}
                   href={`/study-kit/${kit.id}`}

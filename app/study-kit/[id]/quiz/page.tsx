@@ -29,7 +29,7 @@ export default async function QuizPage({ params }: QuizPageProps) {
   // Get the first quiz (for MVP, we create one quiz per study kit)
   const quiz = studyKit.quizzes[0];
   const questions =
-    quiz?.questions.map((q) => ({
+    quiz?.questions.map((q: any) => ({
       ...q,
       options: q.options as string[],
     })) || [];

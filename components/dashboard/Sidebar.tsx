@@ -145,7 +145,7 @@ export function Sidebar() {
         </Link>
 
         <button
-          onClick={() => signOut(() => (window.location.href = "/"))}
+          onClick={() => signOut({ redirectUrl: "/" })}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-full text-destructive bg-destructive/5 border border-destructive/10 hover:bg-destructive/10 transition-all mb-4"
         >
           <LogOut className="w-5 h-5" />

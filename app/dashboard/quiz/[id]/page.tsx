@@ -14,11 +14,11 @@ export default async function QuizPage({ params }: QuizPageProps) {
   const { id } = await params;
 
   const quiz = await db.quiz.findFirst({
-    where: { 
+    where: {
       id,
       studyKit: {
-        userId
-      }
+        userId,
+      },
     },
     include: {
       studyKit: true,
@@ -28,7 +28,7 @@ export default async function QuizPage({ params }: QuizPageProps) {
 
   if (!quiz) notFound();
 
-  const questions = quiz.questions.map((q) => ({
+  const questions = quiz.questions.map((q: any) => ({
     ...q,
     options: q.options as string[],
   }));

@@ -2,16 +2,10 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { format } from "date-fns";
-import type { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
-type Deck = Prisma.StudyKitGetPayload<{
-  include: { 
-    _count: { select: { flashcards: true } },
-    flashcards: { where: { reviewed: true }, select: { id: true } }
-  };
-}>;
+type Deck = any; // TODO: Replace with correct type if needed
 
 export default async function FlashcardsPage() {
   const { userId } = await auth();
@@ -26,8 +20,8 @@ export default async function FlashcardsPage() {
           _count: { select: { flashcards: true } },
           flashcards: {
             where: { reviewed: true },
-            select: { id: true }
-          }
+            select: { id: true },
+          },
         },
         orderBy: { createdAt: "desc" },
       })
@@ -169,7 +163,10 @@ export default async function FlashcardsPage() {
               {decks.map((deck) => {
                 const totalCards = deck._count.flashcards;
                 const reviewedCards = deck.flashcards.length;
-                const progressPercent = totalCards > 0 ? Math.round((reviewedCards / totalCards) * 100) : 0;
+                const progressPercent =
+                  totalCards > 0
+                    ? Math.round((reviewedCards / totalCards) * 100)
+                    : 0;
                 return (
                   <div
                     key={deck.id}

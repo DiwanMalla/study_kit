@@ -78,7 +78,10 @@ export default async function StudyKitPage({ params }: StudyKitPageProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {studyKit.quizzes.reduce((acc, q) => acc + q.questions.length, 0)}
+              {studyKit.quizzes.reduce(
+                (acc: number, q: any) => acc + q.questions.length,
+                0
+              )}
             </div>
           </CardContent>
         </Card>

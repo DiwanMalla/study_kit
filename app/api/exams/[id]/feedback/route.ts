@@ -64,7 +64,7 @@ export async function POST(
     );
 
     const missed = exam.questions
-      .map((q, idx) => {
+      .map((q: any, idx: number) => {
         const userAnswer = answersMap.get(idx);
         const isAnswered = userAnswer !== undefined;
 
@@ -105,7 +105,7 @@ export async function POST(
           status: !isAnswered ? "unanswered" : isCorrect ? "correct" : "wrong",
         };
       })
-      .filter((x) => x.status !== "correct");
+      .filter((x: any) => x.status !== "correct");
 
     // A commonly-available free OpenRouter model
     const fallbackModel = "meta-llama/llama-3.1-8b-instruct:free";

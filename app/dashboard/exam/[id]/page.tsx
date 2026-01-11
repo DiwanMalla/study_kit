@@ -39,10 +39,26 @@ export default async function ExamPage({
     notFound();
   }
 
+  // Transform questions.options from JsonValue to string[]
+  const examForComponent = {
+    ...exam,
+    questions: exam.questions.map((q: any) => ({
+      ...q,
+      options: Array.isArray(q.options) ? q.options : [],
+      type: q.type ?? "mcq",
+    })),
+    attempts: Array.isArray(exam.attempts)
+      ? exam.attempts.map((a: any) => ({
+          ...a,
+          answers: Array.isArray(a.answers) ? a.answers : [],
+        }))
+      : [],
+  };
+
   return (
     <div className="w-full h-full bg-background overflow-y-auto">
       <div className="max-w-[1920px] mx-auto">
-        <ExamTaker exam={exam} />
+        <ExamTaker exam={examForComponent} />
       </div>
     </div>
   );

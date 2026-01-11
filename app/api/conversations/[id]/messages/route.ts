@@ -209,7 +209,7 @@ export async function POST(
 
     // Build conversation history
     const conversationHistory = conversation.messages
-      .map((msg) => {
+      .map((msg: { role: string; content: string }) => {
         const role = msg.role === "user" ? "Student" : "Assistant";
         return `${role}: ${msg.content}`;
       })
@@ -407,7 +407,8 @@ Please provide a helpful, clear response.`;
               const contextMessages = conversation.messages.slice(-4); // Last 4 messages for context
               const contextText = contextMessages
                 .map(
-                  (m) => `${m.role === "user" ? "User" : "AI"}: ${m.content}`
+                  (m: { role: string; content: string }) =>
+                    `${m.role === "user" ? "User" : "AI"}: ${m.content}`
                 )
                 .join("\n");
 
@@ -582,8 +583,12 @@ Example of good expansion: If user asks for "heart tissue", you might add "detai
             }
 
             // Check image generation limit for free users
-            if (!hasUltimateAccess(plan) && imageGenCount >= MAX_FREE_IMAGES_PER_MONTH) {
-              const limitMsg = "You've reached your free limit of 10 image generations per month. Please upgrade to Ultimate for unlimited images.";
+            if (
+              !hasUltimateAccess(plan) &&
+              imageGenCount >= MAX_FREE_IMAGES_PER_MONTH
+            ) {
+              const limitMsg =
+                "You've reached your free limit of 10 image generations per month. Please upgrade to Ultimate for unlimited images.";
               fullResponse = limitMsg;
               enqueueSmooth(controller, limitMsg);
               flushSmooth(controller);
