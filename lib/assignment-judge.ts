@@ -1,5 +1,5 @@
 import { Groq } from "groq-sdk";
-import { AssignmentModelConfig } from "./assignment-models";
+import { AssignmentModelConfig } from "./ai-models";
 import { qwenChatCompletion } from "./ai";
 
 const groq = new Groq({

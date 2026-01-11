@@ -16,6 +16,7 @@ import {
   CheckCircle,
   GraduationCap,
   Settings,
+  LogOut,
 } from "lucide-react";
 
 const mainNav = [
@@ -137,11 +138,19 @@ export function Sidebar() {
       <div className="p-4 mt-auto">
         <Link
           href="/dashboard/settings"
-          className="flex items-center gap-3 px-4 py-3 rounded-full text-muted-foreground hover:bg-surface border border-transparent hover:border-border transition-all mb-2"
+          className="flex items-center gap-3 px-4 py-3 rounded-full text-muted-foreground hover:bg-surface border border-transparent hover:border-border transition-all mb-1"
         >
           <Settings className="w-5 h-5" />
           <span className="text-sm font-medium">Settings</span>
         </Link>
+
+        <button
+          onClick={() => signOut(() => (window.location.href = "/"))}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-full text-destructive bg-destructive/5 border border-destructive/10 hover:bg-destructive/10 transition-all mb-4"
+        >
+          <LogOut className="w-5 h-5" />
+          <span className="text-sm font-medium">Log out</span>
+        </button>
 
         <div className="flex items-center gap-3 p-3 rounded-xl bg-surface border border-border shadow-sm">
           <UserButton afterSignOutUrl="/" />

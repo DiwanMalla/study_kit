@@ -33,6 +33,7 @@ import { ConversationSidebar } from "./conversation-sidebar";
 import { exportConversationAsMarkdown } from "@/lib/conversation-utils";
 import { cn } from "@/lib/utils";
 import { ModelSelector } from "@/components/model-selector";
+import { AI_MODELS } from "@/lib/ai-models";
 
 interface Message {
   id: string;
@@ -76,7 +77,15 @@ export function EnhancedAskAI({ enabledModels }: EnhancedAskAIProps) {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [subject, setSubject] = useState("general");
-  const [selectedModel, setSelectedModel] = useState("auto");
+  // Allow latest OpenRouter free models and Groq models
+  const allowedModelIds = AI_MODELS.filter(
+    (m) => (m.provider === "OpenRouter" && m.isFree) || m.provider === "Groq"
+  ).map((m) => m.id);
+  const [selectedModel, setSelectedModel] = useState(
+    allowedModelIds.includes("llama-3.3-70b-versatile")
+      ? "llama-3.3-70b-versatile"
+      : allowedModelIds[0] || "auto"
+  );
   const [refreshSidebar, setRefreshSidebar] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const mediaInputRef = useRef<HTMLInputElement>(null);
@@ -94,9 +103,7 @@ export function EnhancedAskAI({ enabledModels }: EnhancedAskAIProps) {
     if (files.length === 0 || isLoading) return;
 
     const nextItems: PendingMediaItem[] = files
-      .filter((f) =>
-        f.type.startsWith("image/") || f.type.startsWith("video/")
-      )
+      .filter((f) => f.type.startsWith("image/") || f.type.startsWith("video/"))
       .map((file) => {
         const kind = file.type.startsWith("video/") ? "video" : "image";
         return {
@@ -229,7 +236,9 @@ export function EnhancedAskAI({ enabledModels }: EnhancedAskAIProps) {
       clearPendingMedia();
 
       // Upload media first so we can embed URLs in the chat message.
-      const uploads = await Promise.all(itemsSnapshot.map((m) => uploadMediaToBlob(m.file)));
+      const uploads = await Promise.all(
+        itemsSnapshot.map((m) => uploadMediaToBlob(m.file))
+      );
 
       const attachmentsMarkdown = uploads
         .map((u) => {
@@ -277,14 +286,19 @@ export function EnhancedAskAI({ enabledModels }: EnhancedAskAIProps) {
           form.append("mediaUrl", u.url);
         }
 
-        const response = await fetch(`/api/conversations/${conversationId}/media`, {
-          method: "POST",
-          body: form,
-        });
+        const response = await fetch(
+          `/api/conversations/${conversationId}/media`,
+          {
+            method: "POST",
+            body: form,
+          }
+        );
 
         if (!response.ok) {
           const data = await response.json().catch(() => null);
-          throw new Error(data?.details || data?.error || "Failed to analyze media");
+          throw new Error(
+            data?.details || data?.error || "Failed to analyze media"
+          );
         }
 
         const data = (await response.json()) as {
@@ -294,7 +308,9 @@ export function EnhancedAskAI({ enabledModels }: EnhancedAskAIProps) {
 
         setMessages((prev) =>
           prev
-            .filter((m) => m.id !== tempUserMessage.id && m.id !== tempAiMessage.id)
+            .filter(
+              (m) => m.id !== tempUserMessage.id && m.id !== tempAiMessage.id
+            )
             .concat([data.userMessage, data.aiMessage])
         );
 
@@ -302,14 +318,18 @@ export function EnhancedAskAI({ enabledModels }: EnhancedAskAIProps) {
       } catch (error: unknown) {
         console.error("Media error:", error);
         setMessages((prev) =>
-          prev.filter((m) => m.id !== tempUserMessage.id && m.id !== tempAiMessage.id)
+          prev.filter(
+            (m) => m.id !== tempUserMessage.id && m.id !== tempAiMessage.id
+          )
         );
         setMessages((prev) => [
           ...prev,
           {
             id: `error-${Date.now()}`,
             role: "assistant",
-            content: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+            content: `Error: ${
+              error instanceof Error ? error.message : "Unknown error"
+            }`,
             createdAt: new Date(),
           },
         ]);
@@ -714,7 +734,7 @@ export function EnhancedAskAI({ enabledModels }: EnhancedAskAIProps) {
                 <ModelSelector
                   value={selectedModel}
                   onValueChange={setSelectedModel}
-                  enabledModels={enabledModels}
+                  enabledModels={allowedModelIds}
                   hideLabel
                   hideDescription
                   className="w-[200px]"

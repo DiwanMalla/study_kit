@@ -40,11 +40,11 @@ export function PricingContent({
         description:
           "Perfect for casual study sessions and trying out our AI features.",
         features: [
-          "3 Study Kits per month",
+          "Unlimited Study Kits",
           "Basic AI Summaries",
           "50 Flashcards per kit",
-          "Community Support",
-          "Standard AI Models",
+          "10 Image Generations per month",
+          "Standard AI Models (Llama 3.1)",
         ],
         buttonText: "Get Started",
         variant: "outline",
@@ -99,12 +99,11 @@ export function PricingContent({
         description:
           "Perfect for casual study sessions and trying out our AI features.",
         features: [
-          "3 Study Kits per month",
+          "Unlimited Study Kits",
           "Basic AI Summaries",
           "50 Flashcards per kit",
-          "Community Support",
-          "Standard AI Models (Qwen)",
-          "Assignment Helper (Basic)",
+          "10 Image Generations per month",
+          "Standard AI Models (Llama 3.1)",
         ],
         buttonText: "Get Started",
         variant: "outline",

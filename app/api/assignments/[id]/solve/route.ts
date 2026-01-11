@@ -7,7 +7,10 @@ import {
   getAssignmentModelForPlan,
   getJudgeModels,
   hasPremiumAccess,
-} from "@/lib/assignment-models";
+  hasUltimateAccess,
+  MAX_FREE_IMAGES_PER_MONTH,
+  SubscriptionPlan,
+} from "@/lib/ai-models";
 import { createAssignmentWordDocument } from "@/lib/word-generator";
 import { qwenImageGeneration } from "@/lib/ai";
 import { put } from "@vercel/blob";
@@ -158,15 +161,37 @@ export async function POST(
       );
     }
 
-    // Get user's subscription plan
     const user = await db.user.findUnique({
       where: { clerkId: userId },
-      select: { subscriptionPlan: true },
+      select: {
+        subscriptionPlan: true,
+        imageGenerationCount: true,
+        lastImageReset: true,
+      },
     });
 
-    const plan = user?.subscriptionPlan || "free";
+    const plan = (user?.subscriptionPlan || "free") as SubscriptionPlan;
     const useJudge = hasPremiumAccess(plan);
     const models = getJudgeModels(plan);
+
+    // Reset image counter if a new month has started
+    let imageGenCount = user?.imageGenerationCount || 0;
+    const lastReset = user?.lastImageReset || new Date();
+    const now = new Date();
+    const isNewMonth =
+      now.getMonth() !== lastReset.getMonth() ||
+      now.getFullYear() !== lastReset.getFullYear();
+
+    if (isNewMonth) {
+      imageGenCount = 0;
+      await db.user.update({
+        where: { clerkId: userId },
+        data: {
+          imageGenerationCount: 0,
+          lastImageReset: now,
+        },
+      });
+    }
 
     // Generate solution with optional AI judge
     const result = await withTimeout(
@@ -192,6 +217,14 @@ export async function POST(
         const fullTag = match[0];
         const description = match[1];
 
+        // Check image generation limit for free users
+        if (!hasUltimateAccess(plan) && imageGenCount >= MAX_FREE_IMAGES_PER_MONTH) {
+          console.log(`User ${userId} reached image generation limit`);
+          // Just remove the tag if limit reached
+          finalSolution = finalSolution.replace(fullTag, "");
+          continue;
+        }
+
         try {
           // Generate image using Qwen
           const imageUrl = await qwenImageGeneration(
@@ -213,6 +246,13 @@ export async function POST(
             `\n\n![${description}](${blobUrl})\n\n`
           );
           generatedImages.push(blobUrl);
+
+          // Increment count
+          imageGenCount++;
+          await db.user.update({
+            where: { clerkId: userId },
+            data: { imageGenerationCount: { increment: 1 } },
+          });
         } catch (error) {
           console.error(`Failed to generate image for: ${description}`, error);
           // Remove the tag if generation fails to keep it clean

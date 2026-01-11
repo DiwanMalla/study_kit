@@ -15,28 +15,16 @@ The Assignment Helper has been significantly enhanced with advanced AI capabilit
 
 ### 2. Model Selection System (Free vs Paid)
 
-**File:** `lib/assignment-models.ts`
+**File:** `lib/ai-models.ts`
 
-- **Free Plan:** Uses Qwen 2.5 72B (via Groq)
-
+- **All Plans (Current):** Uses Qwen Max (via Alibaba)
   - Temperature: 0.4
   - Max Tokens: 4096
-  - Good for basic assignments
-
-- **Pro Plan:** Uses Llama 3.3 70B Versatile
-
-  - Temperature: 0.3
-  - Max Tokens: 8192
-  - Better quality and longer responses
-
-- **Ultimate Plan:** Uses GPT-4o (via OpenRouter)
-  - Temperature: 0.2
-  - Max Tokens: 16384
-  - Best quality with maximum detail
+  - High-quality academic performance for all users
 
 ### 3. AI Judge System
 
-**File:** `lib/assignment-judge.ts`
+**File:** `lib/assignment-judge.ts` and `lib/ai-models.ts`
 
 For Pro and Ultimate users:
 
@@ -146,7 +134,7 @@ Updated feature lists to reflect new capabilities:
 
 ### Core Logic
 
-- `lib/assignment-models.ts` - Model selection based on subscription
+- `lib/ai-models.ts` - Centralized model definitions and selection logic
 - `lib/assignment-judge.ts` - Multi-model generation and judging
 - `lib/word-generator.ts` - Word document generation
 

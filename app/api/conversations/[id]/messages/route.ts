@@ -4,6 +4,11 @@ import { db } from "@/lib/db";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SUBJECT_PROMPTS, MODE_INSTRUCTIONS } from "@/lib/conversation-utils";
 import { qwenImageGeneration } from "@/lib/ai";
+import {
+  SubscriptionPlan,
+  hasUltimateAccess,
+  MAX_FREE_IMAGES_PER_MONTH,
+} from "@/lib/ai-models";
 
 type ChatProvider = "gemini" | "groq" | "openrouter" | "nvidia" | "qwen";
 
@@ -153,6 +158,35 @@ export async function POST(
         { error: "Conversation not found" },
         { status: 404 }
       );
+    }
+
+    // Get user's subscription details and handle image reset
+    const user = await db.user.findUnique({
+      where: { clerkId: userId },
+      select: {
+        subscriptionPlan: true,
+        imageGenerationCount: true,
+        lastImageReset: true,
+      },
+    });
+
+    const plan = (user?.subscriptionPlan || "free") as SubscriptionPlan;
+    let imageGenCount = user?.imageGenerationCount || 0;
+    const lastReset = user?.lastImageReset || new Date();
+    const now = new Date();
+    const isNewMonth =
+      now.getMonth() !== lastReset.getMonth() ||
+      now.getFullYear() !== lastReset.getFullYear();
+
+    if (isNewMonth) {
+      imageGenCount = 0;
+      await db.user.update({
+        where: { clerkId: userId },
+        data: {
+          imageGenerationCount: 0,
+          lastImageReset: now,
+        },
+      });
     }
 
     // Save user message
@@ -547,14 +581,28 @@ Example of good expansion: If user asks for "heart tissue", you might add "detai
               }
             }
 
-            const imageUrl = await qwenImageGeneration(
-              optimizedPrompt,
-              modelId || "qwen-image-plus"
-            );
-            const markdown = `Here is the image you requested:\n\n![Generated Image](${imageUrl})`;
-            fullResponse = markdown;
-            enqueueSmooth(controller, markdown);
-            flushSmooth(controller);
+            // Check image generation limit for free users
+            if (!hasUltimateAccess(plan) && imageGenCount >= MAX_FREE_IMAGES_PER_MONTH) {
+              const limitMsg = "You've reached your free limit of 10 image generations per month. Please upgrade to Ultimate for unlimited images.";
+              fullResponse = limitMsg;
+              enqueueSmooth(controller, limitMsg);
+              flushSmooth(controller);
+            } else {
+              const imageUrl = await qwenImageGeneration(
+                optimizedPrompt,
+                modelId || "qwen-image-plus"
+              );
+              const markdown = `Here is the image you requested:\n\n![Generated Image](${imageUrl})`;
+              fullResponse = markdown;
+              enqueueSmooth(controller, markdown);
+              flushSmooth(controller);
+
+              // Increment count
+              await db.user.update({
+                where: { clerkId: userId },
+                data: { imageGenerationCount: { increment: 1 } },
+              });
+            }
           } else {
             // OpenAI-compatible streaming (Groq / OpenRouter)
             const body = openAiCompatibleResponse?.body;
